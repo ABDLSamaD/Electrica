@@ -1,7 +1,8 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 
 const header = () => {
+  const auth = localStorage.getItem("dshbrd_usr_tkn");
   const toogleNav = (e) => {
     document.querySelector(".navbar").classList.toggle("shownavbar");
   };
@@ -64,7 +65,15 @@ const header = () => {
           <span className="bg-yellow-950 w-12 h-2 my-1"></span>
         </div>
         <div className="buttons">
-          <button className="button-login"><Link to="/signin">Sign In</Link></button>
+          {auth ? (
+            <button className="button-login">
+              <Link to="/db-au-user">Dashboard</Link>
+            </button>
+          ) : (
+            <button className="button-login">
+              <Link to="/signin">Sign In</Link>
+            </button>
+          )}
         </div>
       </div>
     </header>

@@ -70,7 +70,7 @@ body {
     }
 } */
 
-#home .container .row .col-1{
+#home .container .row .col-1 {
   z-index: 0;
   animation: slideUp 2s ease-in-out forwards;
   opacity: 0;
@@ -132,7 +132,7 @@ span {
 }
 
 /* SIgnin Section */
-#signin{
+#signin {
   /* background: url("https://images.pexels.com/photos/1103970/pexels-photo-1103970.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=2")no-repeat center center/cover;
   height: 100%;
   width: 100%; */
@@ -140,8 +140,10 @@ span {
 }
 .form_container {
   padding: 50px 40px 20px 40px;
-  background: #f4f4f452;
-  box-shadow: 2px 0px 6px #d8d5d5bf
+  /* background: #f4f4f452;
+  box-shadow: 2px 0px 6px #d8d5d5bf; */
+  border: 1px solid gray;
+  border-radius: 10px;
 }
 .logo_container {
   background: linear-gradient(
@@ -160,7 +162,7 @@ span {
   left: 12px;
   bottom: 9px;
 }
-.input_form{
+.input_form {
   margin-top: 7px;
 }
 .input_field {
@@ -171,22 +173,22 @@ span {
   color: black;
   padding-left: 40px;
 }
-#emailicon{
+#emailicon {
   position: absolute;
   top: 45px;
   left: 20px;
 }
-#passwordicon{
+#passwordicon {
   position: absolute;
   top: 45px;
   left: 20px;
 }
-#emailiconsignup{
+#emailiconsignup {
   position: absolute;
   top: 42px;
   left: 20px;
 }
-#passwordiconsignup{
+#passwordiconsignup {
   position: absolute;
   top: 42px;
   left: 20px;
@@ -197,7 +199,7 @@ span {
   transition: all .3s ease;
 } */
 
-.input_field::placeholder{
+.input_field::placeholder {
   /* font-size: ; */
   padding-left: 5px;
 }
@@ -205,12 +207,12 @@ span {
   /* border: 1px solid transparent; */
   box-shadow: 0px 0px 0px 2px #d7c4c4;
 }
-.show-pass{
-right: 14px;
-top: 40px;
-transition: all .3s ease;
+.show-pass {
+  right: 14px;
+  top: 40px;
+  transition: all 0.3s ease;
 }
-.show-pass-s{
+.show-pass-s {
   top: 36px;
   right: 14px;
 }
@@ -226,7 +228,7 @@ transition: all .3s ease;
 }
 
 /* email verification start */
-#emailverify{
+#emailverify {
   width: 100vw;
   height: 100vh;
   position: relative;
@@ -235,14 +237,14 @@ transition: all .3s ease;
   justify-content: center;
   /* background: linear-gradient(to right, #426981, #28629a); */
 }
-#emailverify .row{
+#emailverify .row {
   border-radius: 10px;
   backdrop-filter: blur(20px);
   -webkit-backdrop-filter: blur(20px);
   box-shadow: 2px 1px 8px rgba(0, 14, 20, 0.228);
   background: rgba(235, 240, 241, 0.094);
 }
-.otp_input{
+.otp_input {
   width: 100%;
   padding: 8px;
   border: 0.3px solid rgba(128, 128, 128, 0.295);
@@ -252,8 +254,6 @@ transition: all .3s ease;
   /* border-bottom: 0.3px solid rgba(0, 4, 130, 0.498); */
 }
 /* email verification end */
-
-
 
 /* animation start */
 
@@ -346,9 +346,8 @@ transition: all .3s ease;
   transform: scale(0.98);
 }
 
-
 @media screen and (max-width: 768px) {
-  .navbar{
+  .navbar {
     /* display: none; */
     width: 100vw;
     height: 100vh;
@@ -359,4 +358,24 @@ transition: all .3s ease;
     top: 55px;
     left: 0;
   }
+}
+
+/* extra classes for toploading bar */
+.fade-enter {
+  opacity: 0;
+  transform: translateY(20px);
+}
+.fade-enter-active {
+  opacity: 1;
+  transform: translateY(0);
+  transition: opacity 500ms ease-in-out, transform 500ms ease-in-out;
+}
+.fade-exit {
+  opacity: 1;
+  transform: translateY(0);
+}
+.fade-exit-active {
+  opacity: 0;
+  transform: translateY(-20px);
+  transition: opacity 500ms ease-in-out, transform 500ms ease-in-out;
 }

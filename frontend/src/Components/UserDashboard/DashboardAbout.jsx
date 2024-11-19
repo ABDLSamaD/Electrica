@@ -1,17 +1,13 @@
-import React from 'react'
-import DashboardHeader from './DashboardHeader'
+import React from "react";
 
 const DashboardAbout = () => {
   return (
-    <>
-        <DashboardHeader />
-        <div className="about">
-            <div className="container">
-                <h1>About</h1>
-            </div>
-        </div>
-    </>
-  )
-}
+    <div className="about">
+      <div className="container">
+        <h1>About</h1>
+      </div>
+    </div>
+  );
+};
 
-export default DashboardAbout
+export default DashboardAbout;

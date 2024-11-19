@@ -1,23 +1,29 @@
-// components/Header.jsx
-import {
-  faRightFromBracket,
-  faUser,
-  faUserTie,
-} from "@fortawesome/free-solid-svg-icons";
+import React, { useState } from "react";
+import { NavLink, useNavigate } from "react-router-dom";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import "./dashboard.css";
-import { Link, useNavigate } from "react-router-dom";
+import {
+  // faHome,
+  // faFileAlt,
+  // faCog,
+  // faPalette,
+  // faChartLine,
+  faBars,
+} from "@fortawesome/free-solid-svg-icons";
 import axios from "axios";
 import Alert from "../OtherComponents/Alert";
-import { useState } from "react";
+import "./dashboard.css";
 
-const DashboardHeader = () => {
-  const navigate = useNavigate();
+const DashboardHeader = (props) => {
+  const { user } = props;
+  const navigate = useNavigate(); // for navigation
 
+  // States dealing start
   const [alert, setAlert] = useState(null);
   const [type, setType] = useState("");
   const [message, setMessage] = useState("");
+  // States dealing end
 
+  // logout function
   const hanldeLogout = async () => {
     try {
       const response = await axios.post(
@@ -47,73 +53,34 @@ const DashboardHeader = () => {
     }
   };
 
-  const showProfile = () => {
-    document.querySelector("#dropdown").classList.toggle("showdropdown");
-  };
-
   return (
-    <header className="flex items-center justify-between p-4 bg-white shadow-md">
+    <>
       {alert && (
         <Alert type={type} message={message} onClose={() => setAlert(null)} />
       )}
-      <h1 className="text-2xl font-semibold text-gray-800">Dashboard</h1>
-      <div className="flex items-center space-x-4">
-        {/* Navigation Links */}
-        <nav className="hidden md:flex space-x-4">
-          <Link to="/db-au-user" className="text-gray-600 hover:text-blue-600">
-            Home
-          </Link>
-          <Link
-            to="/db-au-user/about"
-            className="text-gray-600 hover:text-blue-600"
-          >
-            Reports
-          </Link>
-          <Link to="#/" className="text-gray-600 hover:text-blue-600">
-            Settings
-          </Link>
-        </nav>
 
-        {/* Search Bar */}
-        <div className="relative hidden md:block">
-          <input
-            type="search"
-            placeholder="Search..."
-            className="px-4 py-2 border rounded-full bg-gray-100 focus:outline-none"
-          />
-        </div>
-
-        {/* User Menu */}
-        <div className="relative">
-          <button
-            type="button"
-            className="flex items-center focus:outline-none"
-            onClick={showProfile}
-          >
-            <div className="w-8 h-8 rounded-full">
-              <FontAwesomeIcon icon={faUserTie} size="2xl" />
-            </div>
-          </button>
-          {/* Dropdown Menu */}
-          <div
-            id="dropdown"
-            className="absolute hidden z-50 right-0 mt-2 w-48 bg-white border rounded-md shadow-lg"
-          >
-            <button className="block px-4 py-2 text-gray-700 hover:bg-gray-100">
-              <span className="text-base mr-2">Profile</span>
-              <FontAwesomeIcon icon={faUser} />
-            </button>
-            <button
-              onClick={hanldeLogout}
-              className="block px-4 py-2 text-gray-700 hover:bg-gray-100"
-            >
-              <span className="mr-2 text-base">Logout</span>
-              <FontAwesomeIcon icon={faRightFromBracket} />
-            </button>
+      <div className="relative">
+        <div className="row relative left-36 bg-red-600 flex items-center justify-between">
+          <div className="bar cursor-pointer">
+            <FontAwesomeIcon
+              icon={faBars}
+              size="sm"
+              style={{ color: "#B197FC" }}
+            />
+          </div>
+          <div className="search">
+            <p>search here</p>
           </div>
         </div>
+        <div className="row w-10 md:w-20 ">
+          <div className="p-4 text-xl font-bold text-center border-b border-gray-700">
+            My Dashboard
+          </div>
+
+          <nav className="relative"></nav>
+        </div>
       </div>
-    </header>
+    </>
   );
 };
 

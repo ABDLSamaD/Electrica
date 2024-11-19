@@ -42,7 +42,9 @@ const VerifyForgotOtp = () => {
         setAlert(response.data.type, response.data.message);
       }
     } catch (err) {
-      setError(err.response?.data?.message || "Failed to verify OTP");
+      setType(err.response?.data?.type);
+        setMessage(err.response?.data?.message);
+        setAlert(err.response?.data?.message || "Failed to verify OTP");
     }
   };
 

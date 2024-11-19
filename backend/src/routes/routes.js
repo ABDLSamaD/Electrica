@@ -12,6 +12,7 @@ const {
   verifyForgotOtp,
   resetPassword,
   getUserDetails,
+  checkAuth,
 } = require("../controllers/userController");
 const {
   someProtectedController,
@@ -26,16 +27,32 @@ const validateRequest = require("../middleware/validationMiddleware");
 const fetchUser = require("../middleware/authMiddleware");
 const sessionAuth = require("../middleware/sessionAuth");
 const { rateLimit } = require("express-rate-limit");
-const { userDetail, changepassword, updateUserDetails } = require("../controllers/userSettings");
+const {
+  userDetail,
+  changepassword,
+  updateUserDetails,
+  profileImage,
+} = require("../controllers/userSettings");
 
 const loginRateLimiter = rateLimit({
   windowMs: 5 * 60 * 1000, // 5 minutes
   max: 5, // Limit each IP to 10 requests per windowMs
   message: "Too many login attempts, please try again later.",
 });
+const signupRateLimiter = rateLimit({
+  windowMs: 5 * 60 * 1000, // 5 minutes
+  max: 5, // Limit each IP to 10 requests per windowMs
+  message: "Too many signup attempts, please try again later.",
+});
 
 // routes
-routes.post("/signup", registerValidation, validateRequest, signUp);
+routes.post(
+  "/signup",
+  registerValidation,
+  validateRequest,
+  signupRateLimiter,
+  signUp
+);
 routes.post("/verify-otp", fetchUser, verifyOtp);
 routes.post("/resend-otp", resendOtp);
 routes.post(
@@ -45,6 +62,7 @@ routes.post(
   loginRateLimiter,
   login
 );
+routes.get("/check-auth", sessionAuth, checkAuth);
 routes.get("/login-history/:userId", getLoginHistory);
 routes.get("/protected-endpoint", sessionAuth, someProtectedController);
 routes.post("/logout", sessionAuth, logout);
@@ -52,8 +70,9 @@ routes.post("/set-logout-time", sessionAuth, setLogoutTime);
 routes.post("/forgot-password", forgotPassword);
 routes.post("/verify-forgototp", verifyForgotOtp);
 routes.post("/reset-password", resetPassword);
-routes.post("/adduser-details", fetchUser, validateUserDetails, userDetail);
+routes.post("/adduser-details", fetchUser, userDetail);
 routes.put("/updateuser-details", fetchUser, updateUserDetails);
+routes.post("/adduser-profileImg", fetchUser, profileImage);
 routes.post("/change-password", fetchUser, changepassword);
 routes.get("/user-info", fetchUser, getUserDetails);
 

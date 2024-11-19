@@ -65,13 +65,13 @@ const Signin = () => {
         setAlert(data.type, data.message);
       }
     } catch (err) {
-      setType(err.response?.data?.type);
-      setMessage(err.response?.data?.message || "Failed to verify OTP");
+      setType(err.response?.data?.type || "error");
+      setMessage(err.response?.data?.message || "Network Error");
       setAlert(
-        err.response?.data?.type,
-        err.response?.data?.message || "Failed to verify OTP"
+        err.response?.data?.type || "error",
+        err.response?.data?.message || "Network Error"
       );
-      console.error(err.response?.data?.message || "Failed to verify OTP");
+      console.error(err.response?.data?.message || "Network Error");
     }
   };
 
@@ -85,7 +85,7 @@ const Signin = () => {
           <FontAwesomeIcon icon={faArrowLeft} size="2xs" />
         </Link>
       </div>
-      <div className="container w-90 h-full flex items-center justify-center flex-col bg-[rgb(255,255,255)]">
+      <div className="w-90 h-full flex items-center justify-center flex-col">
         <form
           onSubmit={handleSignin}
           className="my-3 form_container rounded-xl w-fit h-fit flex flex-col items-center justify-center gap-4"
@@ -156,12 +156,25 @@ const Signin = () => {
               Forgot Password?
             </Link>
           </div>
-          <button type="submit" className="w-full rounded-md p-2 focus:scale-105 bg-gray-800">
-            <span className="text-xl text-white font-mono font-bold">Sign In</span> <FontAwesomeIcon icon={faSignInAlt} className="text-gray-600" size="1x" />
+          <button
+            type="submit"
+            className="w-full rounded-md p-2 focus:scale-105 bg-gray-800"
+          >
+            <span className="text-xl text-white font-mono font-bold">
+              Sign In
+            </span>{" "}
+            <FontAwesomeIcon
+              icon={faSignInAlt}
+              className="text-gray-600"
+              size="1x"
+            />
           </button>
           <div className="option flex items-center w-full justify-center">
             <p>Don't have an account?</p>
-            <Link to="/signup" className="text-cyan-600 text-sm ml-1 hover:text-cyan-400">
+            <Link
+              to="/signup"
+              className="text-cyan-600 text-sm ml-1 hover:text-cyan-400"
+            >
               SignUp
             </Link>
           </div>

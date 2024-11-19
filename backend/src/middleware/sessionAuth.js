@@ -1,15 +1,23 @@
 const User = require("../models/user");
 
 const sessionAuth = async (req, res, next) => {
-  if (!req.session.token) {
-    return res.status(401).json({ error: "Unauthorized access" });
-  }
-
-  const user = await User.findById(req.session.user.id);
-  if (!user) {
-    return res.status(401).json({ error: "User not found" });
-  }
   try {
+    if (!req.session.token) {
+      return res.status(401).json({ error: "Unauthorized access" });
+    }
+
+    // Check if session contains user information
+    if (!req.session.user || !req.session.user.id) {
+      return res
+        .status(401)
+        .json({ error: "Unauthorized access. Session user not found." });
+    }
+
+    const user = await User.findById(req.session.user.id);
+    if (!user) {
+      return res.status(401).json({ error: "User not found" });
+    }
+
     const currentTime = Date.now();
     const sessionExpirationTime = req.session.cookie.expires
       ? new Date(req.session.cookie.expires).getTime()
@@ -31,7 +39,9 @@ const sessionAuth = async (req, res, next) => {
       next(); // Proceed to the next middleware or route handler
     }
   } catch (error) {
-    return res.status(401).json({ error: "Invalid or expired session" });
+    return res
+      .status(401)
+      .json({ error: "Internal server error during session validation." });
   }
 };
 

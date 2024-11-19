@@ -24,6 +24,7 @@
     "helmet": "^8.0.0",
     "jsonwebtoken": "^9.0.2",
     "mongoose": "^8.7.3",
-    "nodemailer": "^6.9.16"
+    "nodemailer": "^6.9.16",
+    "path": "^0.12.7"
   }
 }

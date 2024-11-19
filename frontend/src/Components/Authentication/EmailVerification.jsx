@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import Alert from "../OtherComponents/Alert";
 import { useNavigate } from "react-router-dom";
-import axios from 'axios'
+import axios from "axios";
 
 const EmailVerification = () => {
   // navigate
@@ -10,7 +10,7 @@ const EmailVerification = () => {
   // states start
   // const [otps, setOtps] = useState({otp: ""});
   const [otp, setOtp] = useState("");
-  
+
   const [type, setType] = useState("");
   const [message, setMessage] = useState("");
   const [alert, setAlert] = useState(null);
@@ -29,15 +29,18 @@ const EmailVerification = () => {
       const response = await axios.post(
         "http://localhost:5120/api/auth/verify-otp",
         {
-          otp
+          otp,
         },
-        {headers: {
-          Authorization: `Bearer ${authToken}`}
+        {
+          headers: {
+            Authorization: `Bearer ${authToken}`,
+          },
         }
       );
       const data = await response.data;
       if (response.status === 200) {
-        localStorage.removeItem("us-em-temporary")
+        localStorage.removeItem("us-em-temporary");
+        localStorage.removeItem("tkn-at-udb");
         let type = "success";
         let message = data.message;
         setType(type);
@@ -65,31 +68,31 @@ const EmailVerification = () => {
   };
 
   // resend otp
-  const resendOtp = async (e)=>{
-    e.preventDefault()
+  const resendOtp = async (e) => {
+    e.preventDefault();
     try {
       const authEmail = localStorage.getItem("us-em-temporary");
-      const response = await axios.post("http://localhost:5120/api/auth/resend-otp",
+      const response = await axios.post(
+        "http://localhost:5120/api/auth/resend-otp",
         {
-          email: authEmail
+          email: authEmail,
         }
-      )
-      const data = await response.data
-      if(response.status === 200){
+      );
+      const data = await response.data;
+      if (response.status === 200) {
         localStorage.removeItem("us-em-temporary");
         let type = "success";
         let message = data.message;
         setType(type);
         setMessage(message);
         setAlert(type, message);
-      }else{
+      } else {
         let type = "error";
         let message = data.message;
         setType(type);
         setMessage(message);
         setAlert(type, message);
       }
-      
     } catch (err) {
       console.log(err);
       const type = "error";
@@ -98,7 +101,7 @@ const EmailVerification = () => {
       setMessage(message);
       setAlert(type, message);
     }
-  }
+  };
 
   return (
     <div id="emailverify">
@@ -126,7 +129,12 @@ const EmailVerification = () => {
               Confirm
             </button>
             <div className="resend">
-              <button className="underline text-gray-500 mt-2 text-sm" onClick={resendOtp}>Resend Otp</button>
+              <button
+                className="underline text-gray-500 mt-2 text-sm"
+                onClick={resendOtp}
+              >
+                Resend Otp
+              </button>
             </div>
           </form>
         </div>

@@ -30,7 +30,7 @@ const ResetPassword = () => {
         setType(response.data.type);
         setAlert(response.data.type, response.data.message);
         setTimeout(() => {
-          navigate("/");
+          navigate("/signin");
         }, 3000);
       } else {
         setMessage(message);
@@ -40,7 +40,7 @@ const ResetPassword = () => {
     } catch (err) {
       setMessage(err.response?.data?.message || "Failed to send OTP");
       setType(err.response?.data?.type);
-      setAlert(type, err.response?.data?.message || "Failed to send OTP");
+      setAlert(err.response?.data?.type, err.response?.data?.message || "Failed to send OTP");
     }
   };
 

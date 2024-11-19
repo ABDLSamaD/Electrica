@@ -4,6 +4,7 @@ const jwt = require("jsonwebtoken");
 const crypto = require("crypto");
 const { sendOtpEmail } = require("../utils/otpService");
 const { sendForgotOtpEmail } = require("../utils/OtpForgot");
+const { loginMail } = require("../utils/loginmail");
 require("dotenv").config();
 
 exports.signUp = async (req, res) => {
@@ -82,12 +83,10 @@ exports.verifyOtp = async (req, res) => {
         });
       }
 
-      return res
-        .status(400)
-        .json({
-          type: "error",
-          message: `Incorrect OTP. Attempt ${user.otpAttempts}/3`,
-        });
+      return res.status(400).json({
+        type: "error",
+        message: `Incorrect OTP. Attempt ${user.otpAttempts}/3`,
+      });
     }
 
     // OTP is correct, so verify user
@@ -179,23 +178,40 @@ exports.login = async (req, res) => {
     });
     user.token = token;
 
-     // If authentication is successful, adjust session settings based on "Remember Me"
-     if (rememberMe) {
+    // If authentication is successful, adjust session settings based on "Remember Me"
+    if (rememberMe) {
       req.session.cookie.maxAge = 30 * 24 * 60 * 60 * 1000; // Set cookie lifespan to 30 days
     } else {
       req.session.cookie.expires = false; // Session expires on browser close
     }
 
     req.session.token = token; // Store the token in the session
-    req.session.user = { id: user.id, email: user.email, isVerified: user.isVerified };
+    req.session.user = {
+      id: user.id,
+      name: user.name,
+      email: user.email,
+    };
+
+    // Send login email notification (catch potential errors)
+    try {
+      await loginMail(user);
+    } catch (mailError) {
+      console.error("Error sending login email:", mailError.message);
+    }
 
     await user.save();
     res
       .status(200)
       .json({ type: "success", message: "Login successfully", token });
   } catch (error) {
+    console.error("Login error:", error.message);
     res.status(500).json({ type: "error", message: "Internal server error" });
   }
+};
+
+// check auth user
+exports.checkAuth = (req, res) => {
+  res.status(200).json({ isAuthenticated: true, user: req.session.user });
 };
 
 exports.getLoginHistory = async (req, res) => {
@@ -251,13 +267,11 @@ exports.setLogoutTime = async (req, res) => {
     user.logoutTime = logoutTime;
     await user.save();
 
-    res
-      .status(200)
-      .json({
-        type: "success",
-        message: "Logout time updated successfully",
-        logoutTime,
-      });
+    res.status(200).json({
+      type: "success",
+      message: "Logout time updated successfully",
+      logoutTime,
+    });
   } catch (error) {
     res.status(500).json({ type: "error", message: "Internal server error" });
   }
@@ -340,12 +354,10 @@ exports.verifyForgotOtp = async (req, res) => {
         });
       }
 
-      return res
-        .status(400)
-        .json({
-          type: "info",
-          message: `Incorrect OTP. Attempt ${user.otpAttempts}/3`,
-        });
+      return res.status(400).json({
+        type: "info",
+        message: `Incorrect OTP. Attempt ${user.otpAttempts}/3`,
+      });
     }
 
     // OTP is correct, reset attempts and OTP
@@ -400,12 +412,10 @@ exports.resetPassword = async (req, res) => {
 
     await user.save();
 
-    res
-      .status(200)
-      .json({
-        type: "success",
-        message: "Password has been reset successfully.",
-      });
+    res.status(200).json({
+      type: "success",
+      message: "Password has been reset successfully.",
+    });
   } catch (error) {
     console.error(error.message);
     res.status(500).json({ type: "error", message: "Internal server error" });

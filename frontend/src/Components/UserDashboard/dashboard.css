@@ -1,3 +1,18 @@
-.showdropdown{
-    display: block;
+.showdropdown {
+  display: block;
+}
+:root {
+  --viewport-height: 100lvh;
+}
+
+@supports (height: 100svh) {
+  :root {
+    --viewport-height: 100svh;
+  }
+}
+
+@supports (height: 100dvh) {
+  :root {
+    --viewport-height: 100dvh;
+  }
 }

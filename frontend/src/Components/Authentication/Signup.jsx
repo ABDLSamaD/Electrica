@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import Cookies from 'js-cookie'
+import Cookies from "js-cookie";
 import {
   faArrowLeft,
   faEnvelope,
@@ -28,6 +28,7 @@ const Signup = (props) => {
   const [message, setMessage] = useState("");
   const [isPasswordVisible, setIsPasswordVisible] = useState(false); // for password show hide
   const [isFocused, setIsFocused] = useState(false);
+  const [loading, setLoading] = useState(false);
   // states end
   // Separate state for managing cookie values
   const [cookieValues, setCookieValues] = useState({
@@ -70,12 +71,12 @@ const Signup = (props) => {
   };
 
   const onChange = (e) => {
-    const {name, value} = e.target
+    const { name, value } = e.target;
 
     setCredenetials({ ...credentials, [name]: value });
-    
+
     Cookies.set(name, value);
-    
+
     // Also update cookieValues state
     setCookieValues((prev) => ({
       ...prev,
@@ -119,8 +120,8 @@ const Signup = (props) => {
         setAlert(data.type, data.message);
       }
     } catch (err) {
-      console.error(err.response.data.message);
-      setType(err.response.data.type);
+      console.error(err.response?.data?.message);
+      setType(err.response?.data?.type);
       setMessage(err.response?.data?.message || "Failed to verify OTP");
       setAlert(
         err.response?.data?.type,
@@ -135,7 +136,7 @@ const Signup = (props) => {
         {alert && (
           <Alert type={type} message={message} onClose={() => setAlert(null)} />
         )}
-        <div className="container relative w-full h-full flex items-center justify-center flex-col backdrop-blur-xl bg-[rgba(255,255,255,0.01)] transition-all">
+        <div className="relative w-full h-full flex items-center justify-center flex-col backdrop-blur-xl bg-[rgba(255,255,255,0.01)] transition-all">
           <form
             onSubmit={signupUser}
             className="relative my-3 form_container rounded-xl w-fit h-fit flex flex-col items-center justify-center gap-2"
