@@ -43,6 +43,8 @@ const {
   removeProject,
   approveMaterials,
   specifyStartDate,
+  markMessageAsShown,
+  getUnreadMessages,
 } = require("../controllers/userProject");
 // const { requestUser } = require("../controllers/userRequest");
 const decodeToken = require("../middleware/decodedtoken");
@@ -98,6 +100,8 @@ routes.post(
   removeClientConfirmation
 ); // remove client confirmation for dalay work of stages
 routes.post("/messageAdmin", decodeToken, sendMessageToAdmin); // User sends message to admin
+routes.post("/unread", decodeToken, markMessageAsShown); // markAsShown messages
+routes.post("/mark-shown", decodeToken, getUnreadMessages); // un read messages
 routes.post("/approve-material", decodeToken, approveMaterials); // client approved materials bill
 routes.post("/specifydate-material", decodeToken, specifyStartDate); // specify date  approved materials
 routes.post("/user_activity", decodeToken, activityLog);

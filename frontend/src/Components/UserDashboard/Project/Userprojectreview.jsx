@@ -29,11 +29,6 @@ const StageManagement = () => {
         setLoading(false);
         return;
       }
-      if (!projects || projects.length === 0) {
-        setError("No projects found. Please add a project.");
-        setLoading(false);
-        return;
-      }
 
       const selectedProject = projects.find(
         (project) => project._id === projectId
@@ -41,7 +36,6 @@ const StageManagement = () => {
 
       if (!selectedProject) {
         setError("Project not found.");
-        setLoading(false);
         return;
       }
 
@@ -52,7 +46,7 @@ const StageManagement = () => {
       setLoading(false);
     };
 
-    setTimeout(() => fetchData(), 2000);
+    setTimeout(() => fetchData(), 2200);
   }, [projects, projectId]);
 
   const handleApproveMaterial = async (stageId, materialId) => {

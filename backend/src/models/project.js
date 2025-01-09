@@ -78,12 +78,18 @@ const projectSchema = new mongoose.Schema({
     {
       message: { type: String, required: true }, // Client's message
       sentAt: { type: Date, default: Date.now },
+      isShownToAdmin: { type: Boolean, default: false }, // Indicates if admin has seen it
+      shownAt: { type: Date }, // Timestamp when the message was marked as shown
     },
   ],
-  adminMessages: {
-    message: { type: String }, // Client's message
-    sentAt: { type: Date, default: Date.now },
-  },
+  adminMessages: [
+    {
+      message: { type: String, required: true }, // Admin's message
+      sentAt: { type: Date, default: Date.now },
+      isShownToClient: { type: Boolean, default: false }, // Indicates if client has seen it
+      shownAt: { type: Date }, // Timestamp when the message was marked as shown
+    },
+  ],
   createdAt: { type: Date, default: Date.now },
   updatedAt: { type: Date, default: Date.now },
 });

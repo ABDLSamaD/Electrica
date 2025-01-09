@@ -170,27 +170,80 @@ exports.sendMessageToAdmin = async (req, res) => {
       sentAt: new Date(),
     });
 
-    // send an confirmation email to admin that materials are approved
-    try {
-      const admin = await Admin.find().select("-passowrd -role");
-      if (admin && admin.email) {
-        // Check if admin and admin.email are defined
-        sendEmail(admin.email, "client Message", message);
+    await project.save();
+
+    res.status(200).json({
+      type: "success",
+      message: "Message sent to admin successfully.",
+    });
+  } catch (error) {
+    console.log(error.message);
+    res.status(500).json({ type: "error", message: "Internal server error" });
+  }
+};
+exports.markMessageAsShown = async (req, res) => {
+  try {
+    const { projectId, messageId, forAdmin } = req.body; // Indicate if it's for admin or client
+
+    const userId = req.user.id;
+    const { project, error } = await getProjectAndStage(userId, projectId);
+    if (error) {
+      return res.status(400).json({ type: "error", message: error });
+    }
+
+    if (forAdmin) {
+      const message = project.clientMessages.id(messageId);
+      if (message) {
+        message.isShownToAdmin = true;
+        message.shownAt = new Date();
       } else {
-        console.log("No admin email found.");
+        return res
+          .status(404)
+          .json({ type: "error", message: "Message not found" });
       }
-    } catch (error) {
-      console.log(error.message);
+    } else {
+      const message = project.adminMessages.id(messageId);
+      if (message) {
+        message.isShownToClient = true;
+        message.shownAt = new Date();
+      } else {
+        return res
+          .status(404)
+          .json({ type: "error", message: "Message not found" });
+      }
     }
 
     await project.save();
 
     res.status(200).json({
       type: "success",
-      message: "Message sent to admin successfully.",
-      messages: clientMessages,
+      message: "Message marked as shown successfully.",
     });
   } catch (error) {
+    console.error(error);
+    res.status(500).json({ type: "error", message: "Internal server error" });
+  }
+};
+exports.getUnreadMessages = async (req, res) => {
+  try {
+    const { projectId, forAdmin } = req.query; // Query for admin or client messages
+
+    const userId = req.user.id;
+    const { project, error } = await getProjectAndStage(userId, projectId);
+    if (error) {
+      return res.status(400).json({ type: "error", message: error });
+    }
+
+    const unreadMessages = forAdmin
+      ? project.clientMessages.filter((msg) => !msg.isShownToAdmin)
+      : project.adminMessages.filter((msg) => !msg.isShownToClient);
+
+    res.status(200).json({
+      type: "success",
+      unreadMessages,
+    });
+  } catch (error) {
+    console.error(error);
     res.status(500).json({ type: "error", message: "Internal server error" });
   }
 };
