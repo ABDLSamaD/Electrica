@@ -9,6 +9,7 @@ const MessagesSendingRecieving = ({
   sendMessageToAdmin,
 }) => {
   const [chatVisible, setChatVisible] = useState(false);
+  const [chatVisibles, setChatVisibles] = useState(false);
   return (
     <div>
       {/* Floating Chat Icon */}
