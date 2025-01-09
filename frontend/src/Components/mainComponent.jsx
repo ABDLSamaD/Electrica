@@ -28,7 +28,7 @@ import ResetAdminPassword from "./Admin/Authentication/ResetAdminPassword";
 import AdminPrivateRoute from "./Private/AdminPrivateroute";
 import AddProjectForm from "./UserDashboard/Project/AddProjectForm";
 import CheckProjects from "./UserDashboard/Project/CheckProjects";
-import ProjectDoc from "./UserDashboard/Project/ProjectDoc";
+import ProjectDoc from "./UserDashboard/Project/ProjectDocumentation/ProjectDoc";
 import StageManagement from "./UserDashboard/Project/Userprojectreview";
 import AdminHome from "./Admin/AdminHome";
 import UserProfile from "./Admin/User/UserProfile";
