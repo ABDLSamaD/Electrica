@@ -10,13 +10,13 @@ import { Link, useNavigate, useOutletContext } from "react-router-dom";
 import axios from "axios";
 
 const CheckProjects = () => {
-  const { userProject, fetchUser } = useOutletContext(); // Projects are fetched and passed here
+  const { fetchUser, projects, fetchProject } = useOutletContext(); // Projects are fetched and passed here
   const navigate = useNavigate();
 
   const [loading, setLoading] = useState(false); // Loader state
 
   useEffect(() => {
-    if (userProject && userProject.length > 0) {
+    if (projects && projects.length > 0) {
       setLoading(false); // Stop loading immediately if projects are available
       fetchUser();
     } else {
@@ -27,7 +27,7 @@ const CheckProjects = () => {
 
       return () => clearTimeout(timer); // Cleanup the timer on unmount or dependency change
     }
-  }, [userProject]);
+  }, [projects]);
 
   const removeProject = async (projectId) => {
     const confirmRemove = window.confirm(
@@ -39,14 +39,14 @@ const CheckProjects = () => {
       setLoading(true); // Show loader
       const response = await axios.post(
         "http://localhost:5120/api/auth/remove-project",
-        { projectId, removeProject: true },
+        { projectId, removeProject: true, reason },
         { withCredentials: true }
       );
       if (response.status === 200) {
         alert(response.data.message);
-        fetchUser(); // Reload page to update the UI after removal
+        fetchProject(); // Reload page to update the UI after removal
         if (!userProject) {
-          navigate("/db-au-user");
+          navigate("/db-au-user/project");
         }
       } else {
         alert(response.data.message);
@@ -88,9 +88,9 @@ const CheckProjects = () => {
       </div>
 
       {/* Check if there are any projects */}
-      {userProject && userProject.length > 0 ? (
+      {projects && projects.length > 0 ? (
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 w-full">
-          {userProject.map((project) => (
+          {projects.map((project) => (
             <div
               key={project._id}
               className={`p-6 rounded-lg shadow-md border-t-4 

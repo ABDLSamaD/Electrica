@@ -26,7 +26,7 @@ ChartJS.register(
 const DashboardHome = () => {
   const navigate = useNavigate();
 
-  const { user, userProject } = useOutletContext();
+  const { user, projects } = useOutletContext();
   const [data, setData] = useState(null);
   const [loader, setLoader] = useState(true);
   const [error, setError] = useState(null);
@@ -34,7 +34,7 @@ const DashboardHome = () => {
 
   useEffect(() => {
     setPage(false);
-    if (!userProject || userProject.length === 0) {
+    if (!projects || projects.length === 0) {
       setPage(false);
     } else {
       setPage(true);
@@ -61,7 +61,7 @@ const DashboardHome = () => {
     }, 2000); // Reduced delay for better UX
 
     return () => clearTimeout(timer);
-  }, [user, userProject]);
+  }, [user, projects]);
 
   const projectCompletionData = {
     labels: ["Week 1", "Week 2", "Week 3", "Week 4", "Week 5"],
@@ -99,8 +99,8 @@ const DashboardHome = () => {
               </h2>
               <ul className="mt-3 text-gray-400">
                 <li>
-                  <strong>Active Projects:</strong>{" "}
-                  {userProject ? userProject.length : 0}
+                  <strong>Active Projects:</strong>
+                  {projects ? projects.length : 0}
                 </li>
                 <li>
                   <strong>Tasks Completed:</strong> 45

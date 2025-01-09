@@ -5,35 +5,37 @@ import { useNavigate, useOutletContext, useParams } from "react-router-dom";
 import axios from "axios";
 import LoaderAll from "../../OtherComponents/LoaderAll";
 import { FaCheckCircle, FaTimesCircle } from "react-icons/fa";
+import Alert from "../../OtherComponents/Alert";
+import MessagesSendingRecieving from "./MessagesSendingRecieving";
 
 const StageManagement = () => {
   const navigate = useNavigate();
-  const { userProject, fetchUser } = useOutletContext();
+  const { projects, fetchProject } = useOutletContext();
   const localhost = "http://localhost:5120";
   const { projectId } = useParams();
   const [project, setProject] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
   const [successMessage, setSuccessMessage] = useState("");
-  const [isModalOpen, setIsModalOpen] = useState(false);
   const [message, setMessage] = useState("");
+  const [alert, setAlert] = useState(null);
   const [activeStage, setActiveStage] = useState(null);
   const [messages, setMessages] = useState([]);
 
   useEffect(() => {
     const fetchData = () => {
-      if (!Array.isArray(userProject)) {
+      if (!Array.isArray(projects)) {
         setError("Invalid project data. Please refresh the page.");
         setLoading(false);
         return;
       }
-      if (!userProject || userProject.length === 0) {
+      if (!projects || projects.length === 0) {
         setError("No projects found. Please add a project.");
         setLoading(false);
         return;
       }
 
-      const selectedProject = userProject.find(
+      const selectedProject = projects.find(
         (project) => project._id === projectId
       );
 
@@ -44,13 +46,14 @@ const StageManagement = () => {
       }
 
       setProject(selectedProject);
+      setMessages(selectedProject.clientMessages);
       setActiveStage(selectedProject.stages?.[0]?._id || null);
       setError("");
       setLoading(false);
     };
 
     setTimeout(() => fetchData(), 2000);
-  }, [userProject, projectId]);
+  }, [projects, projectId]);
 
   const handleApproveMaterial = async (stageId, materialId) => {
     try {
@@ -77,19 +80,14 @@ const StageManagement = () => {
               : stage
           ),
         }));
-        fetchUser();
+        fetchProject();
       }
     } catch (err) {
       setError("Failed to approve material. Please try again.");
     }
   };
 
-  const sendMessageToAdmin = async () => {
-    if (!message.trim()) {
-      setError("Message cannot be empty.");
-      return;
-    }
-
+  const handleMessageToAdmin = async () => {
     try {
       const response = await axios.post(
         `${localhost}/api/auth/messageAdmin`,
@@ -98,21 +96,18 @@ const StageManagement = () => {
       );
 
       if (response.status === 200) {
-        setSuccessMessage("Message sent to admin successfully.");
-        setMessages((prev) => [
-          ...prev,
-          {
-            sender: "You",
-            content: message,
-            timestamp: new Date().toLocaleString(),
-          },
-        ]);
-        setIsModalOpen(false);
+        setAlert({ type: response.data.type, message: response.data.message });
         setMessage("");
-        fetchUser();
+        fetchProject();
+      } else {
+        setAlert({ type: response.data.type, message: response.data.message });
       }
     } catch (err) {
       setError("Failed to send message. Please try again.");
+      setAlert({
+        type: err.response?.data?.type,
+        message: err.response?.data?.message,
+      });
     }
   };
 
@@ -142,6 +137,20 @@ const StageManagement = () => {
       >
         <FontAwesomeIcon icon={faArrowLeft} size="lg" />
       </button>
+      {alert && (
+        <Alert
+          type={alert.type}
+          message={alert.message}
+          onClose={setAlert(null)}
+        />
+      )}
+
+      <MessagesSendingRecieving
+        messages={messages}
+        setMessage={setMessage}
+        message={message}
+        sendMessageToAdmin={handleMessageToAdmin}
+      />
 
       {/* Project Tabs */}
       <div className="md:container block mx-auto max-w-5xl bg-gray-900 p-6 rounded-lg shadow-lg">
@@ -297,33 +306,6 @@ const StageManagement = () => {
                     )}
                   </div>
                 ))}
-              </div>
-
-              {/* Messages */}
-              <div className="mt-4">
-                <h3 className="text-lg font-semibold">Messages</h3>
-                <div className="space-y-2">
-                  {messages.map((msg, index) => (
-                    <div key={index} className="p-4 bg-gray-800 rounded-lg">
-                      <p>
-                        <strong>{msg.sender}:</strong> {msg.content}
-                      </p>
-                      <p className="text-gray-500 text-sm">{msg.timestamp}</p>
-                    </div>
-                  ))}
-                </div>
-                <textarea
-                  value={message}
-                  onChange={(e) => setMessage(e.target.value)}
-                  className="w-full mt-4 p-2 bg-gray-800 rounded-lg text-white"
-                  placeholder="Write a message to admin..."
-                />
-                <button
-                  onClick={sendMessageToAdmin}
-                  className="bg-orange-500 text-white px-4 py-2 rounded mt-2 hover:bg-orange-600"
-                >
-                  Send Message
-                </button>
               </div>
             </div>
           ) : null

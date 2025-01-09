@@ -139,13 +139,12 @@ exports.removeProject = async (req, res) => {
 // get user project details
 exports.getProjectDetails = async (req, res) => {
   try {
-    const { projectId } = req.body;
     let userId = req.user.id; // Extracted from middleware
-
-    const { project, error } = await getProjectAndStage(userId, projectId);
-    if (error) {
-      return res.status(400).json({ type: "error", message: error });
+    const user = await User.findById(userId);
+    if (!userId) {
+      return res.status(400).json({ type: "error", message: "User not found" });
     }
+    const project = await Project.find();
     res.status(200).json(project);
   } catch (error) {
     console.log(error.message);
@@ -159,44 +158,39 @@ exports.sendMessageToAdmin = async (req, res) => {
     const { projectId, message } = req.body;
     const userId = req.user.id;
 
-    if (!isValidObjectId(projectId)) {
-      return res.status(400).json({ message: "Invalid user ID" });
-    }
-
-    const user = await User.findOne({
-      _id: userId,
-      "project._id": projectId, // Search within the project array for a matching _id
-    });
-    if (!user) {
-      return res.status(400).json({ type: "error", message: "user not found" });
-    }
-
-    const project = user.project.find(
-      (prj) => prj._id.toString() === projectId
+    const { user, project, error } = await getProjectAndStage(
+      userId,
+      projectId
     );
-    if (!project) {
-      return res
-        .status(404)
-        .json({ type: "error", message: "Project not found." });
+    if (error) {
+      return res.status(400).json({ type: "error", message: error });
     }
     project.clientMessages.push({
       message,
       sentAt: new Date(),
     });
-    // send an confirmation email to admin that materials are approved
-    const admins = await Admin.find();
-    admins.forEach((admin) => {
-      sendEmail(admin.email, "Client Message", message);
-    });
 
-    await user.save();
+    // send an confirmation email to admin that materials are approved
+    try {
+      const admin = await Admin.find().select("-passowrd -role");
+      if (admin && admin.email) {
+        // Check if admin and admin.email are defined
+        sendEmail(admin.email, "client Message", message);
+      } else {
+        console.log("No admin email found.");
+      }
+    } catch (error) {
+      console.log(error.message);
+    }
+
+    await project.save();
 
     res.status(200).json({
       type: "success",
       message: "Message sent to admin successfully.",
+      messages: clientMessages,
     });
   } catch (error) {
-    console.log(error.message);
     res.status(500).json({ type: "error", message: "Internal server error" });
   }
 };
@@ -288,7 +282,7 @@ exports.removeClientConfirmation = async (req, res) => {
 
     await project.save();
 
-    const admins = await Admin.find();
+    const admin = await Admin.find();
     sendEmail(
       admin.email,
       `${user.name} Removed Stage Confirmation`,
