@@ -15,6 +15,9 @@
     "@fortawesome/free-regular-svg-icons": "^6.6.0",
     "@fortawesome/free-solid-svg-icons": "^6.6.0",
     "@fortawesome/react-fontawesome": "^0.2.2",
+    "@react-spring/three": "^9.7.5",
+    "@react-three/drei": "^9.120.6",
+    "@react-three/fiber": "^8.17.12",
     "axios": "^1.7.7",
     "chart.js": "^4.4.7",
     "cors": "^2.8.5",
@@ -32,6 +35,7 @@
     "react-spring": "^9.7.5",
     "react-top-loading-bar": "^2.3.1",
     "react-transition-group": "^4.4.5",
+    "three": "^0.172.0",
     "ua-parser-js": "^2.0.0"
   },
   "devDependencies": {

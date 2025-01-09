@@ -76,7 +76,7 @@ const projectSchema = new mongoose.Schema({
   discountAppliedDate: { type: Date, default: null },
   clientMessages: [
     {
-      message: { type: String, required: true }, // Client's message
+      message: { type: String }, // Client's message
       sentAt: { type: Date, default: Date.now },
       isShownToAdmin: { type: Boolean, default: false }, // Indicates if admin has seen it
       shownAt: { type: Date }, // Timestamp when the message was marked as shown
@@ -84,7 +84,7 @@ const projectSchema = new mongoose.Schema({
   ],
   adminMessages: [
     {
-      message: { type: String, required: true }, // Admin's message
+      message: { type: String }, // Admin's message
       sentAt: { type: Date, default: Date.now },
       isShownToClient: { type: Boolean, default: false }, // Indicates if client has seen it
       shownAt: { type: Date }, // Timestamp when the message was marked as shown

@@ -383,12 +383,23 @@ exports.approveMaterials = async (req, res) => {
     await project.save();
 
     // send an confirmation email to admin that materials are approved
-    const admin = await Admin.find();
-    sendEmail(
-      admin.email,
-      "Client approved stage material bill",
-      `${user.name} approved materials bills and comming tomorrow for stage: ${stageName}`
-    );
+    try {
+      const admin = await Admin.findOne(); // or Admin.find()
+      if (!admin || !admin.email) {
+        return res
+          .status(400)
+          .json({ type: "error", message: "Admin email not found." });
+      }
+      await sendEmail(
+        admin.email,
+        "Client approved stage material bill",
+        `${user.name} approved materials bills and coming tomorrow for stage: ${stageName}`
+      );
+    } catch (error) {
+      return res
+        .status(500)
+        .json({ type: "error", message: "Failed to send email to admin." });
+    }
 
     res.status(200).json({
       type: "success",
