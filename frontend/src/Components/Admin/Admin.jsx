@@ -75,9 +75,9 @@ const Admin = () => {
   return (
     <div className="flex h-screen bg-gradient-to-br from-gray-900 via-black to-gray-800 text-white">
       <Sidebar connection={localhost} admin={admin} />
-      <main className="flex-1 p-1 lg:p-2 ml-[40px] lg:ml-[160px] overflow-y-auto">
+      <main className="flex-1 p-1 lg:p-2 ml-[67px] lg:ml-[60px] overflow-y-auto">
         <div className="max-w-full mx-auto">
-          <div className="backdrop-blur-md bg-white/10 rounded-lg shadow-lg min-h-screen">
+          <div className="backdrop-blur-md bg-white/10 shadow-lg min-h-screen md:p-5 p-2">
             {message && <p>{message}</p>}
             <Outlet
               context={{
