@@ -4,6 +4,7 @@ import axios from "axios";
 
 const PrivateRoute = () => {
   const [isAuthenticated, setIsAuthenticated] = useState(null);
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     const validateSession = async () => {
@@ -11,23 +12,29 @@ const PrivateRoute = () => {
         const response = await axios.get(
           "http://localhost:5120/api/auth/check-auth",
           {
-            withCredentials: true, // Ensure cookies are sent
+            withCredentials: true,
           }
         );
-        setIsAuthenticated(response.data.isAuthenticated);
+        if (response.status === 200 && response.data.isAuthenticated) {
+          setIsAuthenticated(true);
+        } else {
+          setIsAuthenticated(false);
+        }
       } catch (error) {
-        console.error(
-          "Session validation failed:",
-          error.response?.data || error.message
-        );
         setIsAuthenticated(false);
+      } finally {
+        setLoading(false);
       }
     };
     validateSession();
   }, []);
 
-  if (isAuthenticated === null) {
-    return <div>Loading...</div>;
+  if (loading) {
+    return (
+      <div className="h-screen flex items-center justify-center">
+        <div>Loading...</div>
+      </div>
+    );
   }
 
   return isAuthenticated ? <Outlet /> : <Navigate to="/signin" replace />;

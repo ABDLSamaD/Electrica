@@ -1,7 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import Cookies from "js-cookie";
 import {
   faArrowLeft,
   faEnvelope,
@@ -13,6 +12,8 @@ import {
 } from "@fortawesome/free-solid-svg-icons";
 import Alert from "../OtherComponents/Alert";
 import PasswordChecker from "../OtherComponents/PasswordChecker";
+import Loader from "../OtherComponents/Loader";
+import axios from "axios";
 
 const Signup = (props) => {
   const navigate = useNavigate(); //navigation then wiil true on page to another
@@ -30,21 +31,6 @@ const Signup = (props) => {
   const [isFocused, setIsFocused] = useState(false);
   const [loading, setLoading] = useState(false);
   // states end
-  // Separate state for managing cookie values
-  const [cookieValues, setCookieValues] = useState({
-    name: Cookies.get("name") || "",
-    email: Cookies.get("email") || "",
-    password: Cookies.get("password") || "",
-  });
-
-  useEffect(() => {
-    // Sync credentials state with cookies for initial values
-    setCredenetials({
-      name: cookieValues.name,
-      email: cookieValues.email,
-      password: cookieValues.password,
-    });
-  }, [cookieValues]);
 
   // this for password check requriements
   const passwordRules = [
@@ -74,14 +60,6 @@ const Signup = (props) => {
     const { name, value } = e.target;
 
     setCredenetials({ ...credentials, [name]: value });
-
-    Cookies.set(name, value);
-
-    // Also update cookieValues state
-    setCookieValues((prev) => ({
-      ...prev,
-      [name]: value,
-    }));
   };
 
   // handle Signup form of user create an account secure
@@ -91,36 +69,32 @@ const Signup = (props) => {
       const { name, email, password } = credentials;
       setLoading(true);
       // fetch api of signup user form from backend
-      const response = await fetch("http://localhost:5120/api/auth/signup", {
-        method: "post",
-        body: JSON.stringify({ name, email, password }),
-        headers: {
-          "Content-Type": "application/json",
-        },
-      });
-      const data = await response.json();
-      setLoading(false);
+      const response = await axios.post(
+        "http://localhost:5120/api/auth/signup",
+        {
+          name,
+          email,
+          password,
+        }
+      );
+
       if (response.status === 200) {
-        localStorage.setItem("tkn-at-udb", data.token);
         localStorage.setItem("us-em-temporary", email);
-        setLoading(true);
-        setType(data.type);
-        setMessage(data.message);
-        setAlert(data.type, data.message);
+        setType(response.data.type);
+        setMessage(response.data.message);
+        setAlert(response.data.type, response.data.message);
         // if submission successfull remove cookie
-        Cookies.remove("name");
-        Cookies.remove("email");
-        Cookies.remove("password");
+        setLoading(true);
         setTimeout(() => {
           navigate("/otpverify");
         }, 3000);
       } else {
-        setType(type);
-        setMessage(data.message);
-        setAlert(data.type, data.message);
+        setLoading(false);
+        setType(response.data.type);
+        setMessage(response.data.message);
+        setAlert(response.data.type, response.data.message);
       }
     } catch (err) {
-      console.error(err.response?.data?.message);
       setType(err.response?.data?.type);
       setMessage(err.response?.data?.message || "Failed to verify OTP");
       setAlert(
@@ -129,6 +103,14 @@ const Signup = (props) => {
       );
     }
   };
+
+  if (loading) {
+    return (
+      <div className="flex items-center justify-center w-screen h-screen z-50 bg-zinc-100 backdrop-blur-xl">
+        <Loader />
+      </div>
+    );
+  }
 
   return (
     <>
@@ -141,13 +123,13 @@ const Signup = (props) => {
             onSubmit={signupUser}
             className="relative my-3 form_container rounded-xl w-fit h-fit flex flex-col items-center justify-center gap-2"
           >
-            <div className="back relative w-full text-2xl">
+            <div className="back relative w-full text-2xl text-gray-200">
               <Link to="/signin" title="Go back">
                 <FontAwesomeIcon icon={faArrowLeft} size="2xs" />
               </Link>
             </div>
             <div className="title_container flex items-center justify-center flex-col gap-3">
-              <p className="title m-0 text-4xl font-bold text-neutral-800">
+              <p className="title m-0 text-4xl font-bold text-gray-950">
                 Create new account
               </p>
               <span

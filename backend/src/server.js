@@ -3,22 +3,24 @@ const app = express();
 const dotenv = require("dotenv");
 const cors = require("cors");
 const bodyparser = require("body-parser");
+const cookieParser = require("cookie-parser");
 const session = require("express-session");
 const MongoStore = require("connect-mongo");
 const { rateLimit } = require("express-rate-limit");
 const helmet = require("helmet");
 const routes = require("./routes/routes");
-const adminRoutes = require("./routes/adminRoutes");
+const adminRoutes = require("./routes/route-admin");
 const connectionDatabase = require("./models/connection");
+const { sendEmail } = require("./utils/mail");
 
 // connection database function call from file
 connectionDatabase();
 
 const limiter = rateLimit({
-  windowMs: 15 * 60 * 1000, // 15 minutes
-  max: 100, // Limit each IP to 100 requests per `window` (here, per 15 minutes).
+  windowMs: 5 * 60 * 1000, // 15 minutes
+  max: 200, // Limit each IP to 200 requests per `window` (here, per 5 minutes).
   standardHeaders: "draft-7", // draft-6: `RateLimit-*` headers; draft-7: combined `RateLimit` header
-  message: "Too many requests, please try again after 15 minutes.",
+  message: "Too many requests, please try again after 5 minutes.",
 });
 // Apply the rate limiting middleware to all requests.
 app.use(limiter);
@@ -32,20 +34,22 @@ const corsOptions = {
 };
 app.use(cors(corsOptions));
 
+app.use(cookieParser());
+
 // express-session
 app.use(
   session({
-    secret: process.env.SESSION_SECRET, // Set a strong secret
     resave: false,
     saveUninitialized: true,
+    secret: process.env.USER_SESSION_SECRET || "user_secret",
     store: MongoStore.create({
-      mongoUrl: process.env.MONGO_URL, // MongoDB connection string
-      collectionName: "sessions",
+      mongoUrl: process.env.MONGO_URL,
+      collectionName: "user_sessions",
     }),
     cookie: {
-      maxAge: 24 * 60 * 60 * 1000, // Default session expiry (1 day)
-      httpOnly: true, // Helps prevent XSS
-      secure: process.env.NODE_ENV === "production", // Use secure cookies in production
+      maxAge: 24 * 60 * 60 * 1000, // 1 day
+      httpOnly: true, // Secure against XSS
+      secure: false, // Set true in production with HTTPS
     },
   })
 );
@@ -58,9 +62,31 @@ app.use(bodyparser.json());
 app.use("/api/auth", routes);
 app.use("/api/adminauth", adminRoutes);
 
+// contact support
+app.post("/user/contact-support", async (req, res) => {
+  try {
+    const { email, message } = req.body;
+    let subject = "Request of User";
+    let text = message;
+    sendEmail(email, subject, text);
+    res.status(200).json({
+      message:
+        "Your request has been received. Support will contact you shortly.",
+    });
+  } catch (error) {
+    res.status(500).json({ message: "Error contacting support", error });
+  }
+});
+
 app.use((err, req, res, next) => {
-  console.error(err.stack);
-  res.status(500).send("Something broke!");
+  res.status(500).send({ error: "Something broke!", type: err.stack });
+});
+
+app.use((err, req, res, next) => {
+  if (err instanceof SyntaxError && err.status === 400 && "body" in err) {
+    return res.status(400).json({ message: "Invalid JSON payload" });
+  }
+  next(err);
 });
 
 // port listen

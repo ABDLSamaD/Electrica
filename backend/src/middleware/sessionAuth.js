@@ -2,15 +2,8 @@ const User = require("../models/user");
 
 const sessionAuth = async (req, res, next) => {
   try {
-    if (!req.session.token) {
-      return res.status(401).json({ error: "Unauthorized access" });
-    }
-
-    // Check if session contains user information
-    if (!req.session.user || !req.session.user.id) {
-      return res
-        .status(401)
-        .json({ error: "Unauthorized access. Session user not found." });
+    if (!req.session.user || !req.session.token) {
+      return res.status(401).json({ error: "Unauthorized access for user." });
     }
 
     const user = await User.findById(req.session.user.id);

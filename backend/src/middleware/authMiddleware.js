@@ -5,7 +5,9 @@ const jwt = require("jsonwebtoken");
 const fetchUser = async (req, res, next) => {
   const authHeader = req.header("Authorization");
   if (!authHeader || !authHeader.startsWith("Bearer ")) {
-    return res.status(403).json({ error: "Please authenticate using a valid token!" });
+    return res
+      .status(403)
+      .json({ error: "Please authenticate using a valid token!" });
   }
   const token = authHeader.replace("Bearer ", "");
   try {

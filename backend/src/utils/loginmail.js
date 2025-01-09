@@ -2,6 +2,14 @@ const nodemailer = require("nodemailer");
 require("dotenv").config();
 
 const loginMail = async (userDetails) => {
+  const lastDevice = userDetails?.loginAttempt.at(-1)?.device;
+
+  const deviceInfoText = lastDevice
+    ? `Browser: ${lastDevice.browser?.name || "Unknown"}, Version: ${
+        lastDevice.browser?.version || "Unknown"
+      }, OS: ${lastDevice.os?.name || "Unknown"}`
+    : "Unknown";
+
   const transporter = nodemailer.createTransport({
     service: "GMAIL",
     auth: {
@@ -86,11 +94,16 @@ const loginMail = async (userDetails) => {
               <p><strong>Login Time:</strong> ${
                 userDetails?.loginAttempt.at(-1)?.timestamp || "Unknown"
               }</p>
-              <p><strong>Browser:</strong> ${
-                userDetails?.loginAttempt.at(-1)?.device || "Unknown"
-              }</p>
+             <p><strong>Device info:</strong> ${deviceInfoText}</p>
               <p><strong>IP Address:</strong> ${
                 userDetails?.loginAttempt.at(-1)?.ipAddress || "Unknown"
+              }</p>
+              <p><strong>Location longitude:</strong> ${
+                userDetails?.loginAttempt.at(-1)?.location.longitude ||
+                "Unknown"
+              }</p>
+              <p><strong>Location latitude:</strong> ${
+                userDetails?.loginAttempt.at(-1)?.location.latitude || "Unknown"
               }</p>
             </div>
             <p>If this was you, you can safely ignore this email. If you didn’t log in, please <a href="https://electrica.example.com/reset-password" target="_blank">reset your password</a> immediately.</p>

@@ -130,3 +130,24 @@ exports.profileImage = async (req, res) => {
     res.status(500).json({ type: "error", message: "Internal Server Error" });
   }
 };
+
+// user activity log
+exports.activityLog = async (req, res) => {
+  try {
+    const { userId, action } = req.body;
+    const user = await User.findById(userId);
+    if (!user) return res.status(404).json({ message: "User not found" });
+
+    // Add new activity
+    user.activityLog.push({ action });
+    await user.save();
+
+    res.status(200).json({
+      message: "Activity logged successfully",
+      activityLog: user.activityLog,
+    });
+  } catch (error) {
+    console.error(error.message);
+    res.status(500).json({ type: "error", message: "Internal Server Error" });
+  }
+};

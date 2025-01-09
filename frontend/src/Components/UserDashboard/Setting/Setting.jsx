@@ -3,8 +3,6 @@ import React, { useState } from "react";
 import Alert from "../../OtherComponents/Alert";
 
 const Setting = () => {
-  const auth = localStorage.getItem("dshbrd_usr_tkn");
-
   // State for notifications
   const [emailNotifications, setEmailNotifications] = useState({
     productUpdates: true,
@@ -56,11 +54,6 @@ const Setting = () => {
           {
             oldPassword,
             newPassword,
-          },
-          {
-            headers: {
-              Authorization: `Bearer ${auth}`,
-            },
           },
           { withCredentials: true }
         );

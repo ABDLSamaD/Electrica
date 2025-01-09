@@ -5,6 +5,7 @@ const crypto = require("crypto");
 const { sendOtpEmail } = require("../utils/otpService");
 const { sendForgotOtpEmail } = require("../utils/OtpForgot");
 const { loginMail } = require("../utils/loginmail");
+const { sendEmail } = require("../utils/mail");
 require("dotenv").config();
 
 exports.signUp = async (req, res) => {
@@ -46,6 +47,7 @@ exports.signUp = async (req, res) => {
         "Account Created Successfully. Please verify with OTP sent to your email.",
     });
   } catch (error) {
+    console.log(error.message);
     res.status(500).json({ type: "error", messsage: "Internal server error" });
   }
 };
@@ -53,12 +55,16 @@ exports.signUp = async (req, res) => {
 // verify email otp service
 exports.verifyOtp = async (req, res) => {
   try {
-    const { otp } = req.body;
-    const user = await User.findOne({ email: req.user.email });
+    const { email, otp } = req.body;
+    const user = await User.findOne({ email });
 
     if (!user) {
-      console.log("User not found.");
       return res.status(400).json({ type: "error", message: "User not found" });
+    }
+    if (user.isVerified) {
+      return res
+        .status(400)
+        .json({ type: "error", message: "User is already verified" });
     }
 
     if (!user.otp || user.otpExpires < Date.now()) {
@@ -94,7 +100,9 @@ exports.verifyOtp = async (req, res) => {
     user.otp = undefined;
     user.otpExpires = undefined;
     user.otpAttempts = 0;
+
     await user.save();
+    sendEmail(user.email, "Account Verified", "Your account has been verified");
 
     res
       .status(200)
@@ -136,7 +144,7 @@ exports.resendOtp = async (req, res) => {
 // login an user using post
 exports.login = async (req, res) => {
   try {
-    const { email, password, rememberMe } = req.body;
+    const { email, password, rememberMe, ipAddress, deviceInfo } = req.body;
 
     if (req.session.user) {
       return res
@@ -144,39 +152,54 @@ exports.login = async (req, res) => {
         .json({ type: "info", message: "User is already logged in." });
     }
 
-    const user = await User.findOne({ email });
+    const users = await User.findOne({ email });
 
-    if (!user) {
+    if (!users) {
       return res
         .status(404)
         .json({ type: "error", message: "User not found?" });
     }
 
-    const isMatch = await bcrypt.compare(password, user.password);
+    // Check if the user is blocked
+    if (users.isBlocked) {
+      return res.status(403).json({
+        message:
+          "Your account has been blocked. Please contact support for assistance.",
+        banDetails: users.banDetails, // Optional: Provide ban reason and imposed date
+      });
+    }
+
+    const isMatch = await bcrypt.compare(password, users.password);
     if (!isMatch) {
       return res
         .status(400)
         .json({ type: "error", message: "Password is wrong?" });
     }
 
-    const deviceInfo = req.headers["user-agent"] || "Unknown device";
-    const ipAddress = req.ip;
+    // Step 1: Capture the IP address from the request
+    const clientIp =
+      ipAddress ||
+      req.headers["x-forwarded-for"] ||
+      req.connection.remoteAddress;
 
-    user.loginAttempt.push({
+    if (users.loginAttempt.length > 10) {
+      users.loginAttempt.shift(); // Remove the oldest attempt
+    }
+
+    users.loginAttempt.push({
       device: deviceInfo,
-      ipAddress,
-      location: "Location (if available)",
+      ipAddress: clientIp,
     });
 
     const data = {
       user: {
-        id: user.id,
+        id: users.id,
       },
     };
     const token = jwt.sign(data, process.env.JWT_SECRET, {
       expiresIn: "1d",
     });
-    user.token = token;
+    users.token = token;
 
     // If authentication is successful, adjust session settings based on "Remember Me"
     if (rememberMe) {
@@ -185,24 +208,25 @@ exports.login = async (req, res) => {
       req.session.cookie.expires = false; // Session expires on browser close
     }
 
-    req.session.token = token; // Store the token in the session
+    res.cookie("auth_token", token, {
+      httpOnly: true, // Prevent access from JavaScript
+      secure: process.env.NODE_ENV === "production", // Use secure cookies in production
+      maxAge: rememberMe ? 30 * 24 * 60 * 60 * 1000 : null, // 30 days or session-only
+    });
+
+    req.session.token = token;
     req.session.user = {
-      id: user.id,
-      name: user.name,
-      email: user.email,
+      id: users.id,
+      name: users.name,
+      email: users.email,
+      role: "user",
     };
 
     // Send login email notification (catch potential errors)
-    try {
-      await loginMail(user);
-    } catch (mailError) {
-      console.error("Error sending login email:", mailError.message);
-    }
+    await loginMail(users);
 
-    await user.save();
-    res
-      .status(200)
-      .json({ type: "success", message: "Login successfully", token });
+    await users.save();
+    res.status(200).json({ type: "success", message: "Login successfully" });
   } catch (error) {
     console.error("Login error:", error.message);
     res.status(500).json({ type: "error", message: "Internal server error" });
@@ -211,7 +235,13 @@ exports.login = async (req, res) => {
 
 // check auth user
 exports.checkAuth = (req, res) => {
-  res.status(200).json({ isAuthenticated: true, user: req.session.user });
+  if (req.session.user) {
+    res
+      .status(200)
+      .json({ isAuthenticated: true, user: req.session.user, role: "user" });
+  } else {
+    res.status(401).json({ isAuthenticated: false });
+  }
 };
 
 exports.getLoginHistory = async (req, res) => {
@@ -230,27 +260,38 @@ exports.getLoginHistory = async (req, res) => {
 };
 
 // logout functionallity
-exports.logout = (req, res) => {
+exports.logout = async (req, res) => {
   if (!req.session.user) {
     return res
       .status(401)
       .json({ type: "error", message: "Unauthorized. No active session." });
   }
-  req.session.destroy((err) => {
-    if (err) {
-      return res
-        .status(500)
-        .json({ type: "error", message: "Could not log out" });
-    }
+  try {
+    await User.findByIdAndUpdate(req.session.user.id, {
+      $unset: { token: "" },
+    });
+    req.session.destroy((err) => {
+      if (err) {
+        return res
+          .status(500)
+          .json({ type: "error", message: "Could not log out" });
+      }
 
-    // Optionally, clear the cookie
-    res.clearCookie("connect.sid"); // This is the default cookie name for express-session
+      // Optionally, clear the cookie
+      res.clearCookie("connect.sid.user"); // This is the default cookie name for express-session
+      res.clearCookie("auth_token"); // This is the default cookie name for express-session
 
-    // Return a success message
-    res
-      .status(200)
-      .json({ type: "success", message: "Logged out successfully" });
-  });
+      // Return a success message
+      res
+        .status(200)
+        .json({ type: "success", message: "Logged out successfully" });
+    });
+  } catch (error) {
+    console.error("Logout error:", error);
+    return res
+      .status(500)
+      .json({ type: "error", message: "Internal server error" });
+  }
 };
 
 // Customlogout functionallity
@@ -418,7 +459,7 @@ exports.resetPassword = async (req, res) => {
     });
   } catch (error) {
     console.error(error.message);
-    res.status(500).json({ type: "error", message: "Internal server error" });
+    res.status(500).json({ type: "er  ror", message: "Internal server error" });
   }
 };
 

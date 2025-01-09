@@ -2,15 +2,11 @@ import React, { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import Alert from "../OtherComponents/Alert";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import {
-  faArrowLeft,
-  faEnvelope,
-  faEye,
-  faEyeSlash,
-  faLock,
-  faSignInAlt,
-} from "@fortawesome/free-solid-svg-icons";
+import { faArrowLeft } from "@fortawesome/free-solid-svg-icons";
 import axios from "axios";
+import InputForm from "../OtherComponents/InputForm";
+import Loader from "../OtherComponents/Loader";
+import { UAParser } from "ua-parser-js";
 
 const Signin = () => {
   // naviagation
@@ -18,169 +14,105 @@ const Signin = () => {
 
   // States start
   const [alert, setAlert] = useState(null);
-  const [type, setType] = useState("");
-  const [message, setMessage] = useState("");
   const [credentials, setCredentials] = useState({
     email: "",
     password: "",
+    rememberMe: false,
   });
-  const [rememberMe, setRememberMe] = useState(false);
-  const [isPasswordVisible, setIsPasswordVisible] = useState(false); // for password show hide
+  const [loader, setLoader] = useState(false);
   // States end
 
-  const togglePasswordVisibility = () => {
-    // password toogle show hide
-    setIsPasswordVisible(!isPasswordVisible);
-  };
-
   const onChange = (e) => {
-    setCredentials({ ...credentials, [e.target.name]: e.target.value });
+    const { name, value, type, checked } = e.target;
+
+    setCredentials((prevCredentials) => ({
+      ...prevCredentials,
+      [name]: type === "checkbox" ? checked : value, // Handle checkbox input
+    }));
   };
 
   const handleSignin = async (e) => {
     e.preventDefault();
+    setLoader(false);
+    const { email, password, rememberMe } = credentials;
+
     try {
-      const { email, password } = credentials;
+      // / Step 1: Get IP address from a public API
+      const ipResponse = await axios.get("https://api.ipify.org?format=json");
+      const ipAddress = ipResponse.data.ip;
+
+      // Step 2: Get device details using UAParser
+      const parser = new UAParser();
+      const userAgent = navigator.userAgent;
+      const deviceInfo = parser.setUA(userAgent).getResult();
+
       const response = await axios.post(
         "http://localhost:5120/api/auth/signin",
         {
           email,
           password,
           rememberMe,
+          ipAddress,
+          deviceInfo,
         },
         { withCredentials: true }
       );
       const data = await response.data;
       if (response.status === 200) {
-        localStorage.setItem("dshbrd_usr_tkn", data.token);
-        setType(data.type);
-        setMessage(data.message);
-        setAlert(data.type, data.message);
+        setLoader(true);
+        // localStorage.setItem("dshbrd_usr_tkn", data.token);
+        setAlert({ type: data.type, message: data.message });
         setTimeout(() => {
           navigate("/db-au-user");
-        }, 4000);
+        }, 5000);
       } else {
-        setType(data.type);
-        setMessage(data.message);
-        setAlert(data.type, data.message);
+        setLoader(false);
+        setAlert({ type: data.type, message: data.message });
       }
     } catch (err) {
-      setType(err.response?.data?.type || "error");
-      setMessage(err.response?.data?.message || "Network Error");
-      setAlert(
-        err.response?.data?.type || "error",
-        err.response?.data?.message || "Network Error"
-      );
-      console.error(err.response?.data?.message || "Network Error");
+      setLoader(false);
+      setAlert({
+        type: err.response?.data?.type || "error",
+        message: err.response?.data?.message || "Network Error",
+      });
     }
   };
 
   return (
-    <div id="signin">
-      {alert && (
-        <Alert type={type} message={message} onClose={() => setAlert(null)} />
-      )}
-      <div className="back relative w-full text-3xl transition-all">
-        <Link to="/" className="mx-2" title="Go back">
-          <FontAwesomeIcon icon={faArrowLeft} size="2xs" />
-        </Link>
-      </div>
-      <div className="w-90 h-full flex items-center justify-center flex-col">
-        <form
-          onSubmit={handleSignin}
-          className="my-3 form_container rounded-xl w-fit h-fit flex flex-col items-center justify-center gap-4"
-        >
-          <div className="title_container flex items-center justify-center flex-col gap-3">
-            <p className="title m-0 text-4xl font-bold text-neutral-800">
-              Login to your account
-            </p>
-            <span
-              style={{ maxWidth: "80%" }}
-              className="subtitle text-xs text-center text-gray-400 leading-5"
-            >
-              Get started with our app, just sigin an account and enjoy the
-              experience.
-            </span>
-          </div>
-          <div className="relative input_form flex flex-col w-full">
-            <label htmlFor="email">Email</label>
-            <input
-              type="email"
-              onChange={onChange}
-              name="email"
-              value={credentials.email}
-              className="input_field outline-none mt-1 border border-solid border-blue-900 p-3 rounded-xl"
-              id="email"
-              placeholder="name@email.com"
-              autoComplete="off"
-              required
-            />
-            <FontAwesomeIcon icon={faEnvelope} id="emailicon" />
-          </div>
-          <div className="relative input_form flex flex-col w-full">
-            <label htmlFor="password">Password</label>
-            <input
-              type={isPasswordVisible ? "text" : "password"}
-              onChange={onChange}
-              name="password"
-              value={credentials.password}
-              className="input_field outline-none mt-1 border border-solid border-blue-900 p-3 rounded-xl"
-              id="password"
-              autoComplete="off"
-              required
-            />
-            <FontAwesomeIcon icon={faLock} id="passwordicon" />
-            <div
-              onClick={togglePasswordVisibility}
-              className="show-pass absolute cursor-pointer"
-            >
-              <FontAwesomeIcon
-                icon={isPasswordVisible ? faEyeSlash : faEye}
-                id={isPasswordVisible ? "hideeye" : "showeye"}
-              />
-            </div>
-          </div>
-          <div className="forgot-password w-full flex justify-between">
-            <label className="flex items-center w-auto p-1">
-              <input
-                type="checkbox"
-                checked={rememberMe}
-                onChange={() => setRememberMe(!rememberMe)}
-              />
-              <span className="ml-1 font-bold">Remember Me</span>
-            </label>
-            <Link
-              to="/forgot_password"
-              className="text-cyan-600 hover:text-cyan-900 text-sm font-semibold"
-            >
-              Forgot Password?
-            </Link>
-          </div>
-          <button
-            type="submit"
-            className="w-full rounded-md p-2 focus:scale-105 bg-gray-800"
-          >
-            <span className="text-xl text-white font-mono font-bold">
-              Sign In
-            </span>{" "}
-            <FontAwesomeIcon
-              icon={faSignInAlt}
-              className="text-gray-600"
-              size="1x"
-            />
-          </button>
-          <div className="option flex items-center w-full justify-center">
-            <p>Don't have an account?</p>
+    <>
+      {loader === true ? <Loader /> : null}
+      <div id="signin">
+        {alert && (
+          <Alert
+            type={alert.type}
+            message={alert.message}
+            onClose={() => setAlert(null)}
+          />
+        )}
+        <div className="back relative w-full text-3xl pt-2 transition-all text-gray-200">
+          <Link to="/" className="mx-2" title="Go back">
+            <FontAwesomeIcon icon={faArrowLeft} size="2xs" />
+          </Link>
+        </div>
+        <div className="w-90 relative h-full flex items-center justify-center flex-col">
+          <InputForm
+            hanldeLogin={handleSignin}
+            onChange={onChange}
+            credential={credentials}
+            passLink={"/forgot_password"}
+          />
+          <p className="mt-4 text-center text-sm text-gray-400">
+            Not a member?
             <Link
               to="/signup"
-              className="text-cyan-600 text-sm ml-1 hover:text-cyan-400"
+              className="text-cyan-600 ml-1 font-bold text-sm hover:underline"
             >
-              SignUp
+              Sign up
             </Link>
-          </div>
-        </form>
+          </p>
+        </div>
       </div>
-    </div>
+    </>
   );
 };
 

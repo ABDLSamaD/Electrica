@@ -2,7 +2,11 @@
 export default {
   content: ["./index.html", "./src/**/*.{js,ts,jsx,tsx}"],
   theme: {
-    extend: {},
+    extend: {
+      colors: {
+        customHsl: "hsl(242deg 88.4% 66.3% / 7%)",
+      },
+    },
     fontFamily: {
       body: [
         "Inter",

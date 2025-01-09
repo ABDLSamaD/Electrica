@@ -1,27 +1,40 @@
-const dotenv = require("dotenv")
 const jwt = require("jsonwebtoken");
 const Admin = require("../models/admin");
-dotenv.config()
 
 const adminAuth = async (req, res, next) => {
-  const token = req.header("Authorization")?.replace("Bearer ", "");
+  const token = req.cookies.admin_auth;
 
   if (!token) {
-    return res.status(401).json({ message: "Access denied. No token provided." });
+    return res
+      .status(401)
+      .json({ message: "Unauthorized access. Token missing." });
   }
 
   try {
     const decoded = jwt.verify(token, process.env.JWT_SECRET);
-    const admin = await Admin.findById(decoded.id);
 
-    if (!admin || decoded.role !== "admin") {
-      return res.status(403).json({ message: "Access denied. Not an admin." });
+    if (!decoded.id || decoded.role !== "admin") {
+      return res
+        .status(403)
+        .json({ type: "error", message: "Access denied. Not an admin." });
+    }
+    const admin = await Admin.findById(decoded.id);
+    if (!admin) {
+      return res
+        .status(404)
+        .json({ type: "error", message: "Admin not found." });
     }
 
-    req.admin = admin;
+    req.admin = {
+      id: admin.id,
+      username: admin.username,
+      email: admin.email,
+      role: admin.role,
+    };
     next();
   } catch (error) {
-    res.status(401).json({ message: "Invalid token." });
+    console.error(error.message);
+    res.status(401).json({ type: "error", message: "Invalid token." });
   }
 };
 
