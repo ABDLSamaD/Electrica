@@ -57,8 +57,6 @@ const AddProjectForm = () => {
         projectPics,
       } = formData;
 
-      console.log(formData);
-
       const response = await axios.post(
         "http://localhost:5120/api/auth/project",
         {
@@ -79,7 +77,7 @@ const AddProjectForm = () => {
         setType(response.data.type);
         setAlert(response.data.type, response.data.message);
         setTimeout(() => {
-          navigate("checkstatus");
+          navigate("/db-au-user/checkstatus");
         }, 2301);
       } else {
         setMessage(response.data.message);
@@ -97,24 +95,20 @@ const AddProjectForm = () => {
   };
 
   return (
-    <div className="bg-slate-100 rounded-lg shadow-lg p-8 mt-2">
+    <div className="p-4 mt-2">
       {alert && (
         <Alert type={type} message={message} onClose={() => setAlert(null)} />
       )}
       <div className="mb-6">
-        <button
-          onClick={handleBack}
-          className="rounded-e-full transition-all p-2 hover:bg-fuchsia-400 h-full"
-          title="go back"
-        >
+        <button onClick={handleBack} className="text-white" title="go back">
           <FontAwesomeIcon icon={faArrowLeft} size="1x" />
         </button>
       </div>
       <div className="text mb-8">
-        <h2 className="text-3xl text-cyan-950 font-semibold leading-10 mb-2">
+        <h2 className="text-3xl text-cyan-50 font-semibold leading-10 mb-2">
           Add New Project
         </h2>
-        <p className="text-cyan-950 font-normal">
+        <p className="text-cyan-50 font-normal">
           A comprehensive project involving electric roof wiring, concealed
           fittings, and troubleshooting installations. you want to create an
           project
@@ -208,8 +202,8 @@ const AddProjectForm = () => {
           <label className="labled">Project City:</label>
         </div>
 
-        <div className="bg-white p-1 rounded-lg shadow-md">
-          <h2 className="text-xl font-semibold text-gray-800 mb-4">
+        <div className="p-1 rounded-lg shadow-md">
+          <h2 className="text-xl font-semibold text-gray-200 mb-4">
             Project Images
           </h2>
           <div className="relative border-2 border-dashed border-gray-400 rounded-lg p-6 hover:bg-gray-50 transition">

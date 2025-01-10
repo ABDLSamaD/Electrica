@@ -77,9 +77,9 @@ const DashboardHome = () => {
   };
 
   return (
-    <div className="relative top-10 p-6 text-gray-200 bg-gray-500/10 rounded min-h-screen">
+    <div className="relative top-10 p-6 text-gray-200 bg-gray-800/20 backdrop-blur-lg rounded min-h-screen">
       {loader ? (
-        <div className="min-height-screen grid place-content-center">
+        <div className="min-h-screen grid place-content-center">
           <LoaderAll />
         </div>
       ) : error ? (
