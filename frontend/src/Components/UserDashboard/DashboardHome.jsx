@@ -58,7 +58,7 @@ const DashboardHome = () => {
         setError("Failed to load user data.");
         setLoader(false);
       }
-    }, 2000); // Reduced delay for better UX
+    }, 2400); // Reduced delay for better UX
 
     return () => clearTimeout(timer);
   }, [user, projects]);
@@ -79,7 +79,9 @@ const DashboardHome = () => {
   return (
     <div className="relative top-10 p-6 text-gray-200 bg-gray-900 min-h-screen">
       {loader ? (
-        <LoaderAll />
+        <div className="min-height-screen grid place-content-center">
+          <LoaderAll />
+        </div>
       ) : error ? (
         <div className="text-red-500 text-sm text-center">{error}</div>
       ) : (
