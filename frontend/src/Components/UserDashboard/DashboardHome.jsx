@@ -33,12 +33,14 @@ const DashboardHome = () => {
   const [page, setPage] = useState(false);
 
   useEffect(() => {
-    setPage(false);
+    // Update `page` state based on `projects`
     if (!projects || projects.length === 0) {
       setPage(false);
     } else {
       setPage(true);
     }
+
+    // Handle case where `user` is not defined
     if (!user) {
       setLoader(false);
       setData(null);
@@ -47,19 +49,22 @@ const DashboardHome = () => {
       return;
     }
 
-    setLoader(true);
+    // Start loading user data
+    // setLoader(true);
     setError(null);
 
+    // Set a timer to simulate fetching data
     const timer = setTimeout(() => {
       try {
-        setData(user);
+        setData(user); // Update data with current `user`
         setLoader(false);
       } catch (err) {
         setError("Failed to load user data.");
         setLoader(false);
       }
-    }, 2000); // Reduced delay for better UX
+    }, 2500); // Reduced delay for better UX
 
+    // Cleanup the timer to avoid race conditions
     return () => clearTimeout(timer);
   }, [user, projects]);
 
@@ -77,9 +82,11 @@ const DashboardHome = () => {
   };
 
   return (
-    <div className="relative top-10 p-6 text-gray-200 bg-gray-900 min-h-screen">
+    <div className="relative top-10 p-6 text-gray-200 bg-gray-500/15 rounded min-h-screen">
       {loader ? (
-        <LoaderAll />
+        <div className="min-h-screen grid place-content-center">
+          <LoaderAll />
+        </div>
       ) : error ? (
         <div className="text-red-500 text-sm text-center">{error}</div>
       ) : (
