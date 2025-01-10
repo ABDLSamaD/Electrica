@@ -23,7 +23,7 @@ const MaterialForm = ({
   handleSubmit,
 }) => {
   // Handle material change (quantity used)
-  const handleMaterialChange = (index, value) => {
+  const handleMaterialChange = (index, field, value) => {
     // Update materialsUsed state
     const updatedMaterialsUsed = [...updates[0].materialsUsed];
     updatedMaterialsUsed[index] = {

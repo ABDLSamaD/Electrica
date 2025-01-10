@@ -61,7 +61,7 @@ const Stepone = () => {
                 details: "",
                 materialsUsed: currentStage.materials.map((mat) => ({
                   name: mat.name,
-                  quantity: 0,
+                  quantity: mat.quantity,
                 })),
                 workers: [],
                 images: [],
