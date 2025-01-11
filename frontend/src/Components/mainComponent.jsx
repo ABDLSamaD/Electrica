@@ -43,6 +43,7 @@ const Stepone = React.lazy(() => import("./Admin/Projectsteps/Stepone"));
 import Stagetwo from "./Admin/Projectsteps/Steptwo";
 import Stagethree from "./Admin/Projectsteps/Stepthree";
 import AddMaterial from "./Admin/Projectsteps/AddMaterial";
+import NotifyClientModal from "./Admin/Projectsteps/NotifyClientModal";
 import axios from "axios";
 
 const Main = () => {
@@ -169,6 +170,10 @@ const Main = () => {
               <Route
                 path="projectusers/stageone/:projectId"
                 element={<Stepone />}
+              />
+              <Route
+                path="projectusers/stageone/:projectId/addmaterial/:stageName/notify-client"
+                element={<NotifyClientModal />}
               />
               <Route
                 path="projectusers/stageone/:projectId/addmaterial/:stageName"

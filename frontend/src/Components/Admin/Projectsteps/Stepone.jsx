@@ -10,7 +10,7 @@ import Alert from "../../OtherComponents/Alert";
 import { FaArrowLeft } from "react-icons/fa";
 import StageDetails from "./StageDetails";
 import LoaderAll from "../../OtherComponents/LoaderAll";
-import DropdownMenu from "./DropDownMenu";
+import DropdownMenu from "./DropdownMenu";
 import MaterialAndWorker from "./MaterialAndWorker";
 
 const Stepone = () => {
@@ -23,6 +23,7 @@ const Stepone = () => {
   const [project, setProject] = useState(null); // Set initial state as null
   const [loading, setLoading] = useState(true); // Set to true initially
   const [stageName, setStageName] = useState("");
+  const [finishedMaterial, setFinishedMaterial] = useState(false);
 
   const [updates, setUpdates] = useState([
     {
@@ -36,8 +37,6 @@ const Stepone = () => {
   const [alert, setAlert] = useState(null);
   const [stageShow, setStageShow] = useState(false); // for timing of an component shows
   const [isMaterialApproved, setIsMaterialApproved] = useState(false);
-  const [canSubmit, setCanSubmit] = useState(true);
-
   // states end
 
   useEffect(() => {
@@ -56,16 +55,17 @@ const Stepone = () => {
 
           if (currentStage) {
             setStageName(currentStage.name);
-            setUpdates([
+            setUpdates((prevUpdates) => [
               {
+                ...prevUpdates[0],
                 details: "",
                 materialsUsed: currentStage.materials.map((mat) => ({
                   name: mat.name,
-                  quantity: mat.quantity,
+                  quantity: 0,
                 })),
                 workers: [],
                 images: [],
-                date: "",
+                date: new Date().toISOString(),
               },
             ]);
 
@@ -73,6 +73,17 @@ const Stepone = () => {
               stage.materials.every((mat) => mat.isApproved)
             );
             setIsMaterialApproved(allMaterialsApproved);
+
+            const areAllMaterialsFinished = currentStage.materials.every(
+              (material) => material.quantity === 0
+            );
+            setFinishedMaterial(areAllMaterialsFinished);
+
+            // Keep materials static for display
+            setProject((prev) => ({
+              ...prev,
+              currentMaterials: currentStage.materials,
+            }));
           }
         }
       }
@@ -104,16 +115,7 @@ const Stepone = () => {
       });
       return; // Stop execution
     }
-    if (!canSubmit) {
-      console.log(
-        "One or more materials are finished, please check available quantities."
-      );
-      setAlert(
-        "error",
-        "One or more materials are finished, please check available quantities."
-      );
-      return;
-    }
+
     const hasInvalidMaterial = updates[0]?.materialsUsed.some(
       (mat) => !mat.name || mat.quantity <= 0
     );
@@ -136,10 +138,8 @@ const Stepone = () => {
     });
 
     if (isValid) {
-      setCanSubmit(true);
       setAlert(null); // Clear any existing alert
     } else {
-      setCanSubmit(false);
       setAlert({
         type: "error",
         message: "All materials must have a valid name and quantity.",
@@ -268,7 +268,7 @@ const Stepone = () => {
   }
 
   return (
-    <div className="min-h-screen relative bg-gradient-to-br from-gray-900 via-gray-800 to-black text-gray-200 py-2 lg:py-12 px-2">
+    <div className="min-h-screen relative bg-gradient-to-br from-gray-900 via-gray-800 to-black text-gray-200 p-4">
       {/* Back Button */}
       <button
         className="mb-4 text-gray-500 hover:text-gray-200 flex items-center md:flex-row md:ml-0 ml-6 flex-col gap-2"
@@ -276,6 +276,18 @@ const Stepone = () => {
       >
         <FaArrowLeft /> Go Back
       </button>
+
+      {finishedMaterial && (
+        <div className="mt-4 mx-auto bg-green-700 rounded-lg p-2 w-max">
+          <p>
+            material is finished now you send a mail to client of stage
+            completion or not
+          </p>
+          <span className="text-gray-200">
+            Click on three dots and notify client
+          </span>
+        </div>
+      )}
       {/* alert */}
       {alert && (
         <Alert

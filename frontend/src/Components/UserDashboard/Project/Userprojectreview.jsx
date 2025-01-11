@@ -7,6 +7,7 @@ import LoaderAll from "../../OtherComponents/LoaderAll";
 import { FaCheckCircle, FaTimesCircle } from "react-icons/fa";
 import Alert from "../../OtherComponents/Alert";
 import MessagesSendingRecieving from "./MessagesSendingRecieving";
+import ClientConfirmation from "./ClientConfirmation";
 
 const StageManagement = () => {
   const navigate = useNavigate();
@@ -146,6 +147,16 @@ const StageManagement = () => {
           message={message}
           sendMessageToAdmin={handleMessageToAdmin}
         />
+
+        <div className="mt-10">
+          <ClientConfirmation
+            onConfirm={() => {
+              // Optional: Handle any additional logic when the client confirms
+              console.log("Client confirmed the project stage.");
+            }}
+            project={project}
+          />
+        </div>
 
         {/* Project Stages */}
         <h1 className="text-3xl font-bold mb-8 text-center">Project Stages</h1>

@@ -722,7 +722,7 @@ exports.stageData = async (req, res) => {
 // Controller_1_Project_10: notify client to an completed or continue work
 exports.notifyClient = async (req, res) => {
   try {
-    const { projectId, stageName } = req.body;
+    const { projectId, stageName, message } = req.body;
 
     const adminId = req.admin.id;
 
@@ -741,15 +741,36 @@ exports.notifyClient = async (req, res) => {
         .status(404)
         .json({ type: "error", message: "Stage not found." });
     }
+
+    // Add notification to the latest update
+    if (!stageIndex.updates || stageIndex.updates.length === 0) {
+      return res.status(400).json({
+        type: "error",
+        message: `No updates found for stage "${stageName}".`,
+      });
+    }
+
+    // update nofitfy
+    stageIndex.notify = {
+      message: message || `The stage "${stageName}" is now complete.`,
+      sentAt: new Date(),
+      stageDetails: {
+        stageName: stageIndex.name,
+        isCompleted: true,
+      },
+    };
+
+    await project.save();
+
     sendEmail(
       user.email,
       "Inform Stage",
-      `Client notified for stage ${stageName}. then our work is complete in stage${stageName} we want to go next step with your confirmation`
+      `Client notified for stage ${stageName}. then our work is complete in stage${stageName}. ${message}`
     );
 
     res.send({ message: `Client notified for stage ${stageIndex}` });
   } catch (error) {
-    console.error(error.message);
+    console.log(error.message);
     res.status(500).json({ type: "error", message: "Internal server error" });
   }
 };

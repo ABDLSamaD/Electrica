@@ -23,23 +23,27 @@ const MaterialForm = ({
   handleSubmit,
 }) => {
   // Handle material change (quantity used)
-  const handleMaterialChange = (index, field, value) => {
-    // Update materialsUsed state
-    const updatedMaterialsUsed = [...updates[0].materialsUsed];
-    updatedMaterialsUsed[index] = {
-      ...updatedMaterialsUsed[index],
-      [field]: value, // Update the specific field in materialsUsed
-    };
+  const handleMaterialChange = (index, value) => {
+    setUpdates((prevUpdates) => {
+      const updatedMaterialsUsed = [...prevUpdates[0].materialsUsed];
 
-    // After updating the remainingMaterials, we also update the materialsUsed
-    setUpdates([{ ...updates[0], materialsUsed: updatedMaterialsUsed }]);
+      // Update the specific field of the material
+      updatedMaterialsUsed[index] = {
+        ...updatedMaterialsUsed[index],
+        quantity: Math.max(0, parseInt(value, 10)),
+      };
+
+      return [{ ...prevUpdates[0], materialsUsed: updatedMaterialsUsed }];
+    });
   };
 
   // Disable the input if the material is out of stock
-  const isMaterialDisabled = (quantity) => quantity <= 0;
+  const isMaterialDisabled = (quantity) => {
+    return quantity <= 0;
+  };
 
   return (
-    <div className="bg-gradient-to-br from-gray-900 via-gray-800 to-black text-gray-200 py-10 px-4 sm:px-6 lg:px-8">
+    <div className="bg-gradient-to-br from-gray-900 via-gray-800 to-black text-gray-200 p-2 lg:p-5">
       {!isMaterialApproved && (
         <div className="fixed inset-0 bg-black bg-opacity-75 flex items-center justify-center z-50">
           <div className="bg-gray-800 p-8 rounded-lg shadow-2xl max-w-md w-full mx-4">
@@ -61,7 +65,7 @@ const MaterialForm = ({
         </div>
       )}
 
-      <div className="max-w-4xl mx-auto bg-gray-800 rounded-xl shadow-2xl p-8 backdrop-filter backdrop-blur-lg bg-opacity-30 border border-gray-700">
+      <div className="lg:max-w-4xl max-w-3xl mx-auto bg-gray-800 rounded-xl shadow-2xl lg:p-8 p-4 backdrop-filter backdrop-blur-lg bg-opacity-30 border border-gray-700">
         <h1 className="text-xl lg:text-3xl font-bold text-gray-100 mb-2 text-center">
           {project.projectName}
         </h1>
@@ -95,7 +99,7 @@ const MaterialForm = ({
               Materials Used
             </h2>
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-              {updates[0].materialsUsed.map((mat, index) => (
+              {project?.currentMaterials?.map((mat, index) => (
                 <div
                   key={index}
                   className={`lg:p-4 p-2 rounded-lg shadow-md border transition-all duration-300 ${
@@ -145,16 +149,11 @@ const MaterialForm = ({
                         id={`use-qty-${index}`}
                         type="number"
                         min="0"
-                        value={mat?.quantity || 0}
+                        value={updates[0]?.materialsUsed[index]?.quantity || 0}
                         onChange={(e) =>
-                          handleMaterialChange(
-                            index,
-                            "quantity",
-                            e.target.value
-                          )
+                          handleMaterialChange(index, e.target.value)
                         }
                         className="md:p-2 p-1 w-full rounded bg-gray-600 border border-gray-500 text-gray-200 focus:ring-2 focus:ring-blue-500 focus:outline-none transition-colors duration-300"
-                        disabled={isMaterialDisabled(mat.quantity)}
                       />
                     </div>
                   )}

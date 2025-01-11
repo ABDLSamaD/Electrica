@@ -1,8 +1,8 @@
 import React, { useState, useEffect, useRef } from "react";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faEllipsisVertical } from "@fortawesome/free-solid-svg-icons";
-import NotifyClient from "./NotifyClient";
+import { faEllipsisVertical, faBell } from "@fortawesome/free-solid-svg-icons";
 import { Link } from "react-router-dom";
+import NotifyClientModal from "./NotifyClientModal"; // Modal for notifying the client
 
 const DropdownMenu = ({
   projectId,
@@ -12,6 +12,7 @@ const DropdownMenu = ({
   onCompleteStage,
 }) => {
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
+  const [isNotifyModalOpen, setIsNotifyModalOpen] = useState(false); // Modal state
   const dropdownRef = useRef(null);
 
   // Close dropdown when clicking outside
@@ -26,7 +27,7 @@ const DropdownMenu = ({
     return () => {
       document.removeEventListener("mousedown", handleOutsideClick);
     };
-  }, []);
+  }, [isDropdownOpen]);
 
   // Toggle dropdown visibility
   const handleToggleDropdown = () => {
@@ -34,11 +35,19 @@ const DropdownMenu = ({
   };
 
   const handleCompleteStage = () => {
-    // Call the onCompleteStage callback passed as a prop
     if (onCompleteStage) {
-      onCompleteStage(projectId, stageName); // Make sure you handle stage completion logic in parent component
+      onCompleteStage(projectId, stageName); // Handle stage completion in parent component
     }
-    setIsDropdownOpen(false); // Close the dropdown after clicking the button
+    setIsDropdownOpen(false); // Close dropdown
+  };
+
+  const handleOpenNotifyModal = () => {
+    setIsNotifyModalOpen(true);
+    setIsDropdownOpen(false); // Close dropdown when opening the modal
+  };
+
+  const handleCloseNotifyModal = () => {
+    setIsNotifyModalOpen(false);
   };
 
   return (
@@ -63,11 +72,12 @@ const DropdownMenu = ({
           <ul className="flex flex-col space-y-3 p-4">
             {/* Notify Client */}
             <li>
-              <NotifyClient
-                projectId={projectId}
-                localhost={localhost}
-                stageName={stageName}
-              />
+              <button
+                onClick={handleOpenNotifyModal}
+                className="block text-sm bg-blue-600 hover:bg-blue-700 text-white rounded-md py-2 px-3 text-center transition-all flex items-center gap-2"
+              >
+                <FontAwesomeIcon icon={faBell} /> Notify Client
+              </button>
             </li>
 
             {/* Complete Stage Button */}
@@ -91,6 +101,16 @@ const DropdownMenu = ({
             </li>
           </ul>
         </div>
+      )}
+
+      {/* Notify Client Modal */}
+      {isNotifyModalOpen && (
+        <NotifyClientModal
+          onClose={handleCloseNotifyModal}
+          projectId={projectId}
+          localhost={localhost}
+          stageName={stageName}
+        />
       )}
     </div>
   );

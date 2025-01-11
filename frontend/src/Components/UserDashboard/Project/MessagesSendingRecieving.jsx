@@ -79,7 +79,7 @@ const MessagesSendingRecieving = ({
       )}
 
       {/* Mobile Compatibility Styles */}
-      <style jsx>{`
+      <style>{`
         @keyframes slide-up {
           from {
             transform: translateY(100%);

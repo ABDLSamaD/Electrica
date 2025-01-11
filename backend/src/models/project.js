@@ -58,6 +58,15 @@ const projectSchema = new mongoose.Schema({
           finished: { type: Boolean, default: false },
         },
       ],
+      notify: {
+        message: { type: String, default: "" },
+        sentAt: { type: Date, default: Date.now },
+        stageDetails: {
+          stageName: { type: String, default: "" }, // Name of the stage
+          isCompleted: { type: Boolean, default: false }, // Whether the stage is completed
+        },
+      },
+
       isCompleted: { type: Boolean, default: false },
       canStart: { type: Boolean, default: false }, // Determines if the stage can start
       clientConfirmation: {

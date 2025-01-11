@@ -58,14 +58,14 @@ function StageDetails({ localhost, projectId, stageName }) {
   }
 
   return (
-    <div className="stage-container max-w-4xl mx-auto px-4 py-8">
+    <div className="stage-container max-w-4xl mx-auto lg:p-5 p-1">
       <motion.div
         initial={{ opacity: 0, y: 50 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.8 }}
         className="bg-gradient-to-br from-gray-900 to-gray-800 rounded-lg shadow-2xl overflow-hidden"
       >
-        <div className="p-6 space-y-6">
+        <div className="lg:p-6 p-2 space-y-6">
           <h2 className="text-3xl font-bold text-white mb-4 border-b border-gray-700 pb-2">
             {stageName}
           </h2>
