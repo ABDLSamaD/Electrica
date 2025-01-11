@@ -40,8 +40,8 @@ import EachProfile from "./Admin/User/EachProfile";
 import ProjectReview from "./Admin/User/ProjectReview";
 import ProjectsUser from "./Admin/User/ProjectsUser";
 const Stepone = React.lazy(() => import("./Admin/Projectsteps/Stepone"));
-import Stagetwo from "./Admin/Projectsteps/Steptwo";
-import Stagethree from "./Admin/Projectsteps/Stepthree";
+// import Stagetwo from "./Admin/Projectsteps/Steptwo";
+// import Stagethree from "./Admin/Projectsteps/Stepthree";
 import AddMaterial from "./Admin/Projectsteps/AddMaterial";
 import NotifyClientModal from "./Admin/Projectsteps/NotifyClientModal";
 import axios from "axios";
@@ -179,14 +179,14 @@ const Main = () => {
                 path="projectusers/stageone/:projectId/addmaterial/:stageName"
                 element={<AddMaterial />}
               />
-              <Route
+              {/* <Route
                 path="projectusers/stagetwo/:projectId/addmaterial/:stageName"
                 element={<Stagetwo />}
               />
               <Route
                 path="projectusers/stagethree/:projectId/addmaterial/:stageName"
                 element={<Stagethree />}
-              />
+              /> */}
               <Route
                 path="userprofile/:userId/projectreview/:projectId"
                 element={<ProjectReview />}

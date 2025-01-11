@@ -81,7 +81,6 @@ const Sidebar = ({ connection, admin }) => {
         <nav className="flex-1 mt-6">
           <ul>
             {menuItems.map((item) => {
-              const end = false;
               return (
                 <li
                   key={item.id}
@@ -93,10 +92,16 @@ const Sidebar = ({ connection, admin }) => {
                 >
                   <NavLink
                     to={item.link}
-                    end={end}
-                    className="flex items-center px-4 py-3 text-white hover:bg-white/10 hover:text-gray-50 transition-colors"
+                    className={({ isActive }) =>
+                      `flex items-center px-4 py-3 rounded-lg transition-colors ${
+                        isActive
+                          ? "bg-cyan-600 text-white"
+                          : "hover:bg-white/10 hover:text-gray-50"
+                      }`
+                    }
+                    end={item.link === "/db_au_admn"}
                   >
-                    <item.icon size={20} />
+                    <item.icon size={22} />
                     {isOpen && (
                       <motion.span
                         initial={{ opacity: 0 }}
@@ -116,10 +121,10 @@ const Sidebar = ({ connection, admin }) => {
 
         <div className="p-4">
           <button
-            className="flex items-center w-full px-4 py-2 text-white hover:bg-white/10 transition-colors rounded"
+            className="flex items-center w-full px-4 py-2 text-white hover:bg-white/10 transition-colors rounded bg-gray-900"
             onClick={handleLogout}
           >
-            <LogOut size={20} />
+            <LogOut size={28} />
             {isOpen && (
               <motion.span
                 initial={{ opacity: 0 }}
