@@ -10,7 +10,7 @@ import Alert from "../../OtherComponents/Alert";
 import { FaArrowLeft } from "react-icons/fa";
 import StageDetails from "./StageDetails";
 import LoaderAll from "../../OtherComponents/LoaderAll";
-import DropdownMenu from "./DropdownMenu";
+import DropDownMenu from "./DropDownMenu";
 import MaterialAndWorker from "./MaterialAndWorker";
 
 const Stepone = () => {
@@ -74,8 +74,8 @@ const Stepone = () => {
             );
             setIsMaterialApproved(allMaterialsApproved);
 
-            const areAllMaterialsFinished = currentStage.materials.every(
-              (material) => material.quantity === 0
+            const areAllMaterialsFinished = currentStage.materials.find(
+              (n) => n.notify.stageDetails.isCompleted === true
             );
             setFinishedMaterial(areAllMaterialsFinished);
 
@@ -277,7 +277,7 @@ const Stepone = () => {
         <FaArrowLeft /> Go Back
       </button>
 
-      {finishedMaterial && (
+      {finishedMaterial ? (
         <div className="mt-4 mx-auto bg-green-700 rounded-lg p-2 w-max">
           <p>
             material is finished now you send a mail to client of stage
@@ -287,7 +287,7 @@ const Stepone = () => {
             Click on three dots and notify client
           </span>
         </div>
-      )}
+      ) : null}
       {/* alert */}
       {alert && (
         <Alert
@@ -298,7 +298,7 @@ const Stepone = () => {
       )}
       {/* three dots content */}
       <div className="absolute top-4 right-4 z-50">
-        <DropdownMenu
+        <DropDownMenu
           projectId={projectId}
           localhost={localhost}
           stageName={stageName}

@@ -1,16 +1,11 @@
 import React, { useState, useEffect, useRef } from "react";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faEllipsisVertical, faBell } from "@fortawesome/free-solid-svg-icons";
+import { faEllipsisVertical } from "@fortawesome/free-solid-svg-icons";
 import { Link } from "react-router-dom";
 import NotifyClientModal from "./NotifyClientModal"; // Modal for notifying the client
+import { FaBell } from "react-icons/fa";
 
-const DropdownMenu = ({
-  projectId,
-  localhost,
-  stageName,
-  users,
-  onCompleteStage,
-}) => {
+const DropDownMenu = ({ projectId, localhost, stageName, onCompleteStage }) => {
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
   const [isNotifyModalOpen, setIsNotifyModalOpen] = useState(false); // Modal state
   const dropdownRef = useRef(null);
@@ -74,9 +69,9 @@ const DropdownMenu = ({
             <li>
               <button
                 onClick={handleOpenNotifyModal}
-                className="block text-sm bg-blue-600 hover:bg-blue-700 text-white rounded-md py-2 px-3 text-center transition-all flex items-center gap-2"
+                className="text-sm bg-blue-600 hover:bg-blue-700 text-white rounded-md py-2 px-3 text-center transition-all flex items-center gap-2"
               >
-                <FontAwesomeIcon icon={faBell} /> Notify Client
+                <FaBell /> Notify Client
               </button>
             </li>
 
@@ -116,4 +111,4 @@ const DropdownMenu = ({
   );
 };
 
-export default DropdownMenu;
+export default DropDownMenu;

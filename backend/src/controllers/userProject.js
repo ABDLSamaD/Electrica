@@ -158,10 +158,7 @@ exports.sendMessageToAdmin = async (req, res) => {
     const { projectId, message } = req.body;
     const userId = req.user.id;
 
-    const { user, project, error } = await getProjectAndStage(
-      userId,
-      projectId
-    );
+    const { project, error } = await getProjectAndStage(userId, projectId);
     if (error) {
       return res.status(400).json({ type: "error", message: error });
     }
@@ -288,12 +285,24 @@ exports.clientConfirmStageCompletion = async (req, res) => {
 
     await project.save();
 
-    const admin = await Admin.find();
-    sendEmail(
-      admin.email,
-      "Client Confirmed Stage Completion",
-      `The ${user.name} has confirmed completion for stage "${stageName}" in project "${project.clientName}".`
-    );
+    // send an confirmation email to admin that materials are approved
+    try {
+      const admin = await Admin.findOne(); // or Admin.find()
+      if (!admin || !admin.email) {
+        return res
+          .status(400)
+          .json({ type: "error", message: "Admin email not found." });
+      }
+      await sendEmail(
+        admin.email,
+        "Client approved stage material bill",
+        `${user.name} approved materials bills and coming tomorrow for stage: ${stageName}`
+      );
+    } catch (error) {
+      return res
+        .status(500)
+        .json({ type: "error", message: "Failed to send email to admin." });
+    }
 
     res.status(200).json({
       type: "success",
@@ -417,7 +426,7 @@ exports.specifyStartDate = async (req, res) => {
     const { projectId, stageName, startDate, message } = req.body;
 
     const userId = req.user.id;
-    const { user, project, stage, error } = await getProjectAndStage(
+    const { project, stage, error } = await getProjectAndStage(
       userId,
       projectId,
       stageName

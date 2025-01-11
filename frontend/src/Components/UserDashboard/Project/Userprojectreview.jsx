@@ -1,4 +1,9 @@
-import { faArrowLeft } from "@fortawesome/free-solid-svg-icons";
+import {
+  faArrowLeft,
+  faCheckCircle,
+  faPlayCircle,
+  faTimesCircle,
+} from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import React, { useEffect, useState } from "react";
 import { useNavigate, useOutletContext, useParams } from "react-router-dom";
@@ -106,6 +111,41 @@ const StageManagement = () => {
     }
   };
 
+  const handleClientConfirm = async (
+    stageName,
+    emergencyMessage,
+    clientConfirmed
+  ) => {
+    try {
+      const response = await axios.post(
+        `${localhost}/api/auth/client-confirmation`,
+        {
+          projectId,
+          stageName,
+          clientConfirmed,
+          emergencyMessage,
+          startDate: Date.now(),
+        },
+        { withCredentials: true }
+      );
+      if (response.status === 200) {
+        setAlert({ type: response.data.type, message: response.data.message });
+        // Refresh data or handle UI updates
+      } else {
+        setAlert({
+          type: response.data.type,
+          message: response.data.message,
+        });
+      }
+    } catch (error) {
+      console.error("Error confirming stage:", error);
+      setAlert({
+        type: error.response?.data?.type,
+        message: error.response?.data?.message,
+      });
+    }
+  };
+
   if (loading) {
     return (
       <div className="flex items-center justify-center min-h-screen bg-gray-800">
@@ -148,16 +188,6 @@ const StageManagement = () => {
           sendMessageToAdmin={handleMessageToAdmin}
         />
 
-        <div className="mt-10">
-          <ClientConfirmation
-            onConfirm={() => {
-              // Optional: Handle any additional logic when the client confirms
-              console.log("Client confirmed the project stage.");
-            }}
-            project={project}
-          />
-        </div>
-
         {/* Project Stages */}
         <h1 className="text-3xl font-bold mb-8 text-center">Project Stages</h1>
 
@@ -175,10 +205,30 @@ const StageManagement = () => {
                   : "bg-gray-800 hover:from-gray-700 hover:to-gray-600"
               }`}
             >
-              {stage.name}{" "}
-              {stage?.canStart && (
-                <span className="block text-white">start project</span>
-              )}
+              {stage.name} {/* Icon Based on Status */}
+              <div className="text-3xl">
+                {stage?.canStart ? (
+                  stage.isCompleted ? (
+                    <FontAwesomeIcon
+                      icon={faCheckCircle}
+                      className="text-green-500"
+                      title="Project Completed"
+                    />
+                  ) : (
+                    <FontAwesomeIcon
+                      icon={faPlayCircle}
+                      className="text-white"
+                      title="Ready to Start"
+                    />
+                  )
+                ) : (
+                  <FontAwesomeIcon
+                    icon={faTimesCircle}
+                    className="text-red-500"
+                    title="Cannot Start Yet"
+                  />
+                )}
+              </div>
             </button>
           ))}
         </div>
@@ -223,7 +273,7 @@ const StageManagement = () => {
                     Client Confirmation
                   </h3>
                   <p className="flex items-center space-x-2">
-                    {stage?.clientConfirmation?.isConfirmed ? (
+                    {stage.clientConfirmation.isConfirmed ? (
                       <>
                         <FaCheckCircle className="text-green-500" />
                         <span className="text-green-400">Confirmed</span>
@@ -319,6 +369,14 @@ const StageManagement = () => {
                     )}
                   </div>
                 ))}
+              </div>
+
+              {/* admin notify for stage */}
+              <div className="notify p-2 bg-gray-800 rounded-xl">
+                <ClientConfirmation
+                  stage={stage}
+                  onClientConfirm={handleClientConfirm}
+                />
               </div>
             </div>
           ) : null
