@@ -9,7 +9,13 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import React, { useState } from "react";
 import { Link } from "react-router-dom";
 
-const InputForm = ({ hanldeLogin, onChange, credential, passLink }) => {
+const InputForm = ({
+  hanldeLogin,
+  onChange,
+  credential,
+  passLink,
+  miniLoader,
+}) => {
   const [isPasswordVisible, setIsPasswordVisible] = useState(false);
   const togglePasswordVisibility = () => {
     // password toogle show hide
@@ -99,10 +105,13 @@ const InputForm = ({ hanldeLogin, onChange, credential, passLink }) => {
       </div>
       <button
         type="submit"
-        className="w-full rounded-md p-2 focus:scale-105 bg-gray-800 hover:bg-gray-900 transition-all duration-300"
+        className={`w-full rounded-md p-2 focus:scale-105 bg-gray-800 hover:bg-gray-900 transition-all duration-300 ${
+          miniLoader ? "opacity-70 cursor-not-allowed" : "hover:bg-cyan-700"
+        }`}
+        disabled={miniLoader}
       >
         <span className="text-xl text-white font-mono font-bold mr-2">
-          Sign In
+          {miniLoader ? "Signing in..." : "Sign In"}
         </span>
         <FontAwesomeIcon
           icon={faSignInAlt}

@@ -173,7 +173,7 @@ exports.login = async (req, res) => {
     if (!isMatch) {
       return res
         .status(400)
-        .json({ type: "error", message: "Password is wrong?" });
+        .json({ type: "error", message: "Invalid credentials!" });
     }
 
     // Step 1: Capture the IP address from the request
@@ -182,36 +182,48 @@ exports.login = async (req, res) => {
       req.headers["x-forwarded-for"] ||
       req.connection.remoteAddress;
 
+    // Keep only login attempts within the last 30 days
+    const now = Date.now();
+    users.loginAttempt = users.loginAttempt.filter(
+      (attempt) =>
+        new Date(attempt.timestamp).getTime() > now - 30 * 24 * 60 * 60 * 1000
+    );
+
+    // Maintain a maximum of 10 login attempts
     if (users.loginAttempt.length > 10) {
-      users.loginAttempt.shift(); // Remove the oldest attempt
+      users.loginAttempt.shift();
     }
 
     users.loginAttempt.push({
       device: deviceInfo,
       ipAddress: clientIp,
+      timestamp: new Date(),
     });
 
+    // Adjust token expiration based on rememberMe
+    const tokenExpiry = rememberMe ? "30d" : "1d";
     const data = {
       user: {
         id: users.id,
       },
     };
     const token = jwt.sign(data, process.env.JWT_SECRET, {
-      expiresIn: "1d",
+      expiresIn: tokenExpiry,
     });
     users.token = token;
 
-    // If authentication is successful, adjust session settings based on "Remember Me"
-    if (rememberMe) {
-      req.session.cookie.maxAge = 30 * 24 * 60 * 60 * 1000; // Set cookie lifespan to 30 days
-    } else {
-      req.session.cookie.expires = false; // Session expires on browser close
-    }
+    const sessionMaxAge = rememberMe
+      ? 30 * 24 * 60 * 60 * 1000 // 30 days
+      : 24 * 60 * 60 * 1000; // 1 day
+
+    // Set session and token cookie
+    req.session.cookie.maxAge = sessionMaxAge;
 
     res.cookie("auth_token", token, {
       httpOnly: true, // Prevent access from JavaScript
       secure: process.env.NODE_ENV === "production", // Use secure cookies in production
-      maxAge: rememberMe ? 30 * 24 * 60 * 60 * 1000 : null, // 30 days or session-only
+      sameSite: "strict",
+      maxAge: sessionMaxAge,
     });
 
     req.session.token = token;

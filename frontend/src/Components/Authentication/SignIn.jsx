@@ -9,22 +9,20 @@ import Loader from "../OtherComponents/Loader";
 import { UAParser } from "ua-parser-js";
 
 const Signin = () => {
-  // naviagation
   const navigate = useNavigate();
 
-  // States start
+  // States
   const [alert, setAlert] = useState(null);
   const [credentials, setCredentials] = useState({
     email: "",
     password: "",
     rememberMe: false,
   });
-  const [loader, setLoader] = useState(false);
-  // States end
+  const [loader, setLoader] = useState(false); // Full page loader
+  const [miniLoader, setMiniLoader] = useState(false); // Mini loader for button
 
   const onChange = (e) => {
     const { name, value, type, checked } = e.target;
-
     setCredentials((prevCredentials) => ({
       ...prevCredentials,
       [name]: type === "checkbox" ? checked : value, // Handle checkbox input
@@ -33,11 +31,13 @@ const Signin = () => {
 
   const handleSignin = async (e) => {
     e.preventDefault();
-    setLoader(false);
+    setAlert(null);
+    setMiniLoader(true); // Start mini loader
+
     const { email, password, rememberMe } = credentials;
 
     try {
-      // / Step 1: Get IP address from a public API
+      // Step 1: Get IP address
       const ipResponse = await axios.get("https://api.ipify.org?format=json");
       const ipAddress = ipResponse.data.ip;
 
@@ -46,31 +46,29 @@ const Signin = () => {
       const userAgent = navigator.userAgent;
       const deviceInfo = parser.setUA(userAgent).getResult();
 
+      // Step 3: Hit API
       const response = await axios.post(
         "http://localhost:5120/api/auth/signin",
-        {
-          email,
-          password,
-          rememberMe,
-          ipAddress,
-          deviceInfo,
-        },
+        { email, password, rememberMe, ipAddress, deviceInfo },
         { withCredentials: true }
       );
-      const data = await response.data;
+
+      const data = response.data;
+
       if (response.status === 200) {
-        setLoader(true);
-        // localStorage.setItem("dshbrd_usr_tkn", data.token);
+        setMiniLoader(false); // Stop mini loader
+        setLoader(true); // Start full page loader
         setAlert({ type: data.type, message: data.message });
+
         setTimeout(() => {
           navigate("/db-au-user");
-        }, 5000);
+        }, 2000);
       } else {
-        setLoader(false);
+        setMiniLoader(false); // Stop mini loader
         setAlert({ type: data.type, message: data.message });
       }
     } catch (err) {
-      setLoader(false);
+      setMiniLoader(false); // Stop mini loader
       setAlert({
         type: err.response?.data?.type || "error",
         message: err.response?.data?.message || "Network Error",
@@ -80,7 +78,7 @@ const Signin = () => {
 
   return (
     <>
-      {loader === true ? <Loader /> : null}
+      {loader && <Loader />} {/* Full loader */}
       <div id="signin">
         {alert && (
           <Alert
@@ -100,6 +98,7 @@ const Signin = () => {
             onChange={onChange}
             credential={credentials}
             passLink={"/forgot_password"}
+            miniLoader={miniLoader}
           />
           <p className="mt-4 text-center text-sm text-gray-400">
             Not a member?

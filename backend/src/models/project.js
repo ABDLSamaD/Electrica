@@ -3,6 +3,7 @@ const mongoose = require("mongoose");
 const projectSchema = new mongoose.Schema({
   createdAt: { type: Date, default: Date.now },
   removeProject: { type: Boolean, default: false },
+  isActive: { type: Boolean, default: true }, // Tracks if the project is currently active
   clientName: String,
   clientNumber: { type: Number, required: true },
   projectDescription: { type: String, required: true },

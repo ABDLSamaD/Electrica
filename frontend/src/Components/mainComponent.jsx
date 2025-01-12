@@ -179,14 +179,6 @@ const Main = () => {
                 path="projectusers/stageone/:projectId/addmaterial/:stageName"
                 element={<AddMaterial />}
               />
-              {/* <Route
-                path="projectusers/stagetwo/:projectId/addmaterial/:stageName"
-                element={<Stagetwo />}
-              />
-              <Route
-                path="projectusers/stagethree/:projectId/addmaterial/:stageName"
-                element={<Stagethree />}
-              /> */}
               <Route
                 path="userprofile/:userId/projectreview/:projectId"
                 element={<ProjectReview />}

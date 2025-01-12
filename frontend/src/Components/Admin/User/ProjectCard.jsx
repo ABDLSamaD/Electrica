@@ -41,7 +41,7 @@ const ProjectCard = ({ project, userId, localhost, refreshProjects }) => {
     return project.stages?.map((stage, index) => (
       <div
         key={index}
-        className={`flex items-center p-3 mb-3 rounded-lg transition-transform transform ${
+        className={`flex items-center lg:flex-row flex-col lg:justify-center justify-start lg:p-3 p-1 mb-3 rounded-lg transition-transform transform ${
           stage.isCompleted ? "bg-green-100" : "bg-gray-100"
         } shadow-sm hover:scale-105`}
       >
@@ -55,12 +55,14 @@ const ProjectCard = ({ project, userId, localhost, refreshProjects }) => {
           {stage.isCompleted ? <CheckCircle size={20} /> : <Circle size={20} />}
         </div>
         <div className="ml-4 flex-1">
-          <h5 className="font-medium text-gray-800">{stage.name}</h5>
+          <h5 className="font-medium text-gray-800 lg:text-base text-sm my-2">
+            {stage.name}
+          </h5>
         </div>
         {stage.updates && stage.updates.length > 0 && (
           <button
             onClick={() => handleStageClick(stage)}
-            className="ml-4 bg-blue-600 text-white text-xs py-1 px-3 rounded-lg hover:bg-blue-700 transition"
+            className="lg:ml-4 ml-0 bg-blue-600 text-white text-xs py-1 px-3 rounded-lg hover:bg-blue-700 transition"
           >
             View Updates
           </button>
