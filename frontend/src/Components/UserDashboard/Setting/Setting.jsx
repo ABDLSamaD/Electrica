@@ -80,12 +80,12 @@ const Setting = () => {
       {alert && (
         <Alert type={type} message={message} onClose={() => setALert(null)} />
       )}
-      <div className="p-6 bg-gray-50">
+      <div className="p-6">
         {/* Settings Header */}
         <h1 className="text-2xl font-bold mb-6">Settings</h1>
 
         {/* Notifications Section */}
-        <div className="bg-white shadow p-6 rounded-lg mb-6">
+        <div className="bg-white/10 shadow p-6 rounded-lg mb-6">
           <h2 className="text-lg font-semibold mb-2">Notifications</h2>
           <p className="text-sm text-gray-500 mb-4">Manage the notifications</p>
 
@@ -163,7 +163,7 @@ const Setting = () => {
         </div>
 
         {/* Password Update Section */}
-        <div className="bg-white shadow p-6 rounded-lg">
+        <div className="bg-white/10 shadow p-6 rounded-lg">
           <h2 className="text-lg font-semibold mb-2">Password</h2>
           <p className="text-sm text-gray-500 mb-4">Update password</p>
 
@@ -177,7 +177,7 @@ const Setting = () => {
                 name="oldPassword"
                 value={passwords.oldPassword}
                 onChange={handlePasswordChange}
-                className={`w-full border rounded px-3 py-2 ${
+                className={`w-full border rounded px-3 py-2 bg-white/20 ${
                   errors.oldPassword ? "border-red-500" : "border-gray-300"
                 }`}
                 placeholder="Enter old password"
@@ -197,7 +197,7 @@ const Setting = () => {
                 name="newPassword"
                 value={passwords.newPassword}
                 onChange={handlePasswordChange}
-                className={`w-full border rounded px-3 py-2 ${
+                className={`w-full border rounded px-3 py-2 bg-white/20 ${
                   errors.newPassword ? "border-red-500" : "border-gray-300"
                 }`}
                 placeholder="Enter new password"
@@ -217,7 +217,7 @@ const Setting = () => {
                 name="confirmPassword"
                 value={passwords.confirmPassword}
                 onChange={handlePasswordChange}
-                className={`w-full border rounded px-3 py-2 ${
+                className={`w-full border rounded px-3 py-2 bg-white/20 ${
                   errors.confirmPassword ? "border-red-500" : "border-gray-300"
                 }`}
                 placeholder="Confirm new password"

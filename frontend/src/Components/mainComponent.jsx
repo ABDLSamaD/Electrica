@@ -45,6 +45,7 @@ const Stepone = React.lazy(() => import("./Admin/Projectsteps/Stepone"));
 import AddMaterial from "./Admin/Projectsteps/AddMaterial";
 import NotifyClientModal from "./Admin/Projectsteps/NotifyClientModal";
 import axios from "axios";
+import ProjectDetails from "./Pages/ProjectsDetails";
 
 const Main = () => {
   // const location = useLocation();
@@ -99,6 +100,7 @@ const Main = () => {
         <Routes>
           <Route path="/" element={<Home isAuthenticatedAdmin={isAdmin} />} />
           <Route path="/about" element={<About />} />
+          <Route path="/project-details" element={<ProjectDetails />} />
           <Route path="/signin" element={<SignIn />} />
           <Route path="/signup" element={<SignUp />} />
           {/* User forgot password */}

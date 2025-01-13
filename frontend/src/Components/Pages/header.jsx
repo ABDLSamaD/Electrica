@@ -2,7 +2,7 @@ import axios from "axios";
 import React, { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 
-const header = ({ isAuthenticatedAdmin }) => {
+const Header = ({ isAuthenticatedAdmin }) => {
   // const auth = localStorage.getItem("dshbrd_usr_tkn");
   const toogleNav = (e) => {
     document.querySelector(".navbar").classList.toggle("shownavbar");
@@ -59,10 +59,10 @@ const header = ({ isAuthenticatedAdmin }) => {
             </li>
             <li>
               <Link
-                to="/contact"
+                to="/project-details"
                 className="p-3 md:p-0 md:bg-inherit md:text-lg text-xl mx-2 font-medium tracking-wider hover:text-indigo-300"
               >
-                Contact
+                Project
               </Link>
             </li>
             <li>
@@ -101,4 +101,4 @@ const header = ({ isAuthenticatedAdmin }) => {
   );
 };
 
-export default header;
+export default Header;

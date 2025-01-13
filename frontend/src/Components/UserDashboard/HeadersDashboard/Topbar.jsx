@@ -195,7 +195,7 @@ const Topbar = ({ user }) => {
                   animate={{ opacity: 1, y: 0 }}
                   exit={{ opacity: 0, y: -10 }}
                   transition={{ duration: 0.3 }}
-                  className="absolute right-0 top-14 bg-[rgba(255,255,255,0.2)] backdrop-blur-lg text-gray-800 shadow-lg rounded-lg z-50 w-64"
+                  className="absolute right-0 top-14 bg-[rgba(1,1,1,0.39)] backdrop:blur-3xl text-gray-300 shadow-lg rounded-lg z-50 w-64"
                 >
                   <div className="flex flex-col items-center text-center p-4">
                     <img
@@ -204,26 +204,26 @@ const Topbar = ({ user }) => {
                       className="w-16 h-16 rounded-full shadow-md border-2 border-gray-200"
                     />
                     <h2 className="mt-2 font-semibold">{user.name}</h2>
-                    <p className="text-sm text-gray-500">@mail: {user.email}</p>
+                    <p className="text-sm text-gray-200">@mail: {user.email}</p>
                   </div>
                   <div className="w-full h-px bg-gray-300"></div>
                   <div className="flex flex-col py-2">
                     <Link
-                      className="flex items-center gap-2 px-4 py-2 hover:bg-gray-200 transition-all rounded-lg"
+                      className="flex items-center gap-2 px-4 py-2 hover:bg-indigo-600 transition-all rounded-lg"
                       to="/db-au-user/db-au-setting"
                     >
                       <FontAwesomeIcon icon={faCog} />
-                      <span>Settings</span>
+                      <span className="text-white">Settings</span>
                     </Link>
                     <Link
-                      className="flex items-center gap-2 px-4 py-2 hover:bg-gray-200 transition-all rounded-lg"
+                      className="flex items-center gap-2 px-4 py-2 hover:bg-indigo-600 transition-all rounded-lg"
                       to="/db-au-user/db-au-profile"
                     >
                       <FontAwesomeIcon icon={faUser} />
-                      <span>Profile</span>
+                      <span className="text-white">Profile</span>
                     </Link>
                     <button
-                      className="flex items-center gap-2 px-4 py-2 hover:bg-gray-200 transition-all rounded-lg"
+                      className="flex items-center gap-2 px-4 py-2 hover:bg-red-900 transition-all rounded-lg"
                       onClick={() => {
                         setTimeout(() => {
                           setModal(true);
@@ -231,7 +231,7 @@ const Topbar = ({ user }) => {
                       }}
                     >
                       <FontAwesomeIcon icon={faRightFromBracket} />
-                      <span>Logout</span>
+                      <span className="text-red-200">Logout</span>
                     </button>
                   </div>
                 </motion.div>

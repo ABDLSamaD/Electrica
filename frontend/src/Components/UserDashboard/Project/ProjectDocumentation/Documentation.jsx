@@ -2,6 +2,8 @@ import React from "react";
 import PointRateCard from "./PointRateCard";
 import ProjectStagesCard from "./ProjectStagesCard";
 import ProjectSubmissionCard from "./ProjectSubmissionCard";
+import electricalwiring from "../../../../assets/electricalwiringandcircuitborad.png";
+import electricalwiringbuilding from "../../../../assets/electricalwiringandbuilding.png";
 
 const Documentation = () => {
   return (
@@ -33,12 +35,12 @@ const Documentation = () => {
 
         <div className="mt-12 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
           <img
-            src="/placeholder.svg?height=200&width=300"
+            src={electricalwiring}
             alt="Electrician working on a circuit board"
             className="rounded-lg shadow-md"
           />
           <img
-            src="/placeholder.svg?height=200&width=300"
+            src={electricalwiringbuilding}
             alt="Electrical wiring in a building"
             className="rounded-lg shadow-md"
           />
