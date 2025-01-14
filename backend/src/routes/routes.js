@@ -105,7 +105,6 @@ routes.post("/mark-shown", decodeToken, getUnreadMessages); // un read messages
 routes.post("/approve-material", decodeToken, approveMaterials); // client approved materials bill
 routes.post("/specifydate-material", decodeToken, specifyStartDate); // specify date  approved materials
 routes.post("/user_activity", decodeToken, activityLog);
-routes.post("/user_activity", decodeToken, activityLog);
 // routes.post("/user_request", sessionAuth, requestUser);
 
 module.exports = routes;

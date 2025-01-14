@@ -142,7 +142,7 @@ exports.logoutAdmin = async (req, res) => {
         if (err) {
           return res.status(500).json({ message: "Error logging out" });
         }
-        res.clearCookie("connect.sid"); // Clear session cookie
+        res.clearCookie("admin.sid"); // Clear session cookie
         res.clearCookie("admin_auth"); // Clear session cookie
         res.status(200).json({ message: "Logged out successfully" });
       });

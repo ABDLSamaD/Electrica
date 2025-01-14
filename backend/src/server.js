@@ -13,6 +13,8 @@ const adminRoutes = require("./routes/route-admin");
 const connectionDatabase = require("./models/connection");
 const { sendEmail } = require("./utils/mail");
 
+dotenv.config();
+
 // connection database function call from file
 connectionDatabase();
 
@@ -24,10 +26,10 @@ const limiter = rateLimit({
 });
 // Apply the rate limiting middleware to all requests.
 app.use(limiter);
-
 // helmet cross origin secure
 app.use(helmet());
 
+// cors cnfiguration
 const corsOptions = {
   origin: "http://localhost:5173",
   credentials: true, // Allow cookies to be sent with requests
@@ -35,32 +37,46 @@ const corsOptions = {
 app.use(cors(corsOptions));
 
 app.use(cookieParser());
-
-// express-session
-app.use(
-  session({
-    resave: false,
-    saveUninitialized: true,
-    secret: process.env.USER_SESSION_SECRET || "user_secret",
-    store: MongoStore.create({
-      mongoUrl: process.env.MONGO_URL,
-      collectionName: "user_sessions",
-    }),
-    cookie: {
-      maxAge: 24 * 60 * 60 * 1000, // 1 day
-      httpOnly: true, // Secure against XSS
-      secure: false, // Set true in production with HTTPS
-    },
-  })
-);
-
-// configuration
-dotenv.config();
 app.use(bodyparser.json());
 
+// express-session
+
+const isProduction = process.env.NODE_ENV === "production";
+const sessionConfig = {
+  resave: false,
+  saveUninitialized: true,
+  cookie: {
+    maxAge: 24 * 60 * 60 * 1000, // 1 day
+    httpOnly: true,
+    secure: isProduction, // Set true in production with HTTPS
+  },
+};
+// user session
+const userSession = session({
+  ...sessionConfig,
+  secret: process.env.USER_SESSION_SECRET,
+  store: MongoStore.create({
+    mongoUrl: process.env.MONGO_URL,
+    collectionName: "user_sessions",
+  }),
+});
+// Admin session middleware
+const adminSession = session({
+  ...sessionConfig,
+  name: "admin.sid",
+  secret: process.env.ADMIN_SESSION_SECRET,
+  store: MongoStore.create({
+    mongoUrl: process.env.MONGO_URL,
+    collectionName: "admin_sessions", // Corrected collection name
+  }),
+});
+
+// app.use("/auth", userSession); // User-specific session
+// app.use("/adminauth", adminSession); // Admin-specific session
+
 // routes call
-app.use("/api/auth", routes);
-app.use("/api/adminauth", adminRoutes);
+app.use("/api/auth", userSession, routes);
+app.use("/api/adminauth", adminSession, adminRoutes);
 
 // contact support
 app.post("/user/contact-support", async (req, res) => {
@@ -76,10 +92,6 @@ app.post("/user/contact-support", async (req, res) => {
   } catch (error) {
     res.status(500).json({ message: "Error contacting support", error });
   }
-});
-
-app.use((err, req, res, next) => {
-  res.status(500).send({ error: "Something broke!", type: err.stack });
 });
 
 app.use((err, req, res, next) => {
