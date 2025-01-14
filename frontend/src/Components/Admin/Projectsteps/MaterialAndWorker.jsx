@@ -1,22 +1,18 @@
-import React, { useState, useEffect } from "react";
+import React from "react";
 import {
   FaEdit,
   FaPlus,
   FaTrashAlt,
-  FaExclamationTriangle,
   FaTools,
   FaUsers,
   FaClipboardList,
 } from "react-icons/fa";
-
-import { Link } from "react-router-dom";
 
 const MaterialForm = ({
   updates,
   setUpdates,
   stageName,
   project,
-  isMaterialApproved,
   handleWorkerChange,
   handleAddWorker,
   handleRemoveWorker,
@@ -44,27 +40,6 @@ const MaterialForm = ({
 
   return (
     <div className="bg-gradient-to-br from-gray-900 via-gray-800 to-black text-gray-200 p-2 lg:p-5">
-      {!isMaterialApproved && (
-        <div className="fixed inset-0 bg-black bg-opacity-75 flex items-center justify-center z-50">
-          <div className="bg-gray-800 p-8 rounded-lg shadow-2xl max-w-md w-full mx-4">
-            <FaExclamationTriangle className="text-yellow-500 text-5xl mx-auto mb-4" />
-            <h2 className="text-2xl font-bold mb-4 text-center">
-              Action Required
-            </h2>
-            <p className="text-sm mb-6 text-center">
-              Some materials in this project are not yet approved. Please add
-              and approve all materials before accessing the project details.
-            </p>
-            <Link
-              to={`addmaterial/${stageName}`}
-              className="block w-full bg-blue-600 hover:bg-blue-700 text-white py-2 px-4 rounded transition duration-300 ease-in-out text-center"
-            >
-              Add Materials
-            </Link>
-          </div>
-        </div>
-      )}
-
       <div className="lg:max-w-4xl max-w-3xl mx-auto bg-gray-800 rounded-xl shadow-2xl lg:p-8 p-4 backdrop-filter backdrop-blur-lg bg-opacity-30 border border-gray-700">
         <h1 className="text-xl lg:text-3xl font-bold text-gray-100 mb-2 text-center">
           {project.projectName}

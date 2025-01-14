@@ -46,6 +46,7 @@ import AddMaterial from "./Admin/Projectsteps/AddMaterial";
 import NotifyClientModal from "./Admin/Projectsteps/NotifyClientModal";
 import axios from "axios";
 import ProjectDetails from "./Pages/ProjectsDetails";
+import CompletedProjetc from "./Admin/Projectsteps/CompletedProjetc";
 
 const Main = () => {
   // const location = useLocation();
@@ -172,6 +173,10 @@ const Main = () => {
               <Route
                 path="projectusers/stageone/:projectId"
                 element={<Stepone />}
+              />
+              <Route
+                path="projectusers/stageone/:projectId/complete"
+                element={<CompletedProjetc />}
               />
               <Route
                 path="projectusers/stageone/:projectId/addmaterial/:stageName/notify-client"

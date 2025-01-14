@@ -56,6 +56,7 @@ const StageManagement = () => {
   }, [projects, projectId]);
 
   const handleApproveMaterial = async (stageName, materialId) => {
+    setLoading(true);
     try {
       const response = await axios.post(
         `${localhost}/api/auth/approve-material`,
@@ -84,6 +85,8 @@ const StageManagement = () => {
       }
     } catch (err) {
       setError("Failed to approve material. Please try again.");
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -288,7 +291,7 @@ const StageManagement = () => {
                 </div>
               </div>
 
-              {/* Materials */}
+              {/* Materials approve */}
               <div className="mt-6">
                 <h3 className="text-lg font-semibold">Materials</h3>
                 {stage.materials.map((material) => (

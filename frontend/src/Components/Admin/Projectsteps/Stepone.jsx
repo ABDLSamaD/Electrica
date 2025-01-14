@@ -23,7 +23,6 @@ const Stepone = () => {
   const [project, setProject] = useState(null); // Set initial state as null
   const [loading, setLoading] = useState(true); // Set to true initially
   const [stageName, setStageName] = useState("");
-  const [finishedMaterial, setFinishedMaterial] = useState(false);
 
   const [updates, setUpdates] = useState([
     {
@@ -36,7 +35,7 @@ const Stepone = () => {
   ]);
   const [alert, setAlert] = useState(null);
   const [stageShow, setStageShow] = useState(false); // for timing of an component shows
-  const [isMaterialApproved, setIsMaterialApproved] = useState(false);
+  const [isProjectCompleted, setIsProjectCompleted] = useState(false);
   // states end
 
   useEffect(() => {
@@ -52,6 +51,13 @@ const Stepone = () => {
           const currentStage = matchedProject.stages.find(
             (stage) => !stage.isCompleted
           );
+          const allStagesCompleted = matchedProject.stages.every(
+            (stage) => stage.isCompleted
+          );
+          // If all stages are completed, set the state to true
+          if (allStagesCompleted) {
+            setIsProjectCompleted(true);
+          }
 
           if (currentStage) {
             setStageName(currentStage.name);
@@ -68,16 +74,6 @@ const Stepone = () => {
                 date: new Date().toISOString(),
               },
             ]);
-
-            const allMaterialsApproved = matchedProject.stages.every((stage) =>
-              stage.materials.every((mat) => mat.isApproved)
-            );
-            setIsMaterialApproved(allMaterialsApproved);
-
-            const areAllMaterialsFinished = currentStage.materials.find(
-              (n) => n.notify.stageDetails.isCompleted === true
-            );
-            setFinishedMaterial(areAllMaterialsFinished);
 
             // Keep materials static for display
             setProject((prev) => ({
@@ -266,6 +262,10 @@ const Stepone = () => {
       </div>
     );
   }
+  const handleNavigate = () => {
+    // Redirect to another page after the project is completed (change URL as needed)
+    navigate(`complete`); // Example path
+  };
 
   return (
     <div className="min-h-screen relative bg-gradient-to-br from-gray-900 via-gray-800 to-black text-gray-200 p-4">
@@ -276,18 +276,6 @@ const Stepone = () => {
       >
         <FaArrowLeft /> Go Back
       </button>
-
-      {finishedMaterial ? (
-        <div className="mt-4 mx-auto bg-green-700 rounded-lg p-2 w-max">
-          <p>
-            material is finished now you send a mail to client of stage
-            completion or not
-          </p>
-          <span className="text-gray-200">
-            Click on three dots and notify client
-          </span>
-        </div>
-      ) : null}
       {/* alert */}
       {alert && (
         <Alert
@@ -296,6 +284,20 @@ const Stepone = () => {
           onClose={() => setAlert(null)}
         />
       )}
+      {/* Display when all stages are completed */}
+      {isProjectCompleted && (
+        <div className="w-full h-screen bg-green-500 flex flex-col justify-center items-center text-white p-8">
+          <h2 className="text-3xl font-bold mb-4">Project Completed</h2>
+          <p className="mb-6">All stages are successfully completed!</p>
+          <button
+            onClick={handleNavigate}
+            className="bg-blue-500 text-white px-6 py-3 rounded-xl hover:bg-blue-600 transition"
+          >
+            Proceed to Next Step
+          </button>
+        </div>
+      )}
+
       {/* three dots content */}
       <div className="absolute top-4 right-4 z-50">
         <DropDownMenu
@@ -313,7 +315,6 @@ const Stepone = () => {
         setUpdates={setUpdates}
         stageName={stageName}
         project={project}
-        isMaterialApproved={isMaterialApproved}
         handleWorkerChange={handleWorkerChange}
         handleAddWorker={handleAddWorker}
         handleRemoveWorker={handleRemoveWorker}

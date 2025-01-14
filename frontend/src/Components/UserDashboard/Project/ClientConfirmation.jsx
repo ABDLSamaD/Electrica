@@ -14,11 +14,7 @@ const ClientConfirmation = ({ stage, onClientConfirm }) => {
   };
 
   const handleConfirm = () => {
-    onClientConfirm(
-      stage.notify.stageDetails.stageName,
-      confirmationMessage,
-      true
-    );
+    onClientConfirm(stage.name, confirmationMessage, true);
     handleCloseModal();
   };
 
