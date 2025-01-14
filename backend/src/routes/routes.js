@@ -5,7 +5,6 @@ const {
   verifyOtp,
   resendOtp,
   login,
-  getLoginHistory,
   logout,
   setLogoutTime,
   forgotPassword,
@@ -78,7 +77,6 @@ routes.post(
   login
 );
 routes.get("/check-auth", sessionAuth, checkAuth);
-routes.get("/login-history/:userId", getLoginHistory);
 routes.get("/protected-endpoint", sessionAuth, someProtectedController);
 routes.post("/logout", sessionAuth, logout);
 routes.post("/set-logout-time", sessionAuth, setLogoutTime);

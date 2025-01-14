@@ -21,6 +21,8 @@ const userSchema = new mongoose.Schema(
       default: "user",
     },
     isActive: { type: Boolean, default: true },
+    ifLogin: { type: Boolean, default: false },
+    loginDate: { type: Date, default: null },
     profileImg: {
       type: String,
       default:

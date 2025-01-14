@@ -176,6 +176,16 @@ exports.login = async (req, res) => {
         .json({ type: "error", message: "Invalid credentials!" });
     }
 
+    if (users.ifLogin) {
+      return res
+        .status(400)
+        .json({ error: "User is already logged in on another platform." });
+    }
+
+    // Update login status and timestamp
+    users.ifLogin = true;
+    users.loginDate = new Date();
+
     // Step 1: Capture the IP address from the request
     const clientIp =
       ipAddress ||
@@ -256,21 +266,6 @@ exports.checkAuth = (req, res) => {
   }
 };
 
-exports.getLoginHistory = async (req, res) => {
-  try {
-    const { userId } = req.params;
-    const user = await User.findById(userId, "loginAttempts");
-
-    if (!user) {
-      return res.status(404).json({ type: "error", message: "User not found" });
-    }
-
-    res.status(200).json({ type: "success", loginHistory: user.loginAttempt });
-  } catch (error) {
-    res.status(500).json({ type: "error", message: "Internal server error" });
-  }
-};
-
 // logout functionallity
 exports.logout = async (req, res) => {
   if (!req.session.user) {
@@ -279,9 +274,11 @@ exports.logout = async (req, res) => {
       .json({ type: "error", message: "Unauthorized. No active session." });
   }
   try {
-    await User.findByIdAndUpdate(req.session.user.id, {
-      $unset: { token: "" },
-    });
+    const user = await User.findById(req.session.user.id);
+    user.ifLogin = false;
+    user.loginDate = null;
+    user.token = null;
+    await user.save();
     req.session.destroy((err) => {
       if (err) {
         return res
@@ -299,7 +296,6 @@ exports.logout = async (req, res) => {
         .json({ type: "success", message: "Logged out successfully" });
     });
   } catch (error) {
-    console.error("Logout error:", error);
     return res
       .status(500)
       .json({ type: "error", message: "Internal server error" });
