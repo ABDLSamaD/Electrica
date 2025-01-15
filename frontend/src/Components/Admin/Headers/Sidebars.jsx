@@ -12,6 +12,7 @@ import {
 } from "lucide-react";
 import { NavLink, useLocation, useNavigate } from "react-router-dom";
 import axios from "axios";
+import apiClient from "../../Private/apiClient";
 
 const menuItems = [
   { id: 1, label: "Dashboard", icon: LayoutDashboard, link: "/db_au_admn" },
@@ -36,11 +37,7 @@ const Sidebar = ({ connection, admin }) => {
 
   const handleLogout = async () => {
     try {
-      const response = await axios.post(
-        `${connection}/api/adminauth/logout`,
-        {},
-        { withCredentials: true }
-      );
+      const response = await apiClient.post("/api/adminauth/logout", {});
       if (response.status === 200) {
         alert(response.data.message);
         navigate("/admn-sign");

@@ -15,8 +15,6 @@ const AdminLogin = () => {
     password: "",
   });
   const [alert, setAlert] = useState(null);
-  const [type, setType] = useState("");
-  const [message, setMessage] = useState("");
   const [loader, setLoader] = useState(false);
   //   State End
 
@@ -42,35 +40,32 @@ const AdminLogin = () => {
       if (response.status === 200) {
         setLoader(true);
         localStorage.setItem("dshbrd_admn_tkn", response.data.token);
-        setType(response.data.type);
-        setMessage(response.data.message);
-        setAlert(response.data.type, response.data.message);
+        setAlert({ type: response.data.type, message: response.data.message });
         setTimeout(() => {
           navigate("/db_au_admn");
-        }, 5000);
+        }, 2000);
       } else {
-        setType(response.data.type);
-        setMessage(response.data.message);
-        setAlert(response.data.type, response.data.message);
+        setAlert({ type: response.data.type, message: response.data.message });
       }
     } catch (err) {
-      setType(err.response?.data?.type);
-      setMessage(err.response?.data?.message);
-      setAlert(err.response?.data?.type, err.response?.data?.message);
-    } finally {
-      setLoader(false);
+      setAlert({
+        type: err.response?.data?.type,
+        message: err.response?.data?.message,
+      });
     }
   };
-  if (alert) {
-    return (
-      <Alert type={type} message={message} onClose={() => setAlert(null)} />
-    );
-  }
 
   return (
     <>
-      {loader === true ? <Loader /> : null}
+      {loader && <Loader />}
       <div id="adminsignin">
+        {alert && (
+          <Alert
+            type={alert.type}
+            message={alert.message}
+            onClose={() => setAlert(null)}
+          />
+        )}
         <div className="back relative w-full text-3xl transition-all">
           <Link to="/" className="mx-2" title="Go back">
             <FontAwesomeIcon icon={faArrowLeft} size="2xs" />

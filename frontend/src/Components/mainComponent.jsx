@@ -44,6 +44,8 @@ import AddMaterial from "./Admin/Projectsteps/AddMaterial";
 import NotifyClientModal from "./Admin/Projectsteps/NotifyClientModal";
 import axios from "axios";
 import ProjectDetails from "./Pages/ProjectsDetails";
+import AdminPublicRoute from "./Private/AdminPublicRoute";
+import UserPublicRoute from "./Private/UserPublicRoute";
 
 const Main = () => {
   // const location = useLocation();
@@ -99,14 +101,28 @@ const Main = () => {
           <Route path="/" element={<Home isAuthenticatedAdmin={isAdmin} />} />
           <Route path="/about" element={<About />} />
           <Route path="/project-details" element={<ProjectDetails />} />
-          <Route path="/signin" element={<SignIn />} />
+          <Route
+            path="/signin"
+            element={
+              <UserPublicRoute>
+                <SignIn />
+              </UserPublicRoute>
+            }
+          />
           <Route path="/signup" element={<SignUp />} />
           {/* User forgot password */}
           <Route path="/forgot_password" element={<Forgot />} />
           <Route path="*" element={<Errornotfound />} />
 
           {/* Admin Authentication Routes */}
-          <Route path="/admn-sign" element={<AdminLogin />} />
+          <Route
+            path="/admn-sign"
+            element={
+              <AdminPublicRoute>
+                <AdminLogin />
+              </AdminPublicRoute>
+            }
+          />
           <Route path="/admn-forgot_pswrd" element={<ForgotAdminPassword />} />
           <Route
             path="/verifyOTPADMIN"

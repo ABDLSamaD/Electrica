@@ -1,6 +1,7 @@
 import axios from "axios";
 import React, { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
+import apiClient from "../Private/apiClient";
 
 const Header = ({ isAuthenticatedAdmin }) => {
   // const auth = localStorage.getItem("dshbrd_usr_tkn");
@@ -12,17 +13,22 @@ const Header = ({ isAuthenticatedAdmin }) => {
 
   // for checking user auth
   useEffect(() => {
+    if (!document.cookie.includes("connect.sid")) {
+      // Skip API call if no session cookie is present
+      setIsAuthenticatedUser(false);
+      return;
+    }
     const checkAuth = async () => {
       try {
-        const response = await axios.get(`${localhost}/api/auth/check-auth`, {
-          withCredentials: true, // Ensure cookies are sent with the request
-        });
-        if (response.data.isAuthenticated) {
-          setIsAuthenticatedUser(true);
+        const response = await apiClient.get("api/auth/check-auth");
+        if (response.status === 200) {
+          if (response.data.isAuthenticated) {
+            setIsAuthenticatedUser(true);
+          }
         } else {
           setIsAuthenticatedUser(false);
         }
-      } catch (error) {
+      } catch {
         setIsAuthenticatedUser(false);
       }
     };
@@ -92,7 +98,7 @@ const Header = ({ isAuthenticatedAdmin }) => {
         </div>
         {isAuthenticatedAdmin ? (
           <button className="button-86">
-            <Link to="/db_au_admn">Admin Dashboard</Link>
+            <Link to="/db_au_admn">Admin</Link>
           </button>
         ) : isAuthenticatedUser ? (
           <button className="button-86">
