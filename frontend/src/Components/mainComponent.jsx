@@ -40,13 +40,10 @@ import EachProfile from "./Admin/User/EachProfile";
 import ProjectReview from "./Admin/User/ProjectReview";
 import ProjectsUser from "./Admin/User/ProjectsUser";
 const Stepone = React.lazy(() => import("./Admin/Projectsteps/Stepone"));
-// import Stagetwo from "./Admin/Projectsteps/Steptwo";
-// import Stagethree from "./Admin/Projectsteps/Stepthree";
 import AddMaterial from "./Admin/Projectsteps/AddMaterial";
 import NotifyClientModal from "./Admin/Projectsteps/NotifyClientModal";
 import axios from "axios";
 import ProjectDetails from "./Pages/ProjectsDetails";
-import CompletedProjetc from "./Admin/Projectsteps/CompletedProjetc";
 
 const Main = () => {
   // const location = useLocation();
@@ -173,10 +170,6 @@ const Main = () => {
               <Route
                 path="projectusers/stageone/:projectId"
                 element={<Stepone />}
-              />
-              <Route
-                path="projectusers/stageone/:projectId/complete"
-                element={<CompletedProjetc />}
               />
               <Route
                 path="projectusers/stageone/:projectId/addmaterial/:stageName/notify-client"

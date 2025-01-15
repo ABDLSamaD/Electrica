@@ -8,19 +8,26 @@ const Header = ({ isAuthenticatedAdmin }) => {
     document.querySelector(".navbar").classList.toggle("shownavbar");
   };
   const [isAuthenticatedUser, setIsAuthenticatedUser] = useState(false);
+  const localhost = "http://localhost:5120";
 
   // for checking user auth
   useEffect(() => {
-    axios
-      .get("http://localhost:5120/api/auth/check-auth", {
-        withCredentials: true,
-      })
-      .then((response) => {
-        setIsAuthenticatedUser(response.data.role === "user");
-      })
-      .catch((error) => {
+    const checkAuth = async () => {
+      try {
+        const response = await axios.get(`${localhost}/api/auth/check-auth`, {
+          withCredentials: true, // Ensure cookies are sent with the request
+        });
+        if (response.data.isAuthenticated) {
+          setIsAuthenticatedUser(true);
+        } else {
+          setIsAuthenticatedUser(false);
+        }
+      } catch (error) {
         setIsAuthenticatedUser(false);
-      });
+      }
+    };
+
+    checkAuth();
   }, []);
 
   return (

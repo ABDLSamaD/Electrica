@@ -267,7 +267,20 @@ const Stepone = () => {
     navigate(`complete`); // Example path
   };
 
-  return (
+  // /* Display when all stages are completed */
+
+  return isProjectCompleted ? (
+    <div className="w-full h-dvh bg-green-300/5 backdrop-blur-2xl flex flex-col justify-center items-center text-white p-8">
+      <h2 className="text-3xl font-bold mb-4">Project Completed</h2>
+      <p className="mb-6">All stages are successfully completed!</p>
+      <button
+        onClick={handleNavigate}
+        className="bg-blue-500 text-white px-6 py-3 rounded-xl hover:bg-blue-600 transition"
+      >
+        Proceed to Next Step
+      </button>
+    </div>
+  ) : (
     <div className="min-h-screen relative bg-gradient-to-br from-gray-900 via-gray-800 to-black text-gray-200 p-4">
       {/* Back Button */}
       <button
@@ -283,19 +296,6 @@ const Stepone = () => {
           message={alert.message}
           onClose={() => setAlert(null)}
         />
-      )}
-      {/* Display when all stages are completed */}
-      {isProjectCompleted && (
-        <div className="w-full h-screen bg-green-500 flex flex-col justify-center items-center text-white p-8">
-          <h2 className="text-3xl font-bold mb-4">Project Completed</h2>
-          <p className="mb-6">All stages are successfully completed!</p>
-          <button
-            onClick={handleNavigate}
-            className="bg-blue-500 text-white px-6 py-3 rounded-xl hover:bg-blue-600 transition"
-          >
-            Proceed to Next Step
-          </button>
-        </div>
       )}
 
       {/* three dots content */}

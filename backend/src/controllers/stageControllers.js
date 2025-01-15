@@ -1040,20 +1040,22 @@ exports.projectComplete = async (req, res) => {
     }
 
     if (allStagesCompleted) {
-      project.isCompleted = true; // Mark the project as complete
       project.completeProject = true; // Mark the project as complete
+      await project.save();
 
+      let obj = {
+        total: project.totalCost, // Include bill details if needed
+        breakdown: project.stages.map((stage) => ({
+          stageName: stage.name,
+          amount: project.totalCost || 0, // Assume `amount` exists in stage
+        })),
+      };
+
+      sendEmail(user.email, "Project Complete", obj);
       return res.status(200).json({
         type: "success",
         message: "All stages are complete. Project marked as complete.",
         project,
-        bill: {
-          total: project.totalCost, // Include bill details if needed
-          breakdown: project.stages.map((stage) => ({
-            stageName: stage.name,
-            amount: project.totalCost || 0, // Assume `amount` exists in stage
-          })),
-        },
       });
     } else {
       return res.status(200).json({
