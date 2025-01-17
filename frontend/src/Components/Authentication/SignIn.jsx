@@ -68,6 +68,7 @@ const Signin = () => {
         setAlert({ type: data.type, message: data.message });
       }
     } catch (err) {
+      setLoader(false);
       setMiniLoader(false); // Stop mini loader
       setAlert({
         type: err.response?.data?.type || "error",

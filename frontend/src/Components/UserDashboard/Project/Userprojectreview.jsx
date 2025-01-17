@@ -21,6 +21,7 @@ const StageManagement = () => {
   const { projectId } = useParams();
   const [project, setProject] = useState(null);
   const [loading, setLoading] = useState(true);
+  const [isCompleted, setIsCompleted] = useState(false);
   const [error, setError] = useState("");
   const [successMessage, setSuccessMessage] = useState("");
   const [message, setMessage] = useState("");
@@ -43,6 +44,12 @@ const StageManagement = () => {
       if (!selectedProject) {
         setError("Project not found.");
         return;
+      }
+      const allStageCompleted = selectedProject.stages.every(
+        (stage) => stage.isCompleted
+      );
+      if (allStageCompleted) {
+        setIsCompleted(true);
       }
 
       setProject(selectedProject);
@@ -166,7 +173,7 @@ const StageManagement = () => {
   }
 
   return (
-    <div className="bg-gradient-to-b from-gray-900 to-gray-800 text-white md:p-6 p-4 min-h-screen">
+    <div className="bg-gradient-to-b from-gray-900 to-gray-800 text-white md:p-6 p-1 min-h-screen">
       {/* Back Button */}
       <button
         className="text-white hover:scale-110 transition mb-4 p-2 rounded-full bg-gray-700 hover:bg-gray-600"
@@ -183,18 +190,24 @@ const StageManagement = () => {
         />
       )}
 
-      <div className="container mx-auto max-w-5xl bg-gray-900 p-8 rounded-3xl shadow-lg shadow-cyan-800 relative">
+      <div className="md:container block mx-auto max-w-5xl bg-gray-900 p-8 rounded-3xl shadow-lg shadow-cyan-800 relative">
         <MessagesSendingRecieving
           messages={messages}
           setMessage={setMessage}
           message={message}
           sendMessageToAdmin={handleMessageToAdmin}
         />
+        {isCompleted && (
+          <div
+            className="iscompleted w-2 h-2 bg-green-500 rounded-full absolute top-2 left-2"
+            title="project complete"
+          ></div>
+        )}
 
         {/* Project Stages */}
         <h1 className="text-3xl font-bold mb-8 text-center">Project Stages</h1>
 
-        <div className="flex flex-wrap justify-center gap-4 mb-6">
+        <div className="flex flex-wrap justify-center md:gap-4 gap-2 mb-6">
           {project.stages.map((stage) => (
             <button
               key={stage._id}
@@ -241,7 +254,7 @@ const StageManagement = () => {
           activeStage === stage._id ? (
             <div
               key={stage._id}
-              className="p-8 bg-gray-900 rounded-3xl shadow-lg"
+              className="md:p-8 p-1 bg-gray-900 rounded-3xl shadow-lg"
             >
               <h2 className="text-2xl font-bold mb-4 text-center">
                 {stage.name}
@@ -327,7 +340,7 @@ const StageManagement = () => {
                 {stage.updates.map((data, index) => (
                   <div
                     key={index}
-                    className="my-4 p-6 bg-gray-800 rounded-xl shadow-inner"
+                    className="my-4 md:p-6 p-2 bg-gray-800 rounded-xl shadow-inner"
                   >
                     <h4 className="text-orange-500 text-lg">
                       Date: {data.date}
@@ -340,7 +353,7 @@ const StageManagement = () => {
                         {data.materialsUsed.map((mat, i) => (
                           <li key={i} className="mb-2">
                             <span className="text-gray-200">
-                              Name: {mat.name} | Quantity:{" "}
+                              Name: {mat.name} | Quantity:
                               <b>{mat.quantity || "n/a"}</b>
                             </span>
                           </li>
@@ -359,7 +372,7 @@ const StageManagement = () => {
                         {data.workers.map((worker, i) => (
                           <li key={i} className="mb-2">
                             <span className="text-gray-200">
-                              Name: {worker.name} | Daily Wage:{" "}
+                              Name: {worker.name} | Daily Wage:
                               {worker.dailyWage}
                             </span>
                           </li>

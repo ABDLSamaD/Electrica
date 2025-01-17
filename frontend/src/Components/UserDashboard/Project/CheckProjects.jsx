@@ -10,7 +10,6 @@ import {
   faCity,
   faDollarSign,
   faPlus,
-  faFilter,
   faSearch, // Add search icon
 } from "@fortawesome/free-solid-svg-icons";
 import { useNavigate, useOutletContext } from "react-router-dom";
@@ -149,6 +148,9 @@ const CheckProjects = () => {
                 >
                   <div className="flex justify-between items-center">
                     <h2 className="text-2xl font-semibold text-white">
+                      {project.stages.every(
+                        (stage) => stage.isCompleted && "Project Complete"
+                      )}
                       {highlightText(project.projectName, searchQuery)}{" "}
                       {/* Highlight project name */}
                     </h2>
@@ -172,13 +174,13 @@ const CheckProjects = () => {
                     style={{
                       backgroundColor:
                         project.status === "Accepted"
-                          ? "#a5f3d3"
+                          ? "#a5f3d3aa"
                           : project.status === "Pending"
                           ? "#fde36e"
                           : "#fcd6d6",
                       color:
                         project.status === "Accepted"
-                          ? "#16c784"
+                          ? "bg-green-600"
                           : project.status === "Pending"
                           ? "#e0a800"
                           : "#d63b3b",

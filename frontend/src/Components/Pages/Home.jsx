@@ -3,6 +3,7 @@ import Header from "./Header";
 import { FaRegSmileBeam, FaCheckCircle, FaClock } from "react-icons/fa";
 import { motion } from "framer-motion";
 import AdvancedFuturisticCards from "./AdvancedFuturisticCards";
+import Footer from "./Footer";
 
 const Home = ({ isAuthenticatedAdmin }) => {
   return (
@@ -52,6 +53,10 @@ const Home = ({ isAuthenticatedAdmin }) => {
       </section>
       <div className="relative top-36">
         <AdvancedFuturisticCards />
+      </div>
+
+      <div className="relative top-64">
+        <Footer />
       </div>
     </>
   );

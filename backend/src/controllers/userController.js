@@ -176,16 +176,6 @@ exports.login = async (req, res) => {
         .json({ type: "error", message: "Invalid credentials!" });
     }
 
-    if (users.ifLogin) {
-      return res
-        .status(400)
-        .json({ error: "User is already logged in on another platform." });
-    }
-
-    // Update login status and timestamp
-    users.ifLogin = true;
-    users.loginDate = new Date();
-
     // Step 1: Capture the IP address from the request
     const clientIp =
       ipAddress ||
@@ -275,8 +265,6 @@ exports.logout = async (req, res) => {
   }
   try {
     const user = await User.findById(req.session.user.id);
-    user.ifLogin = false;
-    user.loginDate = null;
     user.token = null;
     await user.save();
     req.session.destroy((err) => {

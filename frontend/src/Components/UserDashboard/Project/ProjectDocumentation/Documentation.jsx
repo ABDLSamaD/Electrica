@@ -4,6 +4,7 @@ import ProjectStagesCard from "./ProjectStagesCard";
 import ProjectSubmissionCard from "./ProjectSubmissionCard";
 import electricalwiring from "../../../../assets/electricalwiringandcircuitborad.png";
 import electricalwiringbuilding from "../../../../assets/electricalwiringandbuilding.png";
+import { Link } from "react-router-dom";
 
 const Documentation = () => {
   return (
@@ -28,9 +29,12 @@ const Documentation = () => {
             fill out the necessary details. Once submitted, your project will go
             into review.
           </p>
-          <button className="bg-blue-500 hover:bg-blue-600 text-white font-bold py-2 px-4 rounded transition duration-300">
+          <Link
+            to="/db-au-user/project/prjfrom"
+            className="bg-blue-500 hover:bg-blue-600 text-white font-bold py-2 px-4 rounded transition duration-300"
+          >
             Add Project
-          </button>
+          </Link>
         </div>
 
         <div className="mt-12 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
