@@ -2,15 +2,16 @@ import React, { useState } from "react";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
 import ForgotPassword from "../../OtherComponents/ForgotPassword";
-import LoaderAll from "../../OtherComponents/LoaderAll";
 
 const Forgot = () => {
   const navigate = useNavigate();
   const [email, setEmail] = useState("");
   const [alert, setAlert] = useState(null);
+  const [loading, setLoading] = useState(false);
 
   const handleForgotPassword = async (e) => {
     e.preventDefault();
+    setLoading(true);
     try {
       const response = await axios.post(
         "http://localhost:5120/api/auth/forgot-password",
@@ -31,6 +32,8 @@ const Forgot = () => {
         type: err.response?.data?.type,
         message: err.response?.data?.message || "Failed to send OTP",
       });
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -42,6 +45,7 @@ const Forgot = () => {
       email={email}
       setEmail={setEmail}
       linkprevious="/signin"
+      loading={loading}
     />
   );
 };

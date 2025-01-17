@@ -11,6 +11,7 @@ const ForgotPassword = ({
   email,
   setEmail,
   setAlert,
+  loading,
 }) => {
   return (
     <div className="max-w-md mx-auto p-6 flex h-screen flex-col justify-center">
@@ -44,7 +45,7 @@ const ForgotPassword = ({
             type="submit"
             className="w-full bg-orange-500 text-white py-2 rounded hover:bg-orange-600"
           >
-            Send OTP
+            {loading ? "Please wait..." : "Send OTP"}
           </button>
           <div
             className="flex items-center justify-center mt-4"

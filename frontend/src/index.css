@@ -39,11 +39,6 @@ body {
   color: rgb(255, 255, 255);
 }
 
-.shownavbar {
-  display: block;
-  transition: all 0.3s ease-in-out;
-}
-
 .container {
   width: 80%;
   margin: auto;
@@ -114,6 +109,7 @@ body {
   transition: 0s;
   transform: translate(0, 5%);
 }
+
 /* extra classes end */
 
 /* #home .row {
@@ -717,6 +713,9 @@ span {
 }
 
 @media (max-width: 768px) {
+  .container {
+    width: calc(95% - 10px * 2);
+  }
   .sidebar {
     width: 4rem;
   }

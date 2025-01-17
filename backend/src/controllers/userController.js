@@ -366,7 +366,7 @@ exports.forgotPassword = async (req, res) => {
 };
 exports.verifyForgotOtp = async (req, res) => {
   try {
-    const { otp, resetToken } = req.body;
+    const { otp, resetToken, email } = req.body;
 
     if (!otp || !resetToken) {
       return res
@@ -375,9 +375,7 @@ exports.verifyForgotOtp = async (req, res) => {
     }
 
     const user = await User.findOne({
-      resetToken,
-      otp,
-      otpExpires: { $gt: Date.now() },
+      email,
     });
 
     if (!user.otp || user.otpExpires < Date.now()) {
