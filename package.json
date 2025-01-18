@@ -4,11 +4,9 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "start": " nodemon backend/index.js",
+    "start": "npx nodemon backend/index.js",
     "dev": "npx nodemon backend/index.js",
-    "build": "npm run build:frontend",
-    "build:frontend": "cd frontend && npm install && npm run build",
-    "start:vercel": "npx nodemon backend/index.js"
+    "build": "npm install && npm install --prefix frontend && npm run build --prefix frontend"
   },
   "keywords": [],
   "author": "",
