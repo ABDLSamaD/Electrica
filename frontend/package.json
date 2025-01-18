@@ -39,6 +39,7 @@
     "react-top-loading-bar": "^2.3.1",
     "react-transition-group": "^4.4.5",
     "recharts": "^2.15.0",
+    "styled-jsx": "^5.1.6",
     "three": "^0.172.0",
     "ua-parser-js": "^2.0.0"
   },

@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import LoaderAll from "../OtherComponents/LoaderAll";
-import apiClient from "./apiClient"; // Import the Axios instance
+import axios from "axios";
 
 const UserPublicRoute = ({ children }) => {
   const navigate = useNavigate();
@@ -10,21 +10,20 @@ const UserPublicRoute = ({ children }) => {
 
   useEffect(() => {
     const checkAuth = async () => {
-      if (!document.cookie.includes("connect.sid")) {
-        // Skip API call if no session cookie is present
-        setIsAuthenticated(false);
-        return;
-      }
       try {
-        const response = await apiClient.get("api/auth/check-auth");
-        if (response.data.isAuthenticated) {
+        const response = await axios.get(`${baseURL}/api/auth/check-auth`, {
+          withCredentials: true,
+        });
+
+        // Check the response from the server
+        if (response.status === 200 && response.data.isAuthenticated) {
           setIsAuthenticated(true);
-          navigate("/db-au-admn");
+          navigate("/db-au-user");
         } else {
           setIsAuthenticated(false);
         }
-      } catch {
-        setIsAuthenticated(false); // Silently handle errors
+      } catch (error) {
+        setIsAuthenticated(false);
       }
     };
 
@@ -39,7 +38,7 @@ const UserPublicRoute = ({ children }) => {
     );
   }
 
-  return isAuthenticated ? null : children;
+  return isAuthenticated === false ? children : null;
 };
 
 export default UserPublicRoute;

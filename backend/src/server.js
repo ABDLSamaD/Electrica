@@ -30,11 +30,12 @@ app.use(limiter);
 app.use(helmet());
 
 // cors cnfiguration
-const corsOptions = {
-  origin: "http://localhost:5173",
-  credentials: true, // Allow cookies to be sent with requests
-};
-app.use(cors(corsOptions));
+app.use(
+  cors({
+    origin: "http://localhost:5173", // Adjust for your frontend URL
+    credentials: true, // Allow sending credentials (cookies)
+  })
+);
 
 app.use(cookieParser());
 app.use(bodyparser.json());
@@ -48,35 +49,19 @@ const sessionConfig = {
   cookie: {
     maxAge: 24 * 60 * 60 * 1000, // 1 day
     httpOnly: true,
-    secure: isProduction, // Set true in production with HTTPS
+    secure: isProduction, // Set to true in production with HTTPS
   },
+  secret: process.env.SESSION_SECRET, // A common session secret for both user and admin
+  store: MongoStore.create({
+    mongoUrl: process.env.MONGO_URL,
+    collectionName: "sessions", // Common session collection
+  }),
 };
-// user session
-const userSession = session({
-  ...sessionConfig,
-  secret: process.env.USER_SESSION_SECRET,
-  store: MongoStore.create({
-    mongoUrl: process.env.MONGO_URL,
-    collectionName: "user_sessions",
-  }),
-});
-// Admin session middleware
-const adminSession = session({
-  ...sessionConfig,
-  name: "admin.sid",
-  secret: process.env.ADMIN_SESSION_SECRET,
-  store: MongoStore.create({
-    mongoUrl: process.env.MONGO_URL,
-    collectionName: "admin_sessions", // Corrected collection name
-  }),
-});
-
-// app.use("/auth", userSession); // User-specific session
-// app.use("/adminauth", adminSession); // Admin-specific session
+app.use(session(sessionConfig));
 
 // routes call
-app.use("/api/auth", userSession, routes);
-app.use("/api/adminauth", adminSession, adminRoutes);
+app.use("/api/auth", routes);
+app.use("/api/adminauth", adminRoutes);
 
 // contact support
 app.post("/user/contact-support", async (req, res) => {

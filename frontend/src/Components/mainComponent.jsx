@@ -1,10 +1,13 @@
 import React, { Suspense, useEffect, useState } from "react";
 import { Routes, Route } from "react-router-dom";
-// import { Routes, Route, useLocation } from "react-router-dom";
+import axios from "axios";
 // import { CSSTransition } from "react-transition-group";
 // import TopLoadingBar from "./OtherComponents/TopLoadingBar";
+
+// Website Pages Start
 const Home = React.lazy(() => import("./Pages/Home"));
 const About = React.lazy(() => import("./Pages/About"));
+import ProjectDetails from "./Pages/ProjectsDetails";
 const SignIn = React.lazy(() => import("./Authentication/SignIn"));
 const SignUp = React.lazy(() => import("./Authentication/SignUp"));
 import EmailVerification from "./Authentication/EmailVerification";
@@ -14,38 +17,48 @@ import VerifyForgotOtp from "./Authentication/Reset_Password/VerifyForgotOtp";
 import PrivateRouteResetPass from "./Private/PrivateRouteResetPass";
 import ResetPassword from "./Authentication/Reset_Password/ResetPassword";
 import Errornotfound from "./OtherComponents/Errornotfound";
-import DashboardHome from "./UserDashboard/DashboardHome";
-import DashboardAbout from "./UserDashboard/DashboardAbout";
-const DashboardLayout = React.lazy(() =>
-  import("./UserDashboard/DashboardLayout")
-);
-import Profile from "./UserDashboard/Profile/Profile";
-import Setting from "./UserDashboard/Setting/Setting";
 import AdminLogin from "./Admin/Authentication/AdminLogin";
 import ForgotAdminPassword from "./Admin/Authentication/ForgotAdminPassword";
 import VerifyADMNOTP from "./Admin/Authentication/VerifyADMNOTP";
-import PrivateAdmnRoute from "./Private/PrivateAdmnRoute";
-const Admin = React.lazy(() => import("./Admin/Admin"));
 import ResetAdminPassword from "./Admin/Authentication/ResetAdminPassword";
-import AdminPrivateRoute from "./Private/AdminPrivateroute";
-import AddProjectForm from "./UserDashboard/Project/AddProjectForm";
-import CheckProjects from "./UserDashboard/Project/CheckProjects";
-import ProjectDoc from "./UserDashboard/Project/ProjectDocumentation/ProjectDoc";
+// Website Pages End
+
+// User Dashboard Start
+const DashboardLayout = React.lazy(() =>
+  import("./UserDashboard/DashboardLayout")
+);
+import DashboardHome from "./UserDashboard/DashboardHome";
+import DashboardAbout from "./UserDashboard/DashboardAbout";
+import Profile from "./UserDashboard/Profile/Profile";
+import Setting from "./UserDashboard/Setting/Setting";
 const StageManagement = React.lazy(() =>
   import("./UserDashboard/Project/Userprojectreview")
 );
+// User Dashboard End
+
+// Private Routes Start
+import PrivateAdmnRoute from "./Private/PrivateAdmnRoute";
+import AdminPrivateRoute from "./Private/AdminPrivateroute";
+import AdminPublicRoute from "./Private/AdminPublicRoute";
+import UserPublicRoute from "./Private/UserPublicRoute";
+// Private Routes End
+
+// Admin Dashboard Start
+
+const Admin = React.lazy(() => import("./Admin/Admin"));
+
+import AddProjectForm from "./UserDashboard/Project/AddProjectForm";
+import CheckProjects from "./UserDashboard/Project/CheckProjects";
+import ProjectDoc from "./UserDashboard/Project/ProjectDocumentation/ProjectDoc";
 import AdminHome from "./Admin/AdminHome";
 import UserProfile from "./Admin/User/UserProfile";
 import EachProfile from "./Admin/User/EachProfile";
 import ProjectReview from "./Admin/User/ProjectReview";
 import ProjectsUser from "./Admin/User/ProjectsUser";
 const Stepone = React.lazy(() => import("./Admin/Projectsteps/Stepone"));
-import AddMaterial from "./Admin/Projectsteps/AddMaterial";
+const AddMaterial = React.lazy(import("./Admin/Projectsteps/AddMaterial"));
 import NotifyClientModal from "./Admin/Projectsteps/NotifyClientModal";
-import axios from "axios";
-import ProjectDetails from "./Pages/ProjectsDetails";
-import AdminPublicRoute from "./Private/AdminPublicRoute";
-import UserPublicRoute from "./Private/UserPublicRoute";
+// Admin Dashboard End
 
 const Main = () => {
   // const location = useLocation();
@@ -56,7 +69,7 @@ const Main = () => {
   //   location.pathname.startsWith(path)
   // );
 
-  // Simulate loading state changes
+  // // Simulate loading state changes
   // useEffect(() => {
   //   setIsLoading(true);
   //   const timer = setTimeout(() => {
@@ -66,39 +79,21 @@ const Main = () => {
   //   return () => clearTimeout(timer);
   // }, [location]);
 
-  const [isAdmin, setIsAdmin] = useState(false);
-  const [isAuthenticatedAdmin, setAuthenticatedAdmin] = useState(false);
-
-  // for checking admin auth
-  useEffect(() => {
-    // check admin auth
-    const fecthData = async () => {
-      axios
-        .get("http://localhost:5120/api/adminauth/check-adminauth", {
-          withCredentials: true,
-        })
-        .then((response) => {
-          setAuthenticatedAdmin(response.data.isAuthenticated);
-          setIsAdmin(response.data.role === "admin");
-        })
-        .catch((error) => {
-          setIsAdmin(false);
-        });
-    };
-    if (isAuthenticatedAdmin) {
-      fecthData();
-    }
-  }, [isAuthenticatedAdmin]);
-
   return (
     <>
       {/* {!isDashboard && <TopLoadingBar isLoading={isLoading} />}
 
       {!isLoading && (
         <CSSTransition key={location.pathname} timeout={3000} classNames="fade"> */}
-      <Suspense fallback={<div>Loading...</div>}>
+      <Suspense
+        fallback={
+          <div className="flex items-center justify-center text-base text-white min-h-screen">
+            Loading...
+          </div>
+        }
+      >
         <Routes>
-          <Route path="/" element={<Home isAuthenticatedAdmin={isAdmin} />} />
+          <Route path="/" element={<Home />} />
           <Route path="/about" element={<About />} />
           <Route path="/project-details" element={<ProjectDetails />} />
           <Route
@@ -204,8 +199,8 @@ const Main = () => {
           </Route>
         </Routes>
       </Suspense>
-      {/* </CSSTransition> */}
-      {/* )} */}
+      {/* </CSSTransition>
+      )} */}
     </>
   );
 };
