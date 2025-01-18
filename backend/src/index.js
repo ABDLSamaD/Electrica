@@ -30,12 +30,13 @@ app.use(limiter);
 app.use(helmet());
 
 // cors cnfiguration
-app.use(
-  cors({
-    origin: "http://localhost:5173", // Adjust for your frontend URL
-    credentials: true, // Allow sending credentials (cookies)
-  })
-);
+const corsConfig = {
+  origin: "*",
+  credentials: true, // Allow sending credentials (cookies)
+  methods: ["GET", "POST", "PUT", "PATCH"],
+};
+app.use(cors(corsConfig));
+app.options("", cors(corsConfig));
 
 app.use(cookieParser());
 app.use(bodyparser.json());
