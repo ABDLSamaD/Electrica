@@ -8,7 +8,7 @@
     "dev": "npx nodemon backend/index.js",
     "build": "npm run build:frontend",
     "build:frontend": "cd frontend && npm install && npm run build",
-    "start:vercel": "node backend/index.js"
+    "start:vercel": "npx nodemon backend/index.js"
   },
   "keywords": [],
   "author": "",
