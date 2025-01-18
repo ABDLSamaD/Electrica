@@ -1,0 +1,62 @@
+# Logs
+logs
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# Runtime data
+pids
+*.pid
+*.seed
+*.pid.lock
+
+# Directory for uploaded files
+uploads/
+
+# Dependency directories
+node_modules/
+
+# Environment variable files
+.env
+.env.*.local
+
+# Build output
+dist/
+build/
+
+# Database files
+*.sqlite3
+*.db
+
+# Test coverage
+coverage/
+
+# Temporary files
+*.tmp
+*.swp
+
+# IDE-specific files
+.idea/
+.vscode/
+*.sublime-project
+*.sublime-workspace
+
+# OS-generated files
+.DS_Store
+Thumbs.db
+
+# Docker
+docker-compose.override.yml
+.docker/
+
+# Optional NPM cache directory
+.npm/
+
+# Optional yarn cache directory
+.yarn/
+.pnp.*
+
+# Others
+*.bak
+*.orig
