@@ -1,6 +1,6 @@
 import React, { Suspense, useEffect, useState } from "react";
 import { Routes, Route } from "react-router-dom";
-import axios from "axios";
+// import axios from "axios";
 // import { CSSTransition } from "react-transition-group";
 // import TopLoadingBar from "./OtherComponents/TopLoadingBar";
 
@@ -8,8 +8,8 @@ import axios from "axios";
 const Home = React.lazy(() => import("./Pages/Home"));
 const About = React.lazy(() => import("./Pages/About"));
 import ProjectDetails from "./Pages/ProjectsDetails";
-const SignIn = React.lazy(() => import("./Authentication/SignIn"));
-const SignUp = React.lazy(() => import("./Authentication/SignUp"));
+import SignIn from "./Authentication/SignIn";
+import SignUp from "./Authentication/SignUp";
 import EmailVerification from "./Authentication/EmailVerification";
 import PrivateRoute from "./Private/PrivateRoute";
 import Forgot from "./Authentication/Reset_Password/Forgot";
