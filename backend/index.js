@@ -8,15 +8,18 @@ const session = require("express-session");
 const MongoStore = require("connect-mongo");
 const { rateLimit } = require("express-rate-limit");
 const helmet = require("helmet");
-const routes = require("./routes/routes");
-const adminRoutes = require("./routes/route-admin");
-const connectionDatabase = require("./models/connection");
-const { sendEmail } = require("./utils/mail");
+const path = require("path");
+const routes = require("./src/routes/routes");
+const adminRoutes = require("./src/routes/route-admin");
+const connectionDatabase = require("./src/models/connection");
+const { sendEmail } = require("./src/utils/mail");
 
 dotenv.config();
 
 // connection database function call from file
 connectionDatabase();
+
+const _dirname = path.resolve();
 
 const limiter = rateLimit({
   windowMs: 5 * 60 * 1000, // 15 minutes
@@ -31,7 +34,7 @@ app.use(helmet());
 
 // cors cnfiguration
 const corsConfig = {
-  origin: "*",
+  origin: "http://localhost:5173/",
   credentials: true, // Allow sending credentials (cookies)
   methods: ["GET", "POST", "PUT", "PATCH"],
 };
@@ -41,8 +44,10 @@ app.options("", cors(corsConfig));
 app.use(cookieParser());
 app.use(bodyparser.json());
 
-// express-session
+// frontend path resolve config
+app.use(express.static(path.join(_dirname, "/frontend/dist")));
 
+// express-session
 const isProduction = process.env.NODE_ENV === "production";
 const sessionConfig = {
   resave: false,
@@ -63,6 +68,9 @@ app.use(session(sessionConfig));
 // routes call
 app.use("/api/auth", routes);
 app.use("/api/adminauth", adminRoutes);
+app.get("*", (_, res) => {
+  res.sendFile(path.resolve(_dirname, "frontend", "dist", "index.html"));
+});
 
 // contact support
 app.post("/user/contact-support", async (req, res) => {

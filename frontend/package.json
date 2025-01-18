@@ -19,6 +19,7 @@
     "@react-three/drei": "^9.120.6",
     "@react-three/fiber": "^8.17.12",
     "axios": "^1.7.7",
+    "backend": "file:..",
     "chart.js": "^4.4.7",
     "cors": "^2.8.5",
     "framer-motion": "^11.11.17",
