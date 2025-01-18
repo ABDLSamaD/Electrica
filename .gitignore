@@ -14,17 +14,6 @@ pids
 # Directory for uploaded files
 uploads/
 
-# Dependency directories
-node_modules/
-
-# Environment variable files
-.env
-.env.*.local
-
-# Build output
-dist/
-build/
-
 # Database files
 *.sqlite3
 *.db
@@ -49,9 +38,6 @@ Thumbs.db
 # Docker
 docker-compose.override.yml
 .docker/
-
-# Optional NPM cache directory
-.npm/
 
 # Optional yarn cache directory
 .yarn/
