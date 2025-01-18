@@ -48,14 +48,14 @@ app.use(bodyparser.json());
 app.use(express.static(path.join(_dirname, "/frontend/dist")));
 
 // express-session
-const isProduction = process.env.NODE_ENV === "production";
+// const isProduction = process.env.NODE_ENV === "production";
 const sessionConfig = {
   resave: false,
   saveUninitialized: true,
   cookie: {
     maxAge: 24 * 60 * 60 * 1000, // 1 day
     httpOnly: true,
-    secure: isProduction, // Set to true in production with HTTPS
+    secure: true, // Set to true in production with HTTPS
   },
   secret: process.env.SESSION_SECRET, // A common session secret for both user and admin
   store: MongoStore.create({
