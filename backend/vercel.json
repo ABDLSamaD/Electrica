@@ -2,14 +2,15 @@
   "version": 2,
   "builds": [
     {
-      "src": "src/index.js",
+      "src": "index.js",
       "use": "@vercel/node"
     }
   ],
   "routes": [
     {
       "src": "/(.*)",
-      "dest": "/src/index.js"
+      "dest": "index.js"
     }
-  ]
+  ],
+  "ignoreCommand": "git diff --quiet HEAD^ HEAD ./backend"
 }
