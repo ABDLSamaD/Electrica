@@ -1,6 +1,6 @@
 const jwt = require("jsonwebtoken");
 
-const decodeToken = (req, res, next) => {
+const decodedToken = (req, res, next) => {
   try {
     const token = req.cookies.auth_token; // Access the token from the cookie
 
@@ -21,4 +21,4 @@ const decodeToken = (req, res, next) => {
   }
 };
 
-module.exports = decodeToken;
+module.exports = decodedToken;

@@ -46,7 +46,7 @@ const {
   getUnreadMessages,
 } = require("../controllers/userProject");
 // const { requestUser } = require("../controllers/userRequest");
-const decodeToken = require("../middleware/decodedtoken");
+const decodedToken = require("../middleware/decodedtoken");
 
 const loginRateLimiter = rateLimit({
   windowMs: 5 * 60 * 1000, // 5 minutes
@@ -83,26 +83,26 @@ routes.post("/set-logout-time", sessionAuth, setLogoutTime);
 routes.post("/forgot-password", forgotPassword);
 routes.post("/verify-forgototp", verifyForgotOtp);
 routes.post("/reset-password", resetPassword);
-routes.post("/adduser-details", decodeToken, userDetail);
-routes.put("/updateuser-details", decodeToken, updateUserDetails);
-routes.post("/adduser-profileImg", decodeToken, profileImage);
-routes.post("/change-password", decodeToken, changepassword);
-routes.get("/user-info", decodeToken, getUserDetails);
-routes.post("/project", decodeToken, project); //add project details
-routes.post("/remove-project", decodeToken, removeProject); //add project details
-routes.get("/project-details", decodeToken, getProjectDetails); // get project details from admin add
-routes.post("/client-confirmation", decodeToken, clientConfirmStageCompletion); // client confirmation for dalay work of stages
+routes.post("/adduser-details", decodedToken, userDetail);
+routes.put("/updateuser-details", decodedToken, updateUserDetails);
+routes.post("/adduser-profileImg", decodedToken, profileImage);
+routes.post("/change-password", decodedToken, changepassword);
+routes.get("/user-info", decodedToken, getUserDetails);
+routes.post("/project", decodedToken, project); //add project details
+routes.post("/remove-project", decodedToken, removeProject); //add project details
+routes.get("/project-details", decodedToken, getProjectDetails); // get project details from admin add
+routes.post("/client-confirmation", decodedToken, clientConfirmStageCompletion); // client confirmation for dalay work of stages
 routes.post(
   "/removeClient-confirmation",
-  decodeToken,
+  decodedToken,
   removeClientConfirmation
 ); // remove client confirmation for dalay work of stages
-routes.post("/messageAdmin", decodeToken, sendMessageToAdmin); // User sends message to admin
-routes.post("/unread", decodeToken, markMessageAsShown); // markAsShown messages
-routes.post("/mark-shown", decodeToken, getUnreadMessages); // un read messages
-routes.post("/approve-material", decodeToken, approveMaterials); // client approved materials bill
-routes.post("/specifydate-material", decodeToken, specifyStartDate); // specify date  approved materials
-routes.post("/user_activity", decodeToken, activityLog);
+routes.post("/messageAdmin", decodedToken, sendMessageToAdmin); // User sends message to admin
+routes.post("/unread", decodedToken, markMessageAsShown); // markAsShown messages
+routes.post("/mark-shown", decodedToken, getUnreadMessages); // un read messages
+routes.post("/approve-material", decodedToken, approveMaterials); // client approved materials bill
+routes.post("/specifydate-material", decodedToken, specifyStartDate); // specify date  approved materials
+routes.post("/user_activity", decodedToken, activityLog);
 // routes.post("/user_request", sessionAuth, requestUser);
 
 module.exports = routes;
