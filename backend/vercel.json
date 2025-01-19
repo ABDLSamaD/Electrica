@@ -7,8 +7,13 @@
     }
   ],
   "routes": [
-    { "src": "/api/auth/(.*)", "dest": "index.js" },
-    { "src": "/api/adminauth/(.*)", "dest": "index.js" },
-    { "src": "/user/contact-support", "dest": "index.js" }
+    {
+      "src": "/api/auth/(.*)",
+      "dest": "/src/routes/routes.js"
+    },
+    {
+      "src": "/api/adminauth/(.*)",
+      "dest": "/src/routes/route-admin.js"
+    }
   ]
 }

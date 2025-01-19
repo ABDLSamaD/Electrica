@@ -95,6 +95,10 @@ app.use((err, req, res, next) => {
   }
   next(err);
 });
+// Default catch-all route for Vercel
+app.all("*", (req, res) => {
+  res.status(404).send("Not Found");
+});
 
 // port listen
 const port = process.env.PORT || 5120;
