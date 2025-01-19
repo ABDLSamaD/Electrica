@@ -4,7 +4,7 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faBars } from "@fortawesome/free-solid-svg-icons";
 import axios from "axios";
 
-const Header = () => {
+const HeaderMain = () => {
   const [isAuthenticatedUser, setIsAuthenticatedUser] = useState(false);
   const [isUser, setIsUser] = useState(false);
   const [isAdmin, setIsAdmin] = useState(false);
@@ -132,7 +132,7 @@ const Header = () => {
               Project
             </NavLink>
             <NavLink
-              to="/service"
+              to="/#"
               className={({ isActive }) =>
                 isActive
                   ? "text-indigo-400"
@@ -213,7 +213,7 @@ const Header = () => {
           </li>
           <li>
             <Link
-              to="/service"
+              to="/#"
               onClick={toggleNav}
               className="text-white hover:text-indigo-400"
             >
@@ -248,4 +248,4 @@ const Header = () => {
   );
 };
 
-export default Header;
+export default HeaderMain;

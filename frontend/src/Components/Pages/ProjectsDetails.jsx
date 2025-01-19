@@ -1,6 +1,6 @@
 import React, { useEffect, useState, useRef } from "react";
 import { motion, useScroll } from "framer-motion";
-import Header from "./Header";
+import HeaderMain from "./HeaderMain";
 import Footer from "./Footer";
 import Stage from "./Stage";
 import ProgressIndicator from "./ProgressIndicator";
@@ -47,7 +47,7 @@ const ProjectDetails = () => {
 
   return (
     <div className="bg-gray-900/10">
-      <Header />
+      <HeaderMain />
       <ProgressIndicator stages={stages.length} activeStage={activeStage} />
       <div className="container mx-auto py-56">
         <motion.div

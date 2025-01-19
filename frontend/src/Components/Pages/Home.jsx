@@ -1,14 +1,14 @@
 import React from "react";
-import Header from "./Header";
+import HeaderMain from "./HeaderMain";
 import { FaRegSmileBeam, FaCheckCircle, FaClock } from "react-icons/fa";
 import { motion } from "framer-motion";
 import AdvancedFuturisticCards from "./AdvancedFuturisticCards";
 import Footer from "./Footer";
 
-const Home = ({ isAuthenticatedAdmin }) => {
+const Home = () => {
   return (
     <>
-      <Header isAuthenticatedAdmin={isAuthenticatedAdmin} />
+      <HeaderMain />
       <section className="relative top-36">
         <div className="container flex justify-center flex-wrap relative">
           <div className="row mb-9">

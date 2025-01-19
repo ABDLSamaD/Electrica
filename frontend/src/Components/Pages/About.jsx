@@ -2,7 +2,7 @@ import React from "react";
 import { motion } from "framer-motion";
 import { FaLightbulb, FaUsers, FaCogs, FaRocket } from "react-icons/fa";
 import { Link } from "react-router-dom";
-import Header from "./Header";
+import HeaderMain from "./HeaderMain";
 
 const About = () => {
   const containerVariants = {
@@ -27,7 +27,7 @@ const About = () => {
 
   return (
     <>
-      <Header />
+      <HeaderMain />
       <motion.section
         className="relative top-24 flex flex-col items-center justify-center text-white py-16 overflow-hidden"
         initial="hidden"
