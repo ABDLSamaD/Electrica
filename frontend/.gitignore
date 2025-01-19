@@ -8,9 +8,6 @@ pnpm-debug.log*
 # Node modules
 node_modules/
 
-# Ignore dist in local development, but let Vercel rebuild it
-/frontend/dist
-
 
 # Environment variables
 .env

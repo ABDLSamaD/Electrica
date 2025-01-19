@@ -4,7 +4,6 @@ import react from "@vitejs/plugin-react";
 export default defineConfig({
   plugins: [react()],
   build: {
-    outDir: "dist", // Ensure this matches the folder name in your vercel.json
-    emptyOutDir: true,
+    outDir: "dist", // This ensures the build output is in the 'dist' folder
   },
 });
