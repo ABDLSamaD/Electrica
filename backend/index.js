@@ -19,8 +19,6 @@ dotenv.config();
 // connection database function call from file
 connectionDatabase();
 
-const _dirname = path.resolve();
-
 const limiter = rateLimit({
   windowMs: 5 * 60 * 1000, // 15 minutes
   max: 200, // Limit each IP to 200 requests per `window` (here, per 5 minutes).
