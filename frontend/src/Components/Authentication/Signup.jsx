@@ -15,7 +15,7 @@ import PasswordChecker from "../OtherComponents/PasswordChecker";
 import Loader from "../OtherComponents/Loader";
 import axios from "axios";
 
-const SignUp = () => {
+const Signup = () => {
   const navigate = useNavigate(); //navigation then wiil true on page to another
 
   // states start
@@ -234,4 +234,4 @@ const SignUp = () => {
   );
 };
 
-export default SignUp;
+export default Signup;
