@@ -8,7 +8,7 @@ import InputForm from "../OtherComponents/InputForm";
 import Loader from "../OtherComponents/Loader";
 import { UAParser } from "ua-parser-js";
 
-const Signin = () => {
+const SignIn = () => {
   const navigate = useNavigate();
 
   // States
@@ -116,4 +116,4 @@ const Signin = () => {
   );
 };
 
-export default Signin;
+export default SignIn;
