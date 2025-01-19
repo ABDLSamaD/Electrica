@@ -8,7 +8,7 @@ const session = require("express-session");
 const MongoStore = require("connect-mongo");
 const { rateLimit } = require("express-rate-limit");
 const helmet = require("helmet");
-// const path = require("path");
+const path = require("path");
 const routes = require("./src/routes/routes");
 const adminRoutes = require("./src/routes/route-admin");
 const connectionDatabase = require("./src/models/connection");
@@ -19,9 +19,12 @@ dotenv.config();
 // connection database function call from file
 connectionDatabase();
 
+// directory name vith resolve
+const _dirname = path.resolve();
+
 const limiter = rateLimit({
   windowMs: 5 * 60 * 1000, // 15 minutes
-  max: 200, // Limit each IP to 200 requests per `window` (here, per 5 minutes).
+  max: 100, // Limit each IP to 200 requests per `window` (here, per 5 minutes).
   standardHeaders: "draft-7", // draft-6: `RateLimit-*` headers; draft-7: combined `RateLimit` header
   message: "Too many requests, please try again after 5 minutes.",
 });
@@ -43,7 +46,7 @@ app.use(cookieParser());
 app.use(bodyparser.json());
 
 // frontend path resolve config
-// app.use(express.static(path.join(_dirname, "/frontend/dist")));
+app.use(express.static(path.join(_dirname, "/frontend/dist")));
 
 // express-session
 // const isProduction = process.env.NODE_ENV === "production";
@@ -66,9 +69,9 @@ app.use(session(sessionConfig));
 // routes call
 app.use("/api/auth", routes);
 app.use("/api/adminauth", adminRoutes);
-// app.get("*", (_, res) => {
-//   res.sendFile(path.resolve(_dirname, "frontend", "dist", "index.html"));
-// });
+app.get("*", (_, res) => {
+  res.sendFile(path.resolve(_dirname, "frontend", "dist", "index.html"));
+});
 
 // contact support
 app.post("/user/contact-support", async (req, res) => {
