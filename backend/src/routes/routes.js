@@ -46,7 +46,7 @@ const {
   getUnreadMessages,
 } = require("../controllers/userProject");
 // const { requestUser } = require("../controllers/userRequest");
-const decodedToken = require("../middleware/decodedtoken");
+const decodedToken = require("../middleware/decodedToken");
 
 const loginRateLimiter = rateLimit({
   windowMs: 5 * 60 * 1000, // 5 minutes
