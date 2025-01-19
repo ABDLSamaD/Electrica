@@ -2,9 +2,13 @@
   "version": 2,
   "builds": [
     {
-      "src": "./index.js",
+      "src": "index.js",
       "use": "@vercel/node"
     }
   ],
-  "routes": [{ "src": "/api/(.*)", "dest": "index.js" }]
+  "routes": [
+    { "src": "/api/auth/(.*)", "dest": "index.js" },
+    { "src": "/api/adminauth/(.*)", "dest": "index.js" },
+    { "src": "/user/contact-support", "dest": "index.js" }
+  ]
 }
