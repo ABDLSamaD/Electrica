@@ -69,6 +69,9 @@ app.use(session(sessionConfig));
 // routes call
 app.use("/api/auth", routes);
 app.use("/api/adminauth", adminRoutes);
+app.get("/", (req, res) => {
+  res.send("Server electrica");
+});
 // app.get("*", (_, res) => {
 //   res.sendFile(path.resolve(_dirname, "frontend", "dist", "index.html"));
 // });
