@@ -8,8 +8,9 @@ pnpm-debug.log*
 # Node modules
 node_modules/
 
-# Vite build output
-dist/
+# Ignore dist in local development, but let Vercel rebuild it
+/frontend/dist
+
 
 # Environment variables
 .env
