@@ -8,8 +8,8 @@ import { Routes, Route } from "react-router-dom";
 const Home = React.lazy(() => import("./Pages/Home"));
 const About = React.lazy(() => import("./Pages/About"));
 import ProjectDetails from "./Pages/ProjectsDetails";
-import SignIn from "./Authentication/Signin";
-import SignUp from "./Authentication/Signup";
+import Signin from "./Authentication/Signin";
+import Signup from "./Authentication/Signup";
 import EmailVerification from "./Authentication/EmailVerification";
 import PrivateRoute from "./Private/PrivateRoute";
 import Forgot from "./Authentication/Reset_Password/Forgot";
@@ -100,11 +100,11 @@ const Main = () => {
             path="/signin"
             element={
               <UserPublicRoute>
-                <SignIn />
+                <Signin />
               </UserPublicRoute>
             }
           />
-          <Route path="/signup" element={<SignUp />} />
+          <Route path="/signup" element={<Signup />} />
           {/* User forgot password */}
           <Route path="/forgot_password" element={<Forgot />} />
           <Route path="*" element={<Errornotfound />} />
