@@ -2,7 +2,7 @@ import React, { useState, useEffect, useRef } from "react";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faEllipsisVertical } from "@fortawesome/free-solid-svg-icons";
 import { Link } from "react-router-dom";
-import NotifyClientModal from "./NotifyClientModal"; // Modal for notifying the client
+import Notifycient from "./Notifycient";
 import { FaBell } from "react-icons/fa";
 
 const DropDownMenu = ({ projectId, localhost, stageName, onCompleteStage }) => {
@@ -100,7 +100,7 @@ const DropDownMenu = ({ projectId, localhost, stageName, onCompleteStage }) => {
 
       {/* Notify Client Modal */}
       {isNotifyModalOpen && (
-        <NotifyClientModal
+        <Notifycient
           onClose={handleCloseNotifyModal}
           projectId={projectId}
           localhost={localhost}

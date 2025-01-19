@@ -10,8 +10,8 @@ import Alert from "../../OtherComponents/Alert";
 import { FaArrowLeft } from "react-icons/fa";
 import StageDetails from "./StageDetails";
 import LoaderAll from "../../OtherComponents/LoaderAll";
-import DropDownMenu from "./DropDownMenu";
-import MaterialAndWorker from "./MaterialAndWorker";
+import DropdownMenu from "./DropdownMenu";
+import Material_worker from "./Material_worker";
 
 const Stepone = () => {
   const navigate = useNavigate();
@@ -300,7 +300,7 @@ const Stepone = () => {
 
       {/* three dots content */}
       <div className="absolute top-4 right-4 z-50">
-        <DropDownMenu
+        <DropdownMenu
           projectId={projectId}
           localhost={localhost}
           stageName={stageName}
@@ -310,7 +310,7 @@ const Stepone = () => {
       </div>
 
       {/* material and worker form */}
-      <MaterialAndWorker
+      <Material_worker
         updates={updates}
         setUpdates={setUpdates}
         stageName={stageName}

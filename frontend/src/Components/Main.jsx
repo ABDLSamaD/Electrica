@@ -57,7 +57,7 @@ import ProjectReview from "./Admin/User/ProjectReview";
 import ProjectsUser from "./Admin/User/ProjectsUser";
 const Stepone = React.lazy(() => import("./Admin/Projectsteps/Stepone"));
 const AddMaterial = React.lazy(import("./Admin/Projectsteps/AddMaterial"));
-import NotifyClientModal from "./Admin/Projectsteps/NotifyClientModal";
+import NotifyClientModal from "./Admin/Projectsteps/Notifycient";
 // Admin Dashboard End
 
 const Main = () => {
