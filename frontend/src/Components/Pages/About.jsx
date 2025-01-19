@@ -3,6 +3,7 @@ import { motion } from "framer-motion";
 import { FaLightbulb, FaUsers, FaCogs, FaRocket } from "react-icons/fa";
 import { Link } from "react-router-dom";
 import HeaderMain from "./HeaderMain";
+import AboutImage from "../../assets/cartoon-electrician-working-meter-box-young-man-wearing-hard-hat-goggles-electrical-wiring-339592162.webp";
 
 const About = () => {
   const containerVariants = {
@@ -43,7 +44,7 @@ const About = () => {
 
         <motion.div className="w-full md:w-3/4 mb-16" variants={itemVariants}>
           <img
-            src="https://thumbs.dreamstime.com/b/cartoon-electrician-working-meter-box-young-man-wearing-hard-hat-goggles-electrical-wiring-339592162.jpg"
+            src={AboutImage}
             alt="Electrica's mission visualization"
             className="w-full h-auto rounded-3xl shadow-lg"
           />

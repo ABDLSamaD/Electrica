@@ -6,8 +6,6 @@ import axios from "axios";
 
 const HeaderMain = () => {
   const [isAuthenticatedUser, setIsAuthenticatedUser] = useState(false);
-  const [isUser, setIsUser] = useState(false);
-  const [isAdmin, setIsAdmin] = useState(false);
   const [isAuthenticatedAdmin, setIsAuthenticatedAdmin] = useState(false);
   const [isNavOpen, setIsNavOpen] = useState(false);
   const localhost = "http://localhost:5120";
@@ -15,17 +13,12 @@ const HeaderMain = () => {
   // Function to check user authentication based on cookies
   const checkAuth = async () => {
     try {
-      const userAuthToken = document.cookie.includes("auth_token");
-      if (!userAuthToken) {
-        setIsAuthenticatedUser(false);
-        return;
-      }
       // Make an API request to check user authentication status
       const response = await axios.get(`${localhost}/api/auth/check-auth`, {
         withCredentials: true,
       });
 
-      if (response.status === 200 && document.cookie.includes("auth_token")) {
+      if (response.status === 200 && response.data.isAuthenticated) {
         setIsAuthenticatedUser(true);
       } else {
         setIsAuthenticatedUser(false);
@@ -37,12 +30,6 @@ const HeaderMain = () => {
 
   // Function to check admin authentication based on cookies
   const checkAdminAuth = async () => {
-    // Check if admin_auth_token is present in cookies first
-    const adminAuthToken = document.cookie.includes("admin_auth");
-    if (!adminAuthToken) {
-      setIsAuthenticatedAdmin(false);
-      return;
-    }
     try {
       const response = await axios.get(
         `${localhost}/api/adminauth/check-adminauth`,
@@ -50,7 +37,7 @@ const HeaderMain = () => {
           withCredentials: true,
         }
       );
-      if (response.status === 200 && document.cookie.includes("admin_auth")) {
+      if (response.status === 200 && response.data.isAuthenticated) {
         setIsAuthenticatedAdmin(true);
       } else {
         setIsAuthenticatedAdmin(false);
@@ -71,22 +58,8 @@ const HeaderMain = () => {
     setIsNavOpen(!isNavOpen);
   };
 
-  // Handle logout
-  const handleLogout = () => {
-    // Clear cookies
-    document.cookie = "auth_token=; max-age=0"; // User token
-    document.cookie = "admin_auth_token=; max-age=0"; // Admin token
-
-    // Reset authentication states
-    setIsAuthenticatedUser(false);
-    setIsAuthenticatedAdmin(false);
-
-    // Optionally, navigate to home page or sign-in page after logout
-    window.location.href = "/signin"; // Redirect to sign-in page
-  };
-
   return (
-    <header className="fixed top-8 left-0 right-0 z-50 shadow-sm w-full h-auto">
+    <header className="fixed top-8 left-0 right-0 z-50 shadow-sm h-auto">
       <div className="container p-3 flex items-center justify-between font-sans rounded-xl backdrop-blur-lg bg-[hsla(242,88.4%,66.3%,0.12)]">
         <div className="logo">
           <h2 className="text-gray-200 text-2xl hover:text-gray-300 transition-all">
@@ -132,7 +105,7 @@ const HeaderMain = () => {
               Project
             </NavLink>
             <NavLink
-              to="/#"
+              to="#/"
               className={({ isActive }) =>
                 isActive
                   ? "text-indigo-400"
@@ -213,7 +186,7 @@ const HeaderMain = () => {
           </li>
           <li>
             <Link
-              to="/#"
+              to="/service"
               onClick={toggleNav}
               className="text-white hover:text-indigo-400"
             >
