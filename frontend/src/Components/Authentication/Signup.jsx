@@ -17,6 +17,7 @@ import axios from "axios";
 
 const Signup = () => {
   const navigate = useNavigate(); //navigation then wiil true on page to another
+  const electricaURL = import.meta.env.VITE_ELECTRICA_API_URL;
 
   // states start
   const [credentials, setCredenetials] = useState({
@@ -70,7 +71,7 @@ const Signup = () => {
       setLoading(true);
       // fetch api of signup user form from backend
       const response = await axios.post(
-        "http://localhost:5120/api/auth/signup",
+        `${electricaURL}localhost:5120/api/auth/signup`,
         {
           name,
           email,

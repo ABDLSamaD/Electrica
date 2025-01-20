@@ -35,7 +35,7 @@ app.use(helmet());
 
 // cors cnfiguration
 const corsConfig = {
-  origin: "http://localhost:5173/",
+  origin: "https://electrica-theta.vercel.app/",
   credentials: true, // Allow sending credentials (cookies)
   methods: ["GET", "POST", "PUT", "PATCH"],
 };

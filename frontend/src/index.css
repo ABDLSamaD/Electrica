@@ -226,10 +226,9 @@ span {
   position: relative;
 }
 .form_container {
-  padding: 50px 40px 20px 40px;
-  background: rgba(239, 239, 239, 0.1);
-  box-shadow: 2px 0px 6px #141414bf;
-  border: 1px solid gray;
+  background: rgba(239, 239, 239, 0.09);
+  box-shadow: 2px 0px 6px #00000033;
+  border: 0.2px solid gray;
   border-radius: 10px;
 }
 .logo_container {

@@ -6,14 +6,14 @@ import LoaderAll from "../OtherComponents/LoaderAll";
 const AdminPublicRoute = ({ children }) => {
   const navigate = useNavigate();
   const [isAuthenticated, setIsAuthenticated] = useState(null);
-  const localhost = "http://localhost:5120";
+  const electricaURL = import.meta.env.VITE_ELECTRICA_API_URL;
 
   useEffect(() => {
     const checkAuth = async () => {
       try {
         // If cookie exists, verify session with the API
         const response = await axios.get(
-          `${localhost}/api/adminauth/check-adminauth`,
+          `${electricaURL}/api/adminauth/check-adminauth`,
           { withCredentials: true }
         );
 

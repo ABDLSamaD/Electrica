@@ -8,13 +8,13 @@ const HeaderMain = () => {
   const [isAuthenticatedUser, setIsAuthenticatedUser] = useState(false);
   const [isAuthenticatedAdmin, setIsAuthenticatedAdmin] = useState(false);
   const [isNavOpen, setIsNavOpen] = useState(false);
-  const localhost = "http://localhost:5120";
+  const electricaURL = import.meta.env.VITE_ELECTRICA_API_URL;
 
   // Function to check user authentication based on cookies
   const checkAuth = async () => {
     try {
       // Make an API request to check user authentication status
-      const response = await axios.get(`${localhost}/api/auth/check-auth`, {
+      const response = await axios.get(`${electricaURL}/api/auth/check-auth`, {
         withCredentials: true,
       });
 
@@ -32,7 +32,7 @@ const HeaderMain = () => {
   const checkAdminAuth = async () => {
     try {
       const response = await axios.get(
-        `${localhost}/api/adminauth/check-adminauth`,
+        `${electricaURL}/api/adminauth/check-adminauth`,
         {
           withCredentials: true,
         }
@@ -105,7 +105,7 @@ const HeaderMain = () => {
               Project
             </NavLink>
             <NavLink
-              to="#/"
+              to="/service"
               className={({ isActive }) =>
                 isActive
                   ? "text-indigo-400"

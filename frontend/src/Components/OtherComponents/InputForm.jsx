@@ -23,7 +23,7 @@ const InputForm = ({
   };
   return (
     <form
-      className="my-3 form_container rounded-xl w-fit h-fit flex flex-col items-center justify-center gap-4"
+      className="my-3 p-8 form_container rounded-xl w-fit h-fit flex flex-col items-center justify-center gap-4"
       onSubmit={hanldeLogin}
     >
       <div className="title_container flex items-center justify-center flex-col gap-3">

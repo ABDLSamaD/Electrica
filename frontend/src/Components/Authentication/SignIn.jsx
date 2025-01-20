@@ -10,6 +10,7 @@ import { UAParser } from "ua-parser-js";
 
 const SignIn = () => {
   const navigate = useNavigate();
+  const electricaURL = import.meta.env.VITE_ELECTRICA_API_URL;
 
   // States
   const [alert, setAlert] = useState(null);
@@ -48,7 +49,7 @@ const SignIn = () => {
 
       // Step 3: Hit API
       const response = await axios.post(
-        "http://localhost:5120/api/auth/signin",
+        `${electricaURL}/api/auth/signin`,
         { email, password, rememberMe, ipAddress, deviceInfo },
         { withCredentials: true }
       );
@@ -80,7 +81,7 @@ const SignIn = () => {
   return (
     <>
       {loader && <Loader />} {/* Full loader */}
-      <div id="signin">
+      <div id="signin" className="relative md:top-0 top-20">
         {alert && (
           <Alert
             type={alert.type}
@@ -93,7 +94,7 @@ const SignIn = () => {
             <FontAwesomeIcon icon={faArrowLeft} size="2xs" />
           </Link>
         </div>
-        <div className="w-90 relative h-full flex items-center justify-center flex-col">
+        <div className="relative h-full flex items-center justify-center flex-col">
           <InputForm
             hanldeLogin={handleSignin}
             onChange={onChange}

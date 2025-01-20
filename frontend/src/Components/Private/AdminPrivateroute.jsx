@@ -1,16 +1,18 @@
 import axios from "axios";
 import React, { useEffect, useState } from "react";
 import { Navigate, Outlet } from "react-router-dom";
+import LoaderAll from "../OtherComponents/LoaderAll";
 
 const AdminPrivateRoute = () => {
   const [isAuthenticated, setIsAuthenticated] = useState(null);
   const [loading, setLoading] = useState(true);
-  const localhost = `http://localhost:5120`;
+  const electricaURL = import.meta.env.VITE_ELECTRICA_API_URL;
+
   useEffect(() => {
     const validateSession = async () => {
       try {
         const response = await axios.get(
-          `${localhost}/api/adminauth/check-adminauth`,
+          `${electricaURL}/api/adminauth/check-adminauth`,
           { withCredentials: true }
         );
         if (response.status === 200 && response.data.isAuthenticated) {
@@ -30,7 +32,7 @@ const AdminPrivateRoute = () => {
   if (loading) {
     return (
       <div className="h-screen flex items-center justify-center">
-        <p>Loading...</p>
+        <LoaderAll />
       </div>
     );
   }

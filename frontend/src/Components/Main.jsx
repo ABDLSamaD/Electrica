@@ -8,6 +8,7 @@ import { Routes, Route } from "react-router-dom";
 const Home = React.lazy(() => import("./Pages/Home"));
 const About = React.lazy(() => import("./Pages/About"));
 import ProjectDetails from "./Pages/ProjectsDetails";
+import ElectricalServicePage from "./Pages/ElectricalServicePage";
 import SignIn from "./Authentication/SignIn";
 import Signup from "./Authentication/Signup";
 import EmailVerification from "./Authentication/EmailVerification";
@@ -58,6 +59,8 @@ import ProjectsUser from "./Admin/User/ProjectsUser";
 const Stepone = React.lazy(() => import("./Admin/Projectsteps/Stepone"));
 const AddMaterial = React.lazy(import("./Admin/Projectsteps/AddMaterial"));
 import NotifyClientModal from "./Admin/Projectsteps/Notifycient";
+import LoaderAll from "./OtherComponents/LoaderAll";
+
 // Admin Dashboard End
 
 const Main = () => {
@@ -88,7 +91,7 @@ const Main = () => {
       <Suspense
         fallback={
           <div className="flex items-center justify-center text-base text-white min-h-screen">
-            Loading...
+            <LoaderAll />
           </div>
         }
       >
@@ -96,6 +99,7 @@ const Main = () => {
           <Route path="/" element={<Home />} />
           <Route path="/about" element={<About />} />
           <Route path="/project-details" element={<ProjectDetails />} />
+          <Route path="/service" element={<ElectricalServicePage />} />
           <Route
             path="/signin"
             element={

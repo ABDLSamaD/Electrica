@@ -22,6 +22,7 @@
     "backend": "file:..",
     "chart.js": "^4.4.7",
     "cors": "^2.8.5",
+    "dotenv": "^16.4.7",
     "framer-motion": "^11.11.17",
     "gsap": "^3.12.5",
     "js-cookie": "^3.0.5",

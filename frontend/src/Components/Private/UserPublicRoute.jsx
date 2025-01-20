@@ -6,14 +6,17 @@ import axios from "axios";
 const UserPublicRoute = ({ children }) => {
   const navigate = useNavigate();
   const [isAuthenticated, setIsAuthenticated] = useState(null);
-  const baseURL = "http://localhost:5120";
+  const electricaURL = import.meta.env.VITE_ELECTRICA_API_URL;
 
   useEffect(() => {
     const checkAuth = async () => {
       try {
-        const response = await axios.get(`${baseURL}/api/auth/check-auth`, {
-          withCredentials: true,
-        });
+        const response = await axios.get(
+          `${electricaURL}/api/auth/check-auth`,
+          {
+            withCredentials: true,
+          }
+        );
 
         // Check the response from the server
         if (response.status === 200 && response.data.isAuthenticated) {
