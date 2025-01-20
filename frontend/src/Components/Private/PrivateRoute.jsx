@@ -5,12 +5,13 @@ import axios from "axios";
 const PrivateRoute = () => {
   const [isAuthenticated, setIsAuthenticated] = useState(null);
   const [loading, setLoading] = useState(true);
+  const electricaURL = import.meta.env.VITE_ELECTRICA_API_URL;
 
   useEffect(() => {
     const validateSession = async () => {
       try {
         const response = await axios.get(
-          "http://localhost:5120/api/auth/check-auth",
+          `${electricaURL}/api/auth/check-auth`,
           {
             withCredentials: true,
           }

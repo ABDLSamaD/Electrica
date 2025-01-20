@@ -5,12 +5,7 @@ import {
   useOutletContext,
   useParams,
 } from "react-router-dom";
-import {
-  FaArrowLeft,
-  FaCheckCircle,
-  FaTimesCircle,
-  FaProjectDiagram,
-} from "react-icons/fa";
+import { FaArrowLeft } from "react-icons/fa";
 
 const EachProfile = () => {
   const { userId } = useParams();

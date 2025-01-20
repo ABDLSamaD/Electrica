@@ -5,6 +5,7 @@ import ForgotPassword from "../../OtherComponents/ForgotPassword";
 
 const ForgotAdminPassword = () => {
   const navigate = useNavigate();
+  const electricaURL = import.meta.env.VITE_ELECTRICA_API_URL;
   const [email, setEmail] = useState("");
   const [alert, setAlert] = useState(null);
 
@@ -12,7 +13,7 @@ const ForgotAdminPassword = () => {
     e.preventDefault();
     try {
       const response = await axios.post(
-        "http://localhost:5120/api/adminAuth/forgt-paswrd",
+        `${electricaURL}/api/adminAuth/forgt-paswrd`,
         { email }
       );
       if (response.status === 200) {

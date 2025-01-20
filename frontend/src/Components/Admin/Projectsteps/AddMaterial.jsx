@@ -9,7 +9,8 @@ import { useSpring, animated } from "react-spring";
 
 const AddMaterial = () => {
   const navigate = useNavigate();
-  const { localhost, projects, fetchProject } = useOutletContext();
+  const { localhost, projects, fetchProject, electricaURL } =
+    useOutletContext();
   const { projectId, stageName } = useParams();
 
   // states start
@@ -181,7 +182,7 @@ const AddMaterial = () => {
       }
 
       const response = await axios.post(
-        `${localhost}/api/adminauth/add-material`,
+        `${electricaURL}/api/adminauth/add-material`,
         { materials: newMaterials, projectId, stageName },
         { withCredentials: true }
       );

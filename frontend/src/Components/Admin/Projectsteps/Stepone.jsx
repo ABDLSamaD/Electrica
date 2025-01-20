@@ -15,7 +15,7 @@ import Material_worker from "./Material_worker";
 
 const Stepone = () => {
   const navigate = useNavigate();
-  const { users, localhost, fetchUsers, projects, fetchProject } =
+  const { users, fetchUsers, projects, fetchProject, electricaURL } =
     useOutletContext();
   const { projectId } = useParams();
   // states start
@@ -145,7 +145,7 @@ const Stepone = () => {
     setLoading(true);
     try {
       const response = await axios.post(
-        `${localhost}/api/adminauth/projectdaily-update`,
+        `${electricaURL}/api/adminauth/projectdaily-update`,
         {
           projectId,
           stageName,
@@ -186,7 +186,7 @@ const Stepone = () => {
     setLoading(true);
     try {
       const response = await axios.post(
-        `${localhost}/api/adminauth/complete-stage`,
+        `${electricaURL}/api/adminauth/complete-stage`,
         { projectId, stageName },
         { withCredentials: true }
       );
@@ -302,7 +302,7 @@ const Stepone = () => {
       <div className="absolute top-4 right-4 z-50">
         <DropdownMenu
           projectId={projectId}
-          localhost={localhost}
+          electricaURL={electricaURL}
           stageName={stageName}
           users={users}
           onCompleteStage={handleCompleteStage}

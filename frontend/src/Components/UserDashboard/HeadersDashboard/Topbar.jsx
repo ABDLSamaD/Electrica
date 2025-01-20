@@ -16,7 +16,7 @@ import { motion, AnimatePresence } from "framer-motion";
 import { LazyLoadImage } from "react-lazy-load-image-component";
 import "react-lazy-load-image-component/src/effects/blur.css";
 
-const Topbar = ({ user }) => {
+const Topbar = ({ user, electricaURL }) => {
   const navigate = useNavigate();
 
   // states start
@@ -64,7 +64,7 @@ const Topbar = ({ user }) => {
     try {
       setLogout(false);
       const response = await axios.post(
-        "http://localhost:5120/api/auth/logout",
+        `${electricaURL}/api/auth/logout`,
         {},
         { withCredentials: true }
       );

@@ -3,7 +3,7 @@ import { Link } from "react-router-dom";
 import { CheckCircle, Circle, House, XCircle } from "lucide-react";
 import axios from "axios";
 
-const ProjectCard = ({ project, userId, localhost, refreshProjects }) => {
+const ProjectCard = ({ project, userId, electricaURL, refreshProjects }) => {
   const [isStarting, setIsStarting] = useState(false);
   const [hasStarted, setHasStarted] = useState(project.startStage);
   const [modalOpen, setModalOpen] = useState(false);
@@ -13,7 +13,7 @@ const ProjectCard = ({ project, userId, localhost, refreshProjects }) => {
     setIsStarting(true);
     try {
       const response = await axios.post(
-        `${localhost}/api/adminauth/start-project`,
+        `${electricaURL}/api/adminauth/start-project`,
         {
           projectId,
           startMessage: "Project started by admin.",

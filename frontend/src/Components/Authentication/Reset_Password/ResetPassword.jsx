@@ -13,12 +13,13 @@ const ResetPassword = () => {
   const [type, setType] = useState("");
   const [message, setMessage] = useState("");
   const resetToken = localStorage.getItem("reset_token_forgot");
+  const electricaURL = import.meta.env.VITE_ELECTRICA_API_URL;
 
   const handleResetPassword = async (e) => {
     e.preventDefault();
     try {
       const response = await axios.post(
-        "http://localhost:5120/api/auth/reset-password",
+        `${electricaURL}/api/auth/reset-password`,
         {
           newPassword,
           resetToken,
@@ -40,7 +41,10 @@ const ResetPassword = () => {
     } catch (err) {
       setMessage(err.response?.data?.message || "Failed to send OTP");
       setType(err.response?.data?.type);
-      setAlert(err.response?.data?.type, err.response?.data?.message || "Failed to send OTP");
+      setAlert(
+        err.response?.data?.type,
+        err.response?.data?.message || "Failed to send OTP"
+      );
     }
   };
 

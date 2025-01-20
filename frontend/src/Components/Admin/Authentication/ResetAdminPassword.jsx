@@ -8,6 +8,7 @@ import axios from "axios";
 const ResetAdminPassword = () => {
   const navigate = useNavigate();
   const resetToken = localStorage.getItem("admn_resttokn");
+  const electricaURL = import.meta.env.VITE_ELECTRICA_API_URL;
 
   const [newPassword, setNewPassword] = useState("");
   const [alert, setAlert] = useState(null);
@@ -18,7 +19,7 @@ const ResetAdminPassword = () => {
     e.preventDefault();
     try {
       const response = await axios.post(
-        "http://localhost:5120/api/adminAuth/reset-paswrd",
+        `${electricaURL}/api/adminAuth/reset-paswrd`,
         { newPassword },
         {
           headers: {

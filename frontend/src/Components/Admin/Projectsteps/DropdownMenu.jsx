@@ -5,7 +5,12 @@ import { Link } from "react-router-dom";
 import Notifycient from "./Notifycient";
 import { FaBell } from "react-icons/fa";
 
-const DropDownMenu = ({ projectId, localhost, stageName, onCompleteStage }) => {
+const DropDownMenu = ({
+  projectId,
+  electricaURL,
+  stageName,
+  onCompleteStage,
+}) => {
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
   const [isNotifyModalOpen, setIsNotifyModalOpen] = useState(false); // Modal state
   const dropdownRef = useRef(null);
@@ -103,7 +108,7 @@ const DropDownMenu = ({ projectId, localhost, stageName, onCompleteStage }) => {
         <Notifycient
           onClose={handleCloseNotifyModal}
           projectId={projectId}
-          localhost={localhost}
+          baackendURL={electricaURL}
           stageName={stageName}
         />
       )}

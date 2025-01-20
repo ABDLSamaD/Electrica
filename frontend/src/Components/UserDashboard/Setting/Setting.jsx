@@ -3,6 +3,7 @@ import React, { useState } from "react";
 import Alert from "../../OtherComponents/Alert";
 
 const Setting = () => {
+  const electricaURL = import.meta.env.VITE_ELECTRICA_API_URL;
   // State for notifications
   const [emailNotifications, setEmailNotifications] = useState({
     productUpdates: true,
@@ -50,7 +51,7 @@ const Setting = () => {
       // Submit password change logic
       try {
         const response = await axios.post(
-          "http://localhost:5120/api/auth/change-password",
+          `${electricaURL}/api/auth/change-password`,
           {
             oldPassword,
             newPassword,

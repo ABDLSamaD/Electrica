@@ -7,6 +7,7 @@ import Alert from "../../OtherComponents/Alert";
 
 const VerifyADMNOTP = () => {
   const navigate = useNavigate();
+  const electricaURL = import.meta.env.VITE_ELECTRICA_API_URL;
 
   const [otp, setOtp] = useState("");
   const [message, setMessage] = useState("");
@@ -25,7 +26,7 @@ const VerifyADMNOTP = () => {
     e.preventDefault();
     try {
       const response = await axios.post(
-        "http://localhost:5120/api/adminAuth/verify-forgotOTP",
+        `${electricaURL}/api/adminAuth/verify-forgotOTP`,
         { otp },
         { headers: { Authorization: `Bearer ${resetToken}` } }
       );

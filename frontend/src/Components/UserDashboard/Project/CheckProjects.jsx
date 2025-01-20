@@ -31,7 +31,8 @@ const highlightText = (text, query) => {
 };
 
 const CheckProjects = () => {
-  const { fetchUser, projects, fetchProject } = useOutletContext();
+  const { fetchUser, projects, fetchProject, electricaURL } =
+    useOutletContext();
   const navigate = useNavigate();
   const [loading, setLoading] = useState(false);
   const [searchQuery, setSearchQuery] = useState(""); // State for search query
@@ -58,7 +59,7 @@ const CheckProjects = () => {
     try {
       setLoading(true);
       const response = await axios.post(
-        "http://localhost:5120/api/auth/remove-project",
+        `${electricaURL}http://localhost:5120/api/auth/remove-project`,
         { projectId, removeProject: true },
         { withCredentials: true }
       );

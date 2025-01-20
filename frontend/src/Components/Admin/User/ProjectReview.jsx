@@ -11,7 +11,7 @@ import LoaderAll from "../../OtherComponents/LoaderAll";
 
 const ProjectReview = () => {
   const navigate = useNavigate();
-  const { localhost, users, projects, fetchProject } = useOutletContext(); // Users and fetchUsers from context
+  const { users, projects, fetchProject, electricaURL } = useOutletContext(); // Users and fetchUsers from context
   const { projectId, userId } = useParams(); // Retrieve projectId and userId from route params
 
   const [project, setProject] = useState(null);
@@ -50,7 +50,7 @@ const ProjectReview = () => {
     setUpdating(true);
     try {
       const response = await axios.post(
-        `${localhost}/api/adminauth/project-status`,
+        `${electricaURL}/api/adminauth/project-status`,
         {
           projectId: project._id,
           status: selectedStatus,
@@ -60,7 +60,7 @@ const ProjectReview = () => {
       );
 
       if (response.status === 200) {
-        setAlert({ type: "success", message: response.data.message });
+        setAlert({ type: response.data.type, message: response.data.message });
         fetchProject(); // Refresh users/projects
         setSelectedStatus("");
         setStatusReason("");

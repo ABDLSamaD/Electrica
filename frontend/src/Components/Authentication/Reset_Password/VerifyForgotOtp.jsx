@@ -15,6 +15,8 @@ const VerifyForgotOtp = () => {
   const resetToken = localStorage.getItem("reset_token_forgot");
   const emailForgot = localStorage.getItem("email-forgot");
 
+  const electricaURL = import.meta.env.VITE_ELECTRICA_API_URL;
+
   const handleChange = (e, index) => {
     const value = e.target.value;
     const newOtp = [...otp];
@@ -37,7 +39,7 @@ const VerifyForgotOtp = () => {
     setLoading(true);
     try {
       const response = await axios.post(
-        "http://localhost:5120/api/auth/verify-forgototp",
+        `${electricaURL}/api/auth/verify-forgototp`,
         { otp: otpString, resetToken, email: emailForgot }
       );
       if (response.status === 200) {

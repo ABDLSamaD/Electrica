@@ -12,7 +12,7 @@ import {
   FaChevronDown,
 } from "react-icons/fa";
 
-function StageDetails({ localhost, projectId, stageName }) {
+function StageDetails({ electricaURL, projectId, stageName }) {
   const [stageData, setStageData] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
@@ -23,7 +23,7 @@ function StageDetails({ localhost, projectId, stageName }) {
       setError(null); // Reset error state
       try {
         const response = await axios.post(
-          `${localhost}/api/adminauth/getstage`,
+          `${electricaURL}/api/adminauth/getstage`,
           { projectId, stageName },
           { withCredentials: true }
         );
@@ -53,6 +53,13 @@ function StageDetails({ localhost, projectId, stageName }) {
           <p className="font-bold">Error</p>
           <p>{error}</p>
         </div>
+      </div>
+    );
+  }
+  if (loading) {
+    return (
+      <div className="flex items-center justify-center">
+        <LoaderAll />
       </div>
     );
   }

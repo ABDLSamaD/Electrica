@@ -11,6 +11,7 @@ const EmailVerification = () => {
   const [otp, setOtp] = useState(["", "", "", "", "", ""]);
   const [alert, setAlert] = useState(null);
   const [loading, setLoading] = useState(false);
+  const electricaURL = import.meta.env.VITE_ELECTRICA_API_URL;
 
   const handleChange = (e, index) => {
     const value = e.target.value;
@@ -35,10 +36,10 @@ const EmailVerification = () => {
     const otpString = otp.join("");
 
     try {
-      const response = await axios.post(
-        "http://localhost:5120/api/auth/verify-otp",
-        { otp: otpString, email: localStorage.getItem("us-em-temporary") }
-      );
+      const response = await axios.post(`${electricaURL}/api/auth/verify-otp`, {
+        otp: otpString,
+        email: localStorage.getItem("us-em-temporary"),
+      });
 
       if (response.status === 200) {
         localStorage.removeItem("us-em-temporary");

@@ -8,13 +8,14 @@ const Forgot = () => {
   const [email, setEmail] = useState("");
   const [alert, setAlert] = useState(null);
   const [loading, setLoading] = useState(false);
+  const electricaURL = import.meta.env.VITE_ELECTRICA_API_URL;
 
   const handleForgotPassword = async (e) => {
     e.preventDefault();
     setLoading(true);
     try {
       const response = await axios.post(
-        "http://localhost:5120/api/auth/forgot-password",
+        `${electricaURL}/api/auth/forgot-password`,
         { email }
       );
       if (response.status === 200) {

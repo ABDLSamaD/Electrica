@@ -1,11 +1,10 @@
 import React, { useEffect, useState } from "react";
-import { Link, useOutletContext } from "react-router-dom";
+import { useOutletContext } from "react-router-dom";
 import LoaderAll from "../../OtherComponents/LoaderAll";
 import ProjectCard from "./ProjectCard";
 
 const ProjectUsers = () => {
-  const { users, localhost, fetchUsers, projects, fetchProject } =
-    useOutletContext();
+  const { users, projects, fetchProject, electricaURL } = useOutletContext();
   const [project, setProject] = useState([]);
   const [loading, setLoading] = useState(true);
   // Update projects whenever `users` changes
@@ -52,7 +51,7 @@ const ProjectUsers = () => {
               key={project._id}
               project={project}
               userId={user._id}
-              localhost={localhost}
+              electricaURL={electricaURL}
               refreshProjects={fetchProject}
             />
           ))

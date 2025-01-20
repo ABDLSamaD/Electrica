@@ -9,7 +9,7 @@ import LoaderAll from "../../OtherComponents/LoaderAll";
 
 const AddProjectForm = () => {
   const navigate = useNavigate();
-  const { user } = useOutletContext();
+  const { user, electricaURL } = useOutletContext();
 
   const handleBack = () => {
     navigate(-1); // Navigate to the previous route
@@ -58,7 +58,7 @@ const AddProjectForm = () => {
       } = formData;
 
       const response = await axios.post(
-        "http://localhost:5120/api/auth/project",
+        `${electricaURL}/api/auth/project`,
         {
           clientName,
           clientNumber,

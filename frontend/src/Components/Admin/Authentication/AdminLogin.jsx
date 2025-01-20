@@ -9,6 +9,7 @@ import Loader from "../../OtherComponents/Loader";
 
 const AdminLogin = () => {
   const navigate = useNavigate();
+  const electricaURL = import.meta.env.VITE_ELECTRICA_API_URL;
   //   State Start
   const [credentials, setCredentials] = useState({
     email: "",
@@ -29,7 +30,7 @@ const AdminLogin = () => {
     try {
       const { email, password } = credentials;
       const response = await axios.post(
-        "http://localhost:5120/api/adminauth/signin",
+        `${electricaURL}/api/adminauth/signin`,
         {
           email,
           password,

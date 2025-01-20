@@ -3,7 +3,7 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faTimes, faPaperPlane } from "@fortawesome/free-solid-svg-icons";
 import axios from "axios";
 
-const NotifyClientModal = ({ onClose, projectId, localhost, stageName }) => {
+const NotifyClientModal = ({ onClose, projectId, baackendURL, stageName }) => {
   const [message, setMessage] = useState("");
   const [isLoading, setIsLoading] = useState(false);
   const [alert, setAlert] = useState(null);
@@ -17,7 +17,7 @@ const NotifyClientModal = ({ onClose, projectId, localhost, stageName }) => {
     setIsLoading(true);
     try {
       const response = await axios.post(
-        `${localhost}/api/adminauth/notify-client`,
+        `${baackendURL}/api/adminauth/notify-client`,
         { projectId, stageName, message },
         { withCredentials: true }
       );

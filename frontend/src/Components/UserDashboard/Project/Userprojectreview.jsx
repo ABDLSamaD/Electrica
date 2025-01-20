@@ -16,8 +16,7 @@ import ClientConfirmation from "./ClientConfirmation";
 
 const StageManagement = () => {
   const navigate = useNavigate();
-  const { projects, fetchProject } = useOutletContext();
-  const localhost = "http://localhost:5120";
+  const { projects, fetchProject, electricaURL } = useOutletContext();
   const { projectId } = useParams();
   const [project, setProject] = useState(null);
   const [loading, setLoading] = useState(true);
@@ -66,7 +65,7 @@ const StageManagement = () => {
     setLoading(true);
     try {
       const response = await axios.post(
-        `${localhost}/api/auth/approve-material`,
+        `${electricaURL}/api/auth/approve-material`,
         { stageName, projectId, materialId },
         { withCredentials: true }
       );
@@ -100,7 +99,7 @@ const StageManagement = () => {
   const handleMessageToAdmin = async () => {
     try {
       const response = await axios.post(
-        `${localhost}/api/auth/messageAdmin`,
+        `${electricaURL}/api/auth/messageAdmin`,
         { projectId, message },
         { withCredentials: true }
       );
@@ -128,7 +127,7 @@ const StageManagement = () => {
   ) => {
     try {
       const response = await axios.post(
-        `${localhost}/api/auth/client-confirmation`,
+        `${electricaURL}/api/auth/client-confirmation`,
         {
           projectId,
           stageName,

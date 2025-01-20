@@ -6,12 +6,13 @@ import { FaUserAlt, FaPhoneAlt, FaMapMarkerAlt, FaCity } from "react-icons/fa";
 import { AiOutlineMail } from "react-icons/ai";
 import { faArrowLeft } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { Import } from "lucide-react";
 
 const Profile = () => {
   const navigate = useNavigate();
   // const auth = localStorage.getItem("dshbrd_usr_tkn"); // get token auth
 
-  const { user, fetchUser } = useOutletContext();
+  const { user, fetchUser, electricaURL } = useOutletContext();
   // States Start
   const [profileImg, setProfileImg] = useState(
     "https://upload.wikimedia.org/wikipedia/commons/thumb/b/b5/Windows_10_Default_Profile_Picture.svg/2048px-Windows_10_Default_Profile_Picture.svg.png"
@@ -46,7 +47,7 @@ const Profile = () => {
     try {
       const { fullName, address, phone, city } = credentials;
       const response = await axios.post(
-        "http://localhost:5120/api/auth/adduser-details",
+        `${electricaURL}/api/auth/adduser-details`,
         {
           fullName,
           address,
@@ -92,7 +93,7 @@ const Profile = () => {
       data.append("file", profileImg);
       data.append("upload_preset", "electrica-profile");
       data.append("cloud_name", "dchie2dvi");
-      fetch("https://api.cloudinary.com/v1_1/dchie2dvi/image/upload", {
+      fetch(import.meta.env.VITE_CLOUDINARY_URL, {
         method: "post",
         body: data,
       })
@@ -114,7 +115,7 @@ const Profile = () => {
     setLoading(true);
     try {
       const response = await axios.post(
-        "http://localhost:5120/api/auth/adduser-profileImg",
+        `${electricaURL}/api/auth/adduser-profileImg`,
         {
           profileImg,
         },

@@ -9,7 +9,7 @@ const DashboardLayout = () => {
   const [user, setUser] = useState({});
   const [projects, setProjects] = useState([]);
   const [isSidebarOpen, setIsSidebarOpen] = useState(true);
-  const localhost = "http://localhost:5120";
+  const electricaURL = import.meta.env.VITE_ELECTRICA_API_URL;
 
   const toggleSidebar = () => {
     setIsSidebarOpen(!isSidebarOpen);
@@ -18,7 +18,7 @@ const DashboardLayout = () => {
   // fetch user function and fetch also user project details
   const fetchUser = async () => {
     try {
-      const response = await axios.get(`${localhost}/api/auth/user-info`, {
+      const response = await axios.get(`${electricaURL}/api/auth/user-info`, {
         withCredentials: true,
       });
       const result = await response.data;
@@ -35,7 +35,7 @@ const DashboardLayout = () => {
   const fetchProject = async () => {
     try {
       const response = await axios.get(
-        `${localhost}/api/auth/project-details`,
+        `${electricaURL}/api/auth/project-details`,
         { withCredentials: true }
       );
       if (response.status === 200) {
@@ -60,7 +60,11 @@ const DashboardLayout = () => {
       <div className="relative w-full">
         {/* topbar */}
         <div className="sticky top-0 z-40">
-          <Topbar toggleSidebar={toggleSidebar} user={user} />
+          <Topbar
+            toggleSidebar={toggleSidebar}
+            user={user}
+            electricaURL={electricaURL}
+          />
         </div>
         <motion.div
           key="main-content"
@@ -70,7 +74,15 @@ const DashboardLayout = () => {
           transition={{ duration: 0.3 }}
         >
           <div className="relative top-7">
-            <Outlet context={{ user, fetchUser, projects, fetchProject }} />
+            <Outlet
+              context={{
+                user,
+                fetchUser,
+                projects,
+                fetchProject,
+                electricaURL,
+              }}
+            />
           </div>
         </motion.div>
       </div>
