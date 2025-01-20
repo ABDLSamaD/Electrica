@@ -56,7 +56,7 @@ const sessionConfig = {
   cookie: {
     maxAge: 24 * 60 * 60 * 1000, // 1 day
     httpOnly: true,
-    secure: true, // Set to true in production with HTTPS
+    secure: process.env.NODE_ENV === "production", // Set to true in production with HTTPS
   },
   secret: process.env.SESSION_SECRET, // A common session secret for both user and admin
   store: MongoStore.create({
