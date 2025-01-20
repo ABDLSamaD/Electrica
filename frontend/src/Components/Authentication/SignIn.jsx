@@ -63,7 +63,7 @@ const SignIn = () => {
 
         setTimeout(() => {
           navigate("/db-au-user");
-        }, 2000);
+        }, 3000);
       } else {
         setMiniLoader(false); // Stop mini loader
         setAlert({ type: data.type, message: data.message });
