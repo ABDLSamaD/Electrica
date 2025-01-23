@@ -11,6 +11,11 @@ const DashboardLayout = () => {
   const [isSidebarOpen, setIsSidebarOpen] = useState(true);
   const electricaURL = import.meta.env.VITE_ELECTRICA_API_URL;
 
+  // setAlert({
+  //   type: err.response?.data?.type,
+  //   message: err.response?.data?.message,
+  // });
+  // setAlert({ type: response.data.type, message: response.data.message });
   const toggleSidebar = () => {
     setIsSidebarOpen(!isSidebarOpen);
   };

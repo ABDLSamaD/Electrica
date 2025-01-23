@@ -26,8 +26,6 @@ const Signup = () => {
     password: "",
   });
   const [alert, setAlert] = useState(null);
-  const [type, setType] = useState("");
-  const [message, setMessage] = useState("");
   const [isPasswordVisible, setIsPasswordVisible] = useState(false); // for password show hide
   const [isFocused, setIsFocused] = useState(false);
   const [loading, setLoading] = useState(false);
@@ -59,16 +57,15 @@ const Signup = () => {
 
   const onChange = (e) => {
     const { name, value } = e.target;
-
     setCredenetials({ ...credentials, [name]: value });
   };
 
   // handle Signup form of user create an account secure
   const signupUser = async (e) => {
     e.preventDefault();
+    setLoading(true);
     try {
       const { name, email, password } = credentials;
-      setLoading(true);
       // fetch api of signup user form from backend
       const response = await axios.post(
         `${electricaURL}localhost:5120/api/auth/signup`,
@@ -81,157 +78,128 @@ const Signup = () => {
 
       if (response.status === 200) {
         localStorage.setItem("us-em-temporary", email);
-        setType(response.data.type);
-        setMessage(response.data.message);
-        setAlert(response.data.type, response.data.message);
+        setAlert({ type: response.data.type, message: response.data.message });
         // if submission successfull remove cookie
         setLoading(true);
         setTimeout(() => {
+          setLoading(false);
           navigate("/otpverify");
-        }, 3000);
+        }, 19200);
       } else {
         setLoading(false);
-        setType(response.data.type);
-        setMessage(response.data.message);
-        setAlert(response.data.type, response.data.message);
+        setAlert({ type: response.data.type, message: response.data.message });
       }
     } catch (err) {
-      setType(err.response?.data?.type);
-      setMessage(err.response?.data?.message || "Failed to verify OTP");
-      setAlert(
-        err.response?.data?.type,
-        err.response?.data?.message || "Failed to verify OTP"
-      );
+      setLoading(false);
+      setAlert({
+        type: err.response?.data?.type,
+        message: err.response?.data?.message,
+      });
     }
   };
 
   if (loading) {
     return (
-      <div className="flex items-center justify-center w-screen h-screen z-50 bg-zinc-100 backdrop-blur-xl">
+      <div className="flex items-center justify-center w-screen h-screen z-50 bg-zinc-100/10 backdrop-blur-xl">
         <Loader />
       </div>
     );
   }
 
   return (
-    <>
-      <div id="signup">
-        {alert && (
-          <Alert type={type} message={message} onClose={() => setAlert(null)} />
-        )}
-        <div className="relative w-full h-full flex items-center justify-center flex-col backdrop-blur-xl bg-[rgba(255,255,255,0.01)] transition-all">
-          <form
-            onSubmit={signupUser}
-            className="relative my-3 form_container rounded-xl w-fit h-fit flex flex-col items-center justify-center gap-2"
-          >
-            <div className="back relative w-full text-2xl text-gray-200">
-              <Link to="/signin" title="Go back">
-                <FontAwesomeIcon icon={faArrowLeft} size="2xs" />
-              </Link>
-            </div>
-            <div className="title_container flex items-center justify-center flex-col gap-3">
-              <p className="title m-0 text-4xl font-bold text-gray-950">
-                Create new account
-              </p>
-              <span
-                style={{ maxWidth: "80%" }}
-                className="subtitle text-xs text-center text-gray-400 leading-5"
-              >
-                Please register by filling in your personal data
-              </span>
-            </div>
-            {/* name */}
-            <div className="input_form flex flex-col w-full relative">
-              <label htmlFor="name" className="text-gray-500 text-sm">
-                Name
-              </label>
-              <input
-                type="text"
-                className="input_field outline-none mt-1 border border-solid border-blue-900 p-3 rounded-xl"
-                id="name"
-                required
-                onChange={onChange}
-                name="name"
-              />
-              <FontAwesomeIcon icon={faUser} id="emailiconsignup" />
-            </div>
-            {/* email */}
-            <div className="relative input_form flex flex-col w-full">
-              <label htmlFor="email" className="text-gray-500 text-sm">
-                Email
-              </label>
-              <input
-                type="email"
-                className="input_field outline-none mt-1 border border-solid border-blue-900 p-3 rounded-xl"
-                id="email"
-                required
-                placeholder="name@email.com"
-                onChange={onChange}
-                name="email"
-              />
-              <FontAwesomeIcon icon={faEnvelope} id="emailiconsignup" />
-            </div>
-            {/* password */}
-            <div className="relative input_form flex flex-col w-full">
-              <label htmlFor="password" className="text-gray-500 text-sm">
-                Password
-              </label>
-              <input
-                type={isPasswordVisible ? "text" : "password"}
-                className="input_field outline-none mt-1 border border-solid border-blue-900 p-3 rounded-xl"
-                id="password"
-                required
-                onChange={onChange}
-                name="password"
-                onFocus={() => setIsFocused(true)}
-                onBlur={() => setIsFocused(false)}
-              />
-              <FontAwesomeIcon icon={faLock} id="passwordiconsignup" />
-              <div
-                onClick={togglePasswordVisibility}
-                className="show-pass-s absolute cursor-pointer"
-              >
-                <FontAwesomeIcon
-                  icon={isPasswordVisible ? faEyeSlash : faEye}
-                  id={isPasswordVisible ? "hideeye" : "showeye"}
-                />
-              </div>
-              {/* password requirement box */}
-              {!allRequirementsMet && isFocused && (
-                <PasswordChecker
-                  password={credentials.password}
-                  passwordRules={passwordRules}
-                />
-              )}
-            </div>
-            <label className="flex items-center w-full justify-start p-1">
-              <input type="checkbox" placeholder="check" />
-              <div className="ml-1 text-xs cursor-pointer">
-                I accept the <b className="text-cyan-500">Privacy Policy</b>
-              </div>
+    <div id="signup" className="min-h-screen flex items-center justify-center">
+      {alert && (
+        <Alert type={type} message={message} onClose={() => setAlert(null)} />
+      )}
+      <div className="w-full max-w-md p-6 bg-white/5 backdrop-blur-lg rounded-lg shadow-md">
+        <form onSubmit={signupUser} className="flex flex-col gap-4">
+          <Link to="/signin" title="Go back">
+            <FontAwesomeIcon icon={faArrowLeft} size="lg" />
+          </Link>
+          <h2 className="text-2xl text-center font-bold text-gray-900">
+            Create new account
+          </h2>
+          <p className="text-gray-500 text-sm text-center">
+            Please register by filling in your personal data.
+          </p>
+          <div className="flex flex-col gap-2">
+            <label htmlFor="name" className="text-gray-600 text-sm">
+              Name
             </label>
-            <button
-              type="submit"
-              className="w-full rounded-md p-2 bg-gray-800 focus:scale-105"
-            >
-              <span className="text-gray-300 font-mono font-bold text-lg">
-                Signup
-              </span>
-              <FontAwesomeIcon
-                className="ml-2 text-center text-gray-300"
-                icon={faUserPlus}
+            <input
+              type="text"
+              id="name"
+              name="name"
+              required
+              className="input_field p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+              placeholder="Your name"
+              onChange={onChange}
+            />
+          </div>
+          <div className="flex flex-col gap-2">
+            <label htmlFor="email" className="text-gray-600 text-sm">
+              Email
+            </label>
+            <input
+              type="email"
+              id="email"
+              name="email"
+              required
+              className="input_field p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+              placeholder="name@email.com"
+              onChange={onChange}
+            />
+          </div>
+          <div className="flex flex-col gap-2 relative">
+            <label htmlFor="password" className="text-gray-600 text-sm">
+              Password
+            </label>
+            <input
+              type={isPasswordVisible ? "text" : "password"}
+              id="password"
+              name="password"
+              required
+              className="input_field p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+              placeholder="Enter your password"
+              onChange={onChange}
+              onFocus={() => setIsFocused(true)}
+              onBlur={() => setIsFocused(false)}
+            />
+            <FontAwesomeIcon
+              icon={isPasswordVisible ? faEyeSlash : faEye}
+              className="absolute top-11 right-3 text-gray-900 cursor-pointer"
+              onClick={togglePasswordVisibility}
+            />
+            {isFocused && !allRequirementsMet && (
+              <PasswordChecker
+                password={credentials.password}
+                passwordRules={passwordRules}
               />
-            </button>
-            <p className="text-gray-700 text-sm">
-              Aleready have an account?
-              <Link className="text-cyan-600" to="/signin">
-                Login
-              </Link>
-            </p>
-          </form>
-        </div>
+            )}
+          </div>
+          <div className="flex items-center gap-2">
+            <input type="checkbox" id="privacy-policy" required />
+            <label htmlFor="privacy-policy" className="text-sm text-gray-600">
+              I accept the <span className="text-blue-600">Privacy Policy</span>
+              .
+            </label>
+          </div>
+          <button
+            type="submit"
+            className="w-full p-3 bg-blue-600 text-white font-semibold rounded-lg hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500"
+          >
+            Signup
+            <FontAwesomeIcon icon={faUserPlus} className="ml-2" />
+          </button>
+          <p className="text-center text-gray-600 text-sm">
+            Already have an account?{" "}
+            <Link to="/signin" className="text-blue-600">
+              Login
+            </Link>
+          </p>
+        </form>
       </div>
-    </>
+    </div>
   );
 };
 

@@ -81,7 +81,7 @@ const SignIn = () => {
   return (
     <>
       {loader && <Loader />} {/* Full loader */}
-      <div id="signin" className="relative md:top-0 top-20">
+      <div id="signin">
         {alert && (
           <Alert
             type={alert.type}

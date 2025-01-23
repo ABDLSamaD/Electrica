@@ -40,7 +40,6 @@ const corsConfig = {
   methods: ["GET", "POST", "PUT", "PATCH"],
 };
 app.use(cors(corsConfig));
-app.options("", cors(corsConfig));
 
 app.use(cookieParser());
 app.use(bodyparser.json());
@@ -56,7 +55,7 @@ const sessionConfig = {
   cookie: {
     maxAge: 24 * 60 * 60 * 1000, // 1 day
     httpOnly: true,
-    secure: process.env.NODE_ENV === "  ", // Set to true in production with HTTPS
+    secure: process.env.NODE_ENV === "production", // Set to true in production with HTTPS
     sameSite: process.env.NODE_ENV === "production" ? "None" : "Lax",
   },
   secret: process.env.SESSION_SECRET, // A common session secret for both user and admin
