@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { Navigate, Outlet } from "react-router-dom";
 import axios from "axios";
+import LoaderAll from "../OtherComponents/LoaderAll";
 
 const PrivateRoute = () => {
   const [isAuthenticated, setIsAuthenticated] = useState(null);
@@ -23,6 +24,7 @@ const PrivateRoute = () => {
         }
       } catch (error) {
         setIsAuthenticated(false);
+        setLoading(false);
       } finally {
         setLoading(false);
       }
@@ -33,7 +35,7 @@ const PrivateRoute = () => {
   if (loading) {
     return (
       <div className="h-screen flex items-center justify-center">
-        <div>Loading...</div>
+        <LoaderAll />
       </div>
     );
   }

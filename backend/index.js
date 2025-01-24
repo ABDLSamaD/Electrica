@@ -51,7 +51,7 @@ app.use(bodyparser.json());
 // const isProduction = process.env.NODE_ENV === "production";
 const sessionConfig = {
   resave: false,
-  saveUninitialized: true,
+  saveUninitialized: false,
   cookie: {
     maxAge: 24 * 60 * 60 * 1000, // 1 day
     httpOnly: true,

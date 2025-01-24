@@ -222,7 +222,7 @@ exports.login = async (req, res) => {
     res.cookie("auth_token", token, {
       httpOnly: true, // Prevent access from JavaScript
       secure: process.env.NODE_ENV === "production", // Use secure cookies in production
-      sameSite: "strict",
+      sameSite: process.env.NODE_ENV === "production" ? "None" : "Strict",
       maxAge: sessionMaxAge,
     });
 
@@ -233,6 +233,7 @@ exports.login = async (req, res) => {
       email: users.email,
       role: "user",
     };
+    console.log("Session after login:", req.session);
 
     // Send login email notification (catch potential errors)
     await loginMail(users);
@@ -247,12 +248,13 @@ exports.login = async (req, res) => {
 
 // check auth user
 exports.checkAuth = (req, res) => {
+  console.log(req.session.user);
   if (req.session.user) {
-    res
+    return res
       .status(200)
       .json({ isAuthenticated: true, user: req.session.user, role: "user" });
   } else {
-    res.status(401).json({ isAuthenticated: false });
+    return res.status(401).json({ isAuthenticated: false });
   }
 };
 

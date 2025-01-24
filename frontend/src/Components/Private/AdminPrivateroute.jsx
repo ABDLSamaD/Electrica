@@ -22,6 +22,7 @@ const AdminPrivateRoute = () => {
         }
       } catch (error) {
         setIsAuthenticated(false);
+        setLoading(false);
       } finally {
         setLoading(false);
       }
