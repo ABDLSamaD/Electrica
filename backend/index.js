@@ -50,15 +50,17 @@ app.use(bodyparser.json());
 // express-session
 // const isProduction = process.env.NODE_ENV === "production";
 const sessionConfig = {
+  name: "electrica",
   resave: false,
-  saveUninitialized: false,
+  saveUninitialized: true,
+  secret: process.env.SESSION_SECRET, // A common session secret for both user and admin
+  proxy: true,
   cookie: {
     maxAge: 24 * 60 * 60 * 1000, // 1 day
     httpOnly: true,
     secure: process.env.NODE_ENV === "production", // Set to true in production with HTTPS
     sameSite: process.env.NODE_ENV === "production" ? "None" : "Lax",
   },
-  secret: process.env.SESSION_SECRET, // A common session secret for both user and admin
   store: MongoStore.create({
     mongoUrl: process.env.MONGO_URL,
     collectionName: "sessions", // Common session collection
@@ -66,6 +68,8 @@ const sessionConfig = {
   }),
 };
 app.use(session(sessionConfig));
+
+app.set("trust proxy", 1); // Trust the first proxy (for Vercel, Cloudflare, etc.)
 
 // routes call
 app.use("/api/auth", routes);
