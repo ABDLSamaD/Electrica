@@ -134,9 +134,6 @@ const HeaderMain = () => {
             <Link to="/signin">Sign In</Link>
           </button>
         )}
-        {isAuthenticatedUser || isAuthenticatedAdmin ? (
-          <button className="hidden md:block">Logout</button>
-        ) : null}
       </div>
 
       {isNavOpen && (
