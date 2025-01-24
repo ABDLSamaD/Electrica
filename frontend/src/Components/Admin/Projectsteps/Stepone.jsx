@@ -325,7 +325,7 @@ const Stepone = () => {
       {stageShow && (
         <div className="mt-10 bg-gray-900 rounded-lg p-4">
           <StageDetails
-            localhost={electricaURL}
+            electricaURL={electricaURL}
             projectId={projectId}
             stageName={stageName}
           />
