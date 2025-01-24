@@ -135,9 +135,7 @@ const HeaderMain = () => {
           </button>
         )}
         {isAuthenticatedUser || isAuthenticatedAdmin ? (
-          <button className="hidden md:block" onClick={handleLogout}>
-            Logout
-          </button>
+          <button className="hidden md:block">Logout</button>
         ) : null}
       </div>
 
