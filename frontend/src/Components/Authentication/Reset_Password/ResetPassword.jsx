@@ -39,50 +39,58 @@ const ResetPassword = () => {
         setAlert(response.data.type, response.data.message);
       }
     } catch (err) {
-      setMessage(err.response?.data?.message || "Failed to send OTP");
+      setMessage(err.response?.data?.message || "Failed to reset password");
       setType(err.response?.data?.type);
       setAlert(
         err.response?.data?.type,
-        err.response?.data?.message || "Failed to send OTP"
+        err.response?.data?.message || "Failed to reset password"
       );
     }
   };
 
   return (
-    <div className="max-w-md mx-auto p-6 flex h-screen flex-col justify-center">
-      <div className="container shadow-xl p-4">
+    <div className="min-h-screen flex items-center justify-center bg-gray-100">
+      <div className="w-full max-w-md bg-white p-8 rounded-lg shadow-lg">
         {alert && (
           <Alert type={type} message={message} onClose={() => setAlert(null)} />
         )}
-        <div className="flex items-center justify-center flex-col">
-          <FontAwesomeIcon icon={faLock} size="2x" />
-          <h2 className="text-4xl font-bold text-gray-800 mb-5 mt-2">
-            Reset Password
-          </h2>
-          <p className="mb-5 text-gray-500">Must be at least 8 characters</p>
-        </div>
-        <form onSubmit={handleResetPassword}>
-          <input
-            type="password"
-            value={newPassword}
-            onChange={(e) => setNewPassword(e.target.value)}
-            placeholder="Enter new password"
-            required
-            className="w-full p-2 border rounded mb-4"
+        <div className="flex flex-col items-center text-center">
+          <FontAwesomeIcon
+            icon={faLock}
+            size="3x"
+            className="text-blue-600 mb-4"
           />
+          <h1 className="text-2xl font-semibold text-gray-800 mb-2">
+            Reset Your Password
+          </h1>
+          <p className="text-sm text-gray-500 mb-6">
+            Create a new password that's at least 8 characters long.
+          </p>
+        </div>
+        <form onSubmit={handleResetPassword} className="space-y-5">
+          <div className="relative">
+            <input
+              type="password"
+              value={newPassword}
+              onChange={(e) => setNewPassword(e.target.value)}
+              placeholder="Enter new password"
+              required
+              className="w-full p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+            />
+          </div>
           <button
             type="submit"
-            className="w-full bg-blue-500 text-white py-2 rounded hover:bg-blue-600"
+            className="w-full py-3 bg-blue-600 text-white rounded-lg font-semibold hover:bg-blue-700 transition-all"
           >
             Reset Password
           </button>
-          <div
-            className="flex items-center justify-center mt-4"
-            title="back to login"
-          >
-            <Link to="/signin">
-              <FontAwesomeIcon icon={faArrowLeft} size="sm" />
-              <span className="mx-2">back to login</span>
+          <div className="text-center mt-4">
+            <Link
+              to="/signin"
+              className="text-blue-600 hover:text-blue-700 transition-all flex items-center justify-center"
+            >
+              <FontAwesomeIcon icon={faArrowLeft} className="mr-2" />
+              Back to Login
             </Link>
           </div>
         </form>
