@@ -122,54 +122,74 @@ const Signup = () => {
           <p className="text-gray-500 text-sm text-center">
             Please register by filling in your personal data.
           </p>
-          <div className="flex flex-col gap-2">
+          <div className="flex flex-col gap-2 relative">
             <label htmlFor="name" className="text-gray-600 text-sm">
               Name
             </label>
-            <input
-              type="text"
-              id="name"
-              name="name"
-              required
-              className="input_field p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
-              placeholder="Your name"
-              onChange={onChange}
-            />
+            <div className="relative">
+              <FontAwesomeIcon
+                icon={faUser}
+                className="absolute top-1/2 left-3 transform -translate-y-1/2 text-gray-500"
+              />
+              <input
+                type="text"
+                id="name"
+                name="name"
+                required
+                className="input_field pl-10 p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                placeholder="Your name"
+                onChange={onChange}
+              />
+            </div>
           </div>
-          <div className="flex flex-col gap-2">
+
+          <div className="flex flex-col gap-2 relative">
             <label htmlFor="email" className="text-gray-600 text-sm">
               Email
             </label>
-            <input
-              type="email"
-              id="email"
-              name="email"
-              required
-              className="input_field p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
-              placeholder="name@email.com"
-              onChange={onChange}
-            />
+            <div className="relative">
+              <FontAwesomeIcon
+                icon={faEnvelope}
+                className="absolute top-1/2 left-3 transform -translate-y-1/2 text-gray-500"
+              />
+              <input
+                type="email"
+                id="email"
+                name="email"
+                required
+                className="input_field pl-10 p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                placeholder="name@email.com"
+                onChange={onChange}
+              />
+            </div>
           </div>
+
           <div className="flex flex-col gap-2 relative">
             <label htmlFor="password" className="text-gray-600 text-sm">
               Password
             </label>
-            <input
-              type={isPasswordVisible ? "text" : "password"}
-              id="password"
-              name="password"
-              required
-              className="input_field p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
-              placeholder="Enter your password"
-              onChange={onChange}
-              onFocus={() => setIsFocused(true)}
-              onBlur={() => setIsFocused(false)}
-            />
-            <FontAwesomeIcon
-              icon={isPasswordVisible ? faEyeSlash : faEye}
-              className="absolute top-11 right-3 text-gray-900 cursor-pointer"
-              onClick={togglePasswordVisibility}
-            />
+            <div className="relative">
+              <FontAwesomeIcon
+                icon={faLock}
+                className="absolute top-1/2 left-3 transform -translate-y-1/2 text-gray-500"
+              />
+              <input
+                type={isPasswordVisible ? "text" : "password"}
+                id="password"
+                name="password"
+                required
+                className="input_field pl-10 p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                placeholder="Enter your password"
+                onChange={onChange}
+                onFocus={() => setIsFocused(true)}
+                onBlur={() => setIsFocused(false)}
+              />
+              <FontAwesomeIcon
+                icon={isPasswordVisible ? faEyeSlash : faEye}
+                className="absolute top-1/2 right-3 transform -translate-y-1/2 text-gray-900 cursor-pointer"
+                onClick={togglePasswordVisibility}
+              />
+            </div>
             {isFocused && !allRequirementsMet && (
               <PasswordChecker
                 password={credentials.password}
@@ -177,6 +197,7 @@ const Signup = () => {
               />
             )}
           </div>
+
           <div className="flex items-center gap-2">
             <input type="checkbox" id="privacy-policy" required />
             <label htmlFor="privacy-policy" className="text-sm text-gray-600">

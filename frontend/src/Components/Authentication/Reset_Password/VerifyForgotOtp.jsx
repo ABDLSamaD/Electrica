@@ -57,6 +57,7 @@ const VerifyForgotOtp = () => {
         });
       }
     } catch (err) {
+      setLoading(false);
       setAlert({
         type: err.response?.data?.type,
         message: err.response?.data?.message,
@@ -76,7 +77,7 @@ const VerifyForgotOtp = () => {
         otp={otp}
         handleChange={handleChange}
         onkeyDown={handleKeyDown}
-        loading={loa}
+        loading={loading}
       />
     </>
   );

@@ -6,7 +6,6 @@ import axios from "axios";
 
 const HeaderMain = () => {
   const [isAuthenticatedUser, setIsAuthenticatedUser] = useState(false);
-  const [isAuthenticatedAdmin, setIsAuthenticatedAdmin] = useState(false);
   const [isNavOpen, setIsNavOpen] = useState(false);
   const electricaURL = import.meta.env.VITE_ELECTRICA_API_URL;
 
@@ -28,29 +27,9 @@ const HeaderMain = () => {
     }
   };
 
-  // Function to check admin authentication based on cookies
-  const checkAdminAuth = async () => {
-    try {
-      const response = await axios.get(
-        `${electricaURL}/api/adminauth/check-adminauth`,
-        {
-          withCredentials: true,
-        }
-      );
-      if (response.status === 200 && response.data.isAuthenticated) {
-        setIsAuthenticatedAdmin(true);
-      } else {
-        setIsAuthenticatedAdmin(false);
-      }
-    } catch (error) {
-      setIsAuthenticatedAdmin(false);
-    }
-  };
-
   // Check authentication on mount
   useEffect(() => {
     checkAuth();
-    checkAdminAuth();
   }, []);
 
   // Toggle for the mobile navigation sidebar
@@ -121,11 +100,7 @@ const HeaderMain = () => {
             <FontAwesomeIcon icon={faBars} className="text-2xl" />
           </button>
         </div>
-        {isAuthenticatedAdmin ? (
-          <button className="button-86 hidden md:block">
-            <Link to="/db_au_admn">Admin</Link>
-          </button>
-        ) : isAuthenticatedUser ? (
+        {isAuthenticatedUser ? (
           <button className="button-86 hidden md:block">
             <Link to="/db-au-user">Dashboard</Link>
           </button>
@@ -188,14 +163,7 @@ const HeaderMain = () => {
               Services
             </Link>
           </li>
-          {isAuthenticatedAdmin ? (
-            <button
-              className="w-full bg-blue-600 text-white px-4 py-2 rounded"
-              onClick={toggleNav}
-            >
-              <Link to="/db_au_admn">Admin</Link>
-            </button>
-          ) : isAuthenticatedUser ? (
+          {isAuthenticatedUser ? (
             <button
               className="w-full bg-blue-600 text-white px-4 py-2 rounded"
               onClick={toggleNav}
