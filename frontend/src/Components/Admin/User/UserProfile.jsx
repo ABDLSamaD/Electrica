@@ -11,7 +11,7 @@ const UserProfile = () => {
   useEffect(() => {
     setTimeout(() => {
       setLoading(false);
-    }, 3000); // Reduced timeout for better UX
+    }, 2000); // Reduced timeout for better UX
   }, []);
 
   if (loading) {
@@ -31,7 +31,7 @@ const UserProfile = () => {
   }
 
   return (
-    <div className="px-4 py-8 bg-gray-900 min-h-screen">
+    <div className="px-4 sm:px-6 lg:px-12 py-8 bg-gray-900 min-h-screen">
       {/* Back Button */}
       <button
         className="mb-4 text-gray-500 hover:text-gray-200 flex items-center gap-2"
@@ -39,10 +39,10 @@ const UserProfile = () => {
       >
         <FaArrowLeft /> Go Back
       </button>
-      <h1 className="text-4xl font-bold mb-8 text-center text-purple-300">
+      <h1 className="text-3xl sm:text-4xl font-bold mb-8 text-center text-purple-300">
         User Profiles
       </h1>
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
         {users.map((user) => (
           <Link
             to={`/db_au_admn/userprofile/${user._id}`}
@@ -50,18 +50,19 @@ const UserProfile = () => {
             className="block"
             title={`${user.name}'s profile`}
           >
-            <div className="bg-gray-800 rounded-lg shadow-lg hover:shadow-xl transition-all duration-300 p-6">
+            <div className="bg-gray-800 rounded-lg shadow-lg hover:shadow-xl transition-all duration-300 p-4 sm:p-6">
               {/* User Image */}
-              <div className="flex items-center space-x-4 mb-4">
-                <div className="w-16 h-16">
+              <div className="flex items-center flex-wrap space-x-4 mb-4">
+                <div className="w-16 h-16 sm:w-20 sm:h-20">
                   <img
                     src={user.profileImg || "/placeholder-profile.png"}
                     alt={`${user.name}'s avatar`}
                     className="w-full h-full rounded-full object-cover"
                   />
                 </div>
+
                 <div>
-                  <h2 className="text-xl font-semibold text-purple-300 truncate">
+                  <h2 className="text-lg sm:text-xl font-semibold text-purple-300 truncate">
                     {user.name}
                   </h2>
                   <p className="text-gray-400 text-sm">{user.role || "user"}</p>
@@ -69,7 +70,7 @@ const UserProfile = () => {
               </div>
 
               {/* User Info */}
-              <div className="text-gray-300 space-y-2">
+              <div className="text-gray-300 space-y-2 text-sm sm:text-base">
                 <p>
                   <span className="font-medium">Email: </span>
                   {user.email}
@@ -87,7 +88,7 @@ const UserProfile = () => {
               {/* Project Info */}
               {projects && projects.length > 0 ? (
                 <div className="mt-4">
-                  <h3 className="text-lg font-semibold text-purple-300">
+                  <h3 className="text-base font-semibold text-purple-300">
                     Projects:
                   </h3>
                   <ul className="list-disc ml-5 space-y-1 text-sm text-gray-400">
@@ -118,7 +119,7 @@ const UserProfile = () => {
 
               {/* Action Button */}
               <div className="mt-6 text-right">
-                <button className="px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-500 transition-all">
+                <button className="px-4 py-2 sm:px-6 sm:py-3 bg-blue-600 text-white text-sm sm:text-base rounded-md hover:bg-blue-500 transition-all">
                   View Profile
                 </button>
               </div>
