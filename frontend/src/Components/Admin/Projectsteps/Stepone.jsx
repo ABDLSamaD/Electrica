@@ -270,7 +270,7 @@ const Stepone = () => {
   // /* Display when all stages are completed */
 
   return isProjectCompleted ? (
-    <div className="w-full h-dvh bg-green-300/5 backdrop-blur-2xl flex flex-col justify-center items-center text-white p-8">
+    <div className="w-full h-dvh bg-green-300/5 backdrop-blur-2xl flex flex-col justify-center items-center text-white p-8 lg:p-3">
       <h2 className="text-3xl font-bold mb-4">Project Completed</h2>
       <p className="mb-6">All stages are successfully completed!</p>
       <button

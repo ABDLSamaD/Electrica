@@ -9,8 +9,7 @@ import { useSpring, animated } from "react-spring";
 
 const AddMaterial = () => {
   const navigate = useNavigate();
-  const { localhost, projects, fetchProject, electricaURL } =
-    useOutletContext();
+  const { projects, fetchProject, electricaURL } = useOutletContext();
   const { projectId, stageName } = useParams();
 
   // states start
@@ -117,7 +116,7 @@ const AddMaterial = () => {
     setIsLoading(true);
     try {
       const response = await axios.post(
-        `${localhost}/api/adminauth/remove-material`,
+        `${electricaURL}/api/adminauth/remove-material`,
         {
           materialName,
           projectId,

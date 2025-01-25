@@ -41,7 +41,7 @@ function StageDetails({ electricaURL, projectId, stageName }) {
     // Debounce fetching to avoid redundant API calls
     const timeoutId = setTimeout(() => fetchStageData(), 6000);
     return () => clearTimeout(timeoutId); // Cleanup timeout
-  }, [projectId, stageName, localhost]);
+  }, [projectId, stageName, electricaURL]);
 
   if (error) {
     return (

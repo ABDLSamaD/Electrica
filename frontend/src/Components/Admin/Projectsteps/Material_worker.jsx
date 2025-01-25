@@ -39,7 +39,7 @@ const MaterialForm = ({
   };
 
   return (
-    <div className="bg-gradient-to-br from-gray-900 via-gray-800 to-black text-gray-200 p-2 lg:p-5">
+    <div className="text-gray-200 p-2 lg:p-5">
       <div className="lg:max-w-4xl max-w-3xl mx-auto bg-gray-800 rounded-xl shadow-2xl lg:p-8 p-4 backdrop-filter backdrop-blur-lg bg-opacity-30 border border-gray-700">
         <h1 className="text-xl lg:text-3xl font-bold text-gray-100 mb-2 text-center">
           {project.projectName}
