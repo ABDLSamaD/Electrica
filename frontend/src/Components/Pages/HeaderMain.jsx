@@ -1,7 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { Link, NavLink } from "react-router-dom";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import Cookies from "js-cookie";
 import { faBars } from "@fortawesome/free-solid-svg-icons";
 import axios from "axios";
 
@@ -13,23 +12,20 @@ const HeaderMain = () => {
   // Function to check user authentication based on cookies
   const checkAuth = async () => {
     try {
-      const token = Cookies.get("auth_token");
-      if (!token) {
-        setIsAuthenticatedUser(false);
-        return;
-      }
       // Make an API request to check user authentication status
       const response = await axios.get(`${electricaURL}/api/auth/check-auth`, {
         withCredentials: true,
       });
 
-      if (response.status === 200 && response.data.isAuthenticated) {
-        setIsAuthenticatedUser(true);
+      if (response.status === 200) {
+        setIsAuthenticatedUser(response.data.isAuthenticated);
+      }
+    } catch (error) {
+      if (error.response?.status === 401) {
+        setIsAuthenticatedUser(false);
       } else {
         setIsAuthenticatedUser(false);
       }
-    } catch (error) {
-      setIsAuthenticatedUser(false);
     }
   };
 
