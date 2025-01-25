@@ -1,11 +1,50 @@
-import React from "react";
+import React, { useEffect } from "react";
 import HeaderMain from "./HeaderMain";
 import { FaRegSmileBeam, FaCheckCircle, FaClock } from "react-icons/fa";
 import { motion } from "framer-motion";
+import Cookies from "js-cookie";
 import AdvancedFuturisticCards from "./AdvancedFuturisticCards";
 import Footer from "./Footer";
+import { useNavigate } from "react-router-dom";
+import axios from "axios";
 
 const Home = () => {
+  const [loading, setLoading] = useState(true); // To handle the loading state
+  const navigate = useNavigate();
+  const electricaURL = import.meta.env.VITE_ELECTRICA_API_URL;
+  useEffect(() => {
+    const checkAdminAuth = async () => {
+      try {
+        const token = Cookies.get("authToken"); // Get the auth token from cookies
+        if (!token) {
+          setLoading(false); // No token, just stop loading
+          return;
+        }
+        const response = await axios.get(
+          `${electricaURL}/api/adminauth/check-adminauth`,
+          {
+            withCredentials: true,
+          }
+        );
+        if (response.data.isAuthenticated && response.data.role === "admin") {
+          navigate("/db_au_admn"); // Redirect to the admin page
+        } else {
+          setLoading(false); // Stop loading if the user is not an admin
+        }
+      } catch (error) {
+        setLoading(false);
+      }
+    };
+    checkAdminAuth();
+  }, [navigate]);
+
+  if (loading) {
+    return (
+      <div className="flex items-center justify-center min-h-screen bg-gray-900">
+        <p className="text-white">Checking authentication...</p>
+      </div>
+    );
+  }
   return (
     <>
       <HeaderMain />
