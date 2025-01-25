@@ -15,7 +15,7 @@ const Home = () => {
   useEffect(() => {
     const checkAdminAuth = async () => {
       try {
-        const token = Cookies.get("authToken"); // Get the auth token from cookies
+        const token = Cookies.get("admin_auth"); // Get the auth token from cookies
         if (!token) {
           setLoading(false); // No token, just stop loading
           return;
@@ -26,10 +26,12 @@ const Home = () => {
             withCredentials: true,
           }
         );
-        if (response.data.isAuthenticated && response.data.role === "admin") {
-          navigate("/db_au_admn"); // Redirect to the admin page
-        } else {
-          setLoading(false); // Stop loading if the user is not an admin
+        if (response.status === 200) {
+          if (response.data.isAuthenticated && response.data.role === "admin") {
+            navigate("/db_au_admn"); // Redirect to the admin page
+          } else {
+            setLoading(false); // Stop loading if the user is not an admin
+          }
         }
       } catch (error) {
         setLoading(false);
