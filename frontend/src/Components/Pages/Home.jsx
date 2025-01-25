@@ -26,12 +26,10 @@ const Home = () => {
             withCredentials: true,
           }
         );
-        if (response.status === 200) {
-          if (response.data.isAuthenticated && response.data.role === "admin") {
-            navigate("/db_au_admn"); // Redirect to the admin page
-          } else {
-            setLoading(false); // Stop loading if the user is not an admin
-          }
+        if (response.status === 200 && response.data.isAuthenticated) {
+          navigate("/db_au_admn"); // Redirect to the admin page
+        } else {
+          setLoading(false); // Stop loading if the user is not an admin
         }
       } catch (error) {
         setLoading(false);
