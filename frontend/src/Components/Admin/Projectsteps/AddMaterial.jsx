@@ -1,11 +1,11 @@
 import { faArrowLeft, faTrash } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { useSpring, animated } from "@react-spring/web";
 import React, { useEffect, useState } from "react";
 import { useNavigate, useOutletContext, useParams } from "react-router-dom";
 import LoaderAll from "../../OtherComponents/LoaderAll";
 import axios from "axios";
 import Alert from "../../OtherComponents/Alert";
-import { useSpring, animated } from "react-spring";
 
 const AddMaterial = () => {
   const navigate = useNavigate();
@@ -72,7 +72,7 @@ const AddMaterial = () => {
         setError("An error occurred while fetching the project data.");
       } finally {
         // Add a delay of 3 seconds for showing loader
-        setTimeout(() => setLoading(false), 3000);
+        setTimeout(() => setLoading(false), 2000);
       }
     };
 
@@ -154,6 +154,7 @@ const AddMaterial = () => {
         type: err.response?.data?.type,
         message: err.response?.data?.message,
       });
+      setLoading(false);
     } finally {
       setTimeout(() => setIsLoading(false), 3000); // Delay the loader for 3 seconds
     }

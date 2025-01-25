@@ -281,7 +281,7 @@ const Stepone = () => {
       </button>
     </div>
   ) : (
-    <div className="min-h-screen relative bg-gradient-to-br from-gray-900 via-gray-800 to-black text-gray-200 p-4">
+    <div className="min-h-screen relative bg-gradient-to-br from-gray-900 via-gray-800 to-black lg:bg-white/5 lg:backdrop-blur-xl text-gray-200 p-4 lg:p-1">
       {/* Back Button */}
       <button
         className="mb-4 text-gray-500 hover:text-gray-200 flex items-center md:flex-row md:ml-0 ml-6 flex-col gap-2"
