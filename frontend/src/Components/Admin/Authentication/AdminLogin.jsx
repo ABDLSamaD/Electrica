@@ -17,6 +17,7 @@ const AdminLogin = () => {
   });
   const [alert, setAlert] = useState(null);
   const [loader, setLoader] = useState(false);
+  const [miniLoader, setMiniLoader] = useState(false);
   //   State End
 
   //   onchange event on input value
@@ -27,6 +28,7 @@ const AdminLogin = () => {
   //   handle Login Admin
   const hanldeLogin = async (e) => {
     e.preventDefault();
+    setMiniLoader(true);
     try {
       const { email, password } = credentials;
       const response = await axios.post(
@@ -39,6 +41,7 @@ const AdminLogin = () => {
       );
 
       if (response.status === 200) {
+        setMiniLoader(false);
         setLoader(true);
         localStorage.setItem("dshbrd_admn_tkn", response.data.token);
         setAlert({ type: response.data.type, message: response.data.message });
@@ -46,9 +49,12 @@ const AdminLogin = () => {
           navigate("/db_au_admn");
         }, 2000);
       } else {
+        setMiniLoader(false);
         setAlert({ type: response.data.type, message: response.data.message });
       }
     } catch (err) {
+      setLoader(false);
+      setMiniLoader(false);
       setAlert({
         type: err.response?.data?.type,
         message: err.response?.data?.message,
@@ -78,13 +84,8 @@ const AdminLogin = () => {
             onChange={onChange}
             credential={credentials}
             passLink={"/admn-forgot_pswrd"}
+            miniLoader={miniLoader}
           />
-          <p className="mt-4 text-center text-sm text-gray-600">
-            Not a member?
-            <Link to="#signup" className="text-blue-600 hover:underline">
-              Sign up
-            </Link>
-          </p>
         </div>
       </div>
     </>
