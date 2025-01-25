@@ -48,6 +48,7 @@ const AddMaterial = () => {
   const materialAnimation = useSpring({
     opacity: isLoading ? 0.5 : 1,
     transform: isLoading ? "scale(0.95)" : "scale(1)",
+    config: { tension: 120, friction: 14 },
   });
 
   useEffect(() => {
