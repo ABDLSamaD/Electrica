@@ -59,14 +59,11 @@ const Signup = () => {
     setLoading(true);
     try {
       const { name, email, password } = credentials;
-      const response = await axios.post(
-        `${electricaURL}localhost:5120/api/auth/signup`,
-        {
-          name,
-          email,
-          password,
-        }
-      );
+      const response = await axios.post(`${electricaURL}/api/auth/signup`, {
+        name,
+        email,
+        password,
+      });
 
       if (response.status === 200) {
         localStorage.setItem("us-em-temporary", email);
