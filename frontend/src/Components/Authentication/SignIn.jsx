@@ -90,8 +90,9 @@ const SignIn = () => {
           />
         )}
         <div className="back relative w-full text-3xl pt-2 transition-all text-gray-200">
-          <Link to="/" className="mx-2" title="Go back">
-            <FontAwesomeIcon icon={faArrowLeft} size="2xs" />
+          <Link to="/" className="mx-2 text-gray-200" title="Go back">
+            <FontAwesomeIcon icon={faArrowLeft} size="2xs" color="gray" /> Go
+            Back
           </Link>
         </div>
         <div className="relative h-full flex items-center justify-center flex-col">

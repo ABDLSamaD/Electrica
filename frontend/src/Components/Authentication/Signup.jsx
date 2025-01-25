@@ -16,22 +16,19 @@ import Loader from "../OtherComponents/Loader";
 import axios from "axios";
 
 const Signup = () => {
-  const navigate = useNavigate(); //navigation then wiil true on page to another
+  const navigate = useNavigate();
   const electricaURL = import.meta.env.VITE_ELECTRICA_API_URL;
 
-  // states start
   const [credentials, setCredenetials] = useState({
     name: "",
     email: "",
     password: "",
   });
   const [alert, setAlert] = useState(null);
-  const [isPasswordVisible, setIsPasswordVisible] = useState(false); // for password show hide
+  const [isPasswordVisible, setIsPasswordVisible] = useState(false);
   const [isFocused, setIsFocused] = useState(false);
   const [loading, setLoading] = useState(false);
-  // states end
 
-  // this for password check requriements
   const passwordRules = [
     {
       id: "length",
@@ -45,28 +42,23 @@ const Signup = () => {
     },
     { id: "number", test: (pwd) => /\d/.test(pwd), label: "One number" },
   ];
-  // Check if all requirements met
   const allRequirementsMet = passwordRules.every((rule) =>
     rule.test(credentials.password)
   );
 
-  const togglePasswordVisibility = () => {
-    // password toogle show hide
+  const togglePasswordVisibility = () =>
     setIsPasswordVisible(!isPasswordVisible);
-  };
 
   const onChange = (e) => {
     const { name, value } = e.target;
     setCredenetials({ ...credentials, [name]: value });
   };
 
-  // handle Signup form of user create an account secure
   const signupUser = async (e) => {
     e.preventDefault();
     setLoading(true);
     try {
       const { name, email, password } = credentials;
-      // fetch api of signup user form from backend
       const response = await axios.post(
         `${electricaURL}localhost:5120/api/auth/signup`,
         {
@@ -79,8 +71,6 @@ const Signup = () => {
       if (response.status === 200) {
         localStorage.setItem("us-em-temporary", email);
         setAlert({ type: response.data.type, message: response.data.message });
-        // if submission successfull remove cookie
-        setLoading(true);
         setTimeout(() => {
           setLoading(false);
           navigate("/otpverify");
@@ -92,8 +82,8 @@ const Signup = () => {
     } catch (err) {
       setLoading(false);
       setAlert({
-        type: err.response?.data?.type,
-        message: err.response?.data?.message,
+        type: err.response?.data?.type || "error",
+        message: err.response?.data?.message || "Something went wrong!",
       });
     }
   };
@@ -107,22 +97,33 @@ const Signup = () => {
   }
 
   return (
-    <div id="signup" className="min-h-screen flex items-center justify-center">
+    <div
+      id="signup"
+      className="min-h-screen flex items-center justify-center p-4 sm:p-8"
+    >
       {alert && (
-        <Alert type={type} message={message} onClose={() => setAlert(null)} />
+        <Alert
+          type={alert.type}
+          message={alert.message}
+          onClose={() => setAlert(null)}
+        />
       )}
-      <div className="w-full max-w-md p-6 bg-white/5 backdrop-blur-lg rounded-lg shadow-md">
-        <form onSubmit={signupUser} className="flex flex-col gap-4">
-          <Link to="/signin" title="Go back">
+      <div className="w-full max-w-md p-6 bg-white/5 backdrop-blur-lg rounded-lg shadow-md sm:max-w-lg">
+        <form onSubmit={signupUser} className="flex flex-col gap-6">
+          <Link
+            to="/signin"
+            title="Go back"
+            className="text-blue-500 hover:text-blue-700"
+          >
             <FontAwesomeIcon icon={faArrowLeft} size="lg" />
           </Link>
           <h2 className="text-2xl text-center font-bold text-gray-900">
-            Create new account
+            Create New Account
           </h2>
           <p className="text-gray-500 text-sm text-center">
             Please register by filling in your personal data.
           </p>
-          <div className="flex flex-col gap-2 relative">
+          <div className="flex flex-col gap-2">
             <label htmlFor="name" className="text-gray-600 text-sm">
               Name
             </label>
@@ -136,14 +137,14 @@ const Signup = () => {
                 id="name"
                 name="name"
                 required
-                className="input_field pl-10 p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                className="input_field pl-10 p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 w-full"
                 placeholder="Your name"
                 onChange={onChange}
               />
             </div>
           </div>
 
-          <div className="flex flex-col gap-2 relative">
+          <div className="flex flex-col gap-2">
             <label htmlFor="email" className="text-gray-600 text-sm">
               Email
             </label>
@@ -157,14 +158,14 @@ const Signup = () => {
                 id="email"
                 name="email"
                 required
-                className="input_field pl-10 p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                className="input_field pl-10 p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 w-full"
                 placeholder="name@email.com"
                 onChange={onChange}
               />
             </div>
           </div>
 
-          <div className="flex flex-col gap-2 relative">
+          <div className="flex flex-col gap-2">
             <label htmlFor="password" className="text-gray-600 text-sm">
               Password
             </label>
@@ -178,7 +179,7 @@ const Signup = () => {
                 id="password"
                 name="password"
                 required
-                className="input_field pl-10 p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                className="input_field pl-10 p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 w-full"
                 placeholder="Enter your password"
                 onChange={onChange}
                 onFocus={() => setIsFocused(true)}

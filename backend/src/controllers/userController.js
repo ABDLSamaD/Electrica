@@ -277,8 +277,8 @@ exports.logout = async (req, res) => {
       }
 
       // Optionally, clear the cookie
-      res.clearCookie("electrica"); // This is the default cookie name for express-session
       res.clearCookie("auth_token"); // This is the default cookie name for express-session
+      res.clearCookie("electrica"); // This is the default cookie name for express-session
 
       // Return a success message
       res
