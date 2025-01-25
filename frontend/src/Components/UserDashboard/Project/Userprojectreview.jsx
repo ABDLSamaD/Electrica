@@ -1,15 +1,26 @@
+import React, { useEffect, useState } from "react";
+import { useNavigate, useOutletContext, useParams } from "react-router-dom";
+import axios from "axios";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { FaCheckCircle, FaTimesCircle } from "react-icons/fa";
+import { motion } from "framer-motion";
 import {
   faArrowLeft,
   faCheckCircle,
   faPlayCircle,
   faTimesCircle,
 } from "@fortawesome/free-solid-svg-icons";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import React, { useEffect, useState } from "react";
-import { useNavigate, useOutletContext, useParams } from "react-router-dom";
-import axios from "axios";
+import {
+  FiAlertTriangle,
+  FiCheck,
+  FiCheckCircle,
+  FiClock,
+  FiPackage,
+  FiThumbsUp,
+  FiUser,
+  FiUsers,
+} from "react-icons/fi";
 import LoaderAll from "../../OtherComponents/LoaderAll";
-import { FaCheckCircle, FaTimesCircle } from "react-icons/fa";
 import Alert from "../../OtherComponents/Alert";
 import MessagesSendingRecieving from "./MessagesSendingRecieving";
 import ClientConfirmation from "./ClientConfirmation";
@@ -58,7 +69,7 @@ const StageManagement = () => {
       setLoading(false);
     };
 
-    setTimeout(() => fetchData(), 2200);
+    setTimeout(() => fetchData(), 1800);
   }, [projects, projectId]);
 
   const handleApproveMaterial = async (stageName, materialId) => {
@@ -147,7 +158,6 @@ const StageManagement = () => {
         });
       }
     } catch (error) {
-      console.error("Error confirming stage:", error);
       setAlert({
         type: error.response?.data?.type,
         message: error.response?.data?.message,
@@ -172,10 +182,10 @@ const StageManagement = () => {
   }
 
   return (
-    <div className="bg-gradient-to-b from-gray-900 to-gray-800 text-white md:p-6 p-1 min-h-screen">
+    <div className="bg-gradient-to-b from-gray-900 to-gray-800 text-white md:p-6 p-4 min-h-screen">
       {/* Back Button */}
       <button
-        className="text-white hover:scale-110 transition mb-4 p-2 rounded-full bg-gray-700 hover:bg-gray-600"
+        className="text-white hover:scale-110 transition mb-4 p-3 rounded-full bg-gray-700 hover:bg-gray-600 flex items-center justify-center"
         title="Go back"
         onClick={() => navigate(-1)}
       >
@@ -189,7 +199,7 @@ const StageManagement = () => {
         />
       )}
 
-      <div className="md:container block mx-auto max-w-5xl bg-gray-900 p-8 rounded-3xl shadow-lg shadow-cyan-800 relative">
+      <div className="md:container mx-auto max-w-5xl bg-gray-900 md:p-8 p-4 rounded-3xl shadow-lg shadow-cyan-800 relative">
         <MessagesSendingRecieving
           messages={messages}
           setMessage={setMessage}
@@ -206,13 +216,13 @@ const StageManagement = () => {
         {/* Project Stages */}
         <h1 className="text-3xl font-bold mb-8 text-center">Project Stages</h1>
 
-        <div className="flex flex-wrap justify-center md:gap-4 gap-2 mb-6">
+        <div className="flex flex-wrap justify-center gap-2 mb-6">
           {project.stages.map((stage) => (
             <button
               key={stage._id}
               onClick={() => setActiveStage(stage._id)}
               disabled={stage.status === "notStarted"}
-              className={`p-4 rounded-xl shadow-md transition ${
+              className={`md:p-4 p-2 rounded-xl shadow-md transition text-sm md:text-base ${
                 activeStage === stage._id
                   ? "bg-gradient-to-r from-orange-500 to-orange-400 text-white"
                   : stage.status === "notStarted"
@@ -221,7 +231,7 @@ const StageManagement = () => {
               }`}
             >
               {stage.name} {/* Icon Based on Status */}
-              <div className="text-3xl">
+              <div className="md:text-3xl text-xl">
                 {stage?.canStart ? (
                   stage.isCompleted ? (
                     <FontAwesomeIcon
@@ -253,141 +263,308 @@ const StageManagement = () => {
           activeStage === stage._id ? (
             <div
               key={stage._id}
-              className="md:p-8 p-1 bg-gray-900 rounded-3xl shadow-lg"
+              className="bg-gray-900 rounded-3xl shadow-lg md:p-6 p-4"
             >
-              <h2 className="text-2xl font-bold mb-4 text-center">
-                {stage.name}
-              </h2>
-              <p className="mb-4 text-center">
-                <strong>Main Material:</strong> {stage.mainMaterial || "N/A"}
-              </p>
-
-              {/* status and confirmation */}
-              <div className="grid md:grid-cols-2 gap-6">
-                {/* Status */}
-                <div className="p-6 bg-gradient-to-r from-gray-800 to-gray-700 rounded-xl shadow-inner">
-                  <h3 className="text-xl font-semibold mb-2">Status</h3>
-                  <p className="flex items-center space-x-2">
-                    {stage?.isCompleted ? (
-                      <>
-                        <FaCheckCircle className="text-green-500" />
-                        <span className="text-green-400">Completed</span>
-                      </>
-                    ) : (
-                      <>
-                        <FaTimesCircle className="text-yellow-500" />
-                        <span className="text-yellow-400">In progress</span>
-                      </>
-                    )}
+              <motion.div
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                transition={{ duration: 0.5 }}
+              >
+                {/* Stage Header */}
+                <div className="text-center mb-8">
+                  <motion.h2
+                    initial={{ y: -20 }}
+                    animate={{ y: 0 }}
+                    className="md:text-3xl text-2xl font-bold bg-gradient-to-r from-cyan-400 to-blue-500 bg-clip-text text-transparent"
+                  >
+                    {stage.name}
+                  </motion.h2>
+                  <p className="mt-2 text-lg text-gray-300">
+                    Main Material:{" "}
+                    <span className="font-medium text-cyan-300">
+                      {stage.mainMaterial || "N/A"}
+                    </span>
                   </p>
                 </div>
 
-                {/* Client Confirmation */}
-                <div className="p-6 bg-gradient-to-r from-gray-800 to-gray-700 rounded-xl shadow-inner">
-                  <h3 className="text-xl font-semibold mb-2">
-                    Client Confirmation
-                  </h3>
-                  <p className="flex items-center space-x-2">
-                    {stage.clientConfirmation.isConfirmed ? (
-                      <>
-                        <FaCheckCircle className="text-green-500" />
-                        <span className="text-green-400">Confirmed</span>
-                      </>
-                    ) : (
-                      <>
-                        <FaTimesCircle className="text-red-500" />
-                        <span className="text-red-400">Not Confirmed</span>
-                      </>
-                    )}
-                  </p>
+                {/* Status Grid */}
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  {/* Status Card */}
+                  <motion.div
+                    whileHover={{ y: -5 }}
+                    className="p-4 md:p-6 bg-white/5 backdrop-blur-lg rounded-2xl border border-white/10 hover:border-white/20 transition-all"
+                  >
+                    <div className="flex items-center gap-4">
+                      <div className="p-3 bg-white/10 rounded-xl">
+                        {stage?.isCompleted ? (
+                          <FiCheckCircle className="w-8 h-8 text-green-400" />
+                        ) : (
+                          <FiClock className="w-8 h-8 text-amber-400" />
+                        )}
+                      </div>
+                      <div>
+                        <h3 className="text-lg font-semibold text-gray-300 mb-1">
+                          Project Status
+                        </h3>
+                        <div className="flex items-center gap-2">
+                          <span
+                            className={`px-3 py-1 rounded-full text-sm ${
+                              stage?.isCompleted
+                                ? "bg-green-500/20 text-green-400"
+                                : "bg-amber-500/20 text-amber-400"
+                            }`}
+                          >
+                            {stage?.isCompleted ? "Completed" : "In Progress"}
+                          </span>
+                          {!stage?.isCompleted && (
+                            <span className="text-xs text-gray-400">
+                              Est. completion: {stage.estimatedCompletion}
+                            </span>
+                          )}
+                        </div>
+                      </div>
+                    </div>
+                  </motion.div>
+
+                  {/* Client Confirmation Card */}
+                  <motion.div
+                    whileHover={{ y: -5 }}
+                    className="p-6 bg-white/5 backdrop-blur-lg rounded-2xl border border-white/10 hover:border-white/20 transition-all"
+                  >
+                    <div className="flex items-center gap-4">
+                      <div className="p-3 bg-white/10 rounded-xl">
+                        {stage.clientConfirmation.isConfirmed ? (
+                          <FiThumbsUp className="w-8 h-8 text-green-400" />
+                        ) : (
+                          <FiAlertTriangle className="w-8 h-8 text-amber-400" />
+                        )}
+                      </div>
+                      <div>
+                        <h3 className="text-lg font-semibold text-gray-300 mb-1">
+                          Client Confirmation
+                        </h3>
+                        <div className="flex items-center gap-2">
+                          <span
+                            className={`px-3 py-1 rounded-full text-sm ${
+                              stage.clientConfirmation.isConfirmed
+                                ? "bg-green-500/20 text-green-400"
+                                : "bg-amber-500/20 text-amber-400"
+                            }`}
+                          >
+                            {stage.clientConfirmation.isConfirmed
+                              ? "Confirmed"
+                              : "Pending Approval"}
+                          </span>
+                          {stage.clientConfirmation.isConfirmed && (
+                            <span className="text-xs text-gray-400">
+                              Confirmed on:{" "}
+                              {new Date(
+                                stage.clientConfirmation.date
+                              ).toLocaleDateString()}
+                            </span>
+                          )}
+                        </div>
+                      </div>
+                    </div>
+                  </motion.div>
                 </div>
-              </div>
+              </motion.div>
 
               {/* Materials approve */}
               <div className="mt-6">
-                <h3 className="text-lg font-semibold">Materials</h3>
-                {stage.materials.map((material) => (
-                  <div
-                    key={material._id}
-                    className="flex justify-between items-center py-3 px-4 bg-gray-800 rounded-lg shadow-md mb-2"
-                  >
-                    <span className="text-gray-200">
-                      {material.name} - Quantity: {material.quantity}
-                      {material.isApproved ? (
-                        <span className="text-green-500 ml-2"> (Approved)</span>
-                      ) : (
-                        <span className="text-red-500 ml-2"> (Pending)</span>
-                      )}
-                    </span>
-                    {!material.isApproved && (
-                      <button
-                        onClick={() =>
-                          handleApproveMaterial(stage.name, material._id)
-                        }
-                        className="bg-blue-500 text-white px-4 py-2 rounded-lg hover:bg-blue-600 transition"
-                      >
-                        Approve
-                      </button>
-                    )}
-                  </div>
-                ))}
+                <h3 className="text-xl md:text-2xl font-bold bg-gradient-to-r from-green-400 to-cyan-500 bg-clip-text text-transparent">
+                  Materials
+                </h3>
+
+                <div className="grid gap-2 mt-4">
+                  {stage.materials.map((material, index) => (
+                    <motion.div
+                      key={material._id}
+                      initial={{ opacity: 0, x: -20 }}
+                      animate={{ opacity: 1, x: 0 }}
+                      transition={{ duration: 0.3, delay: index * 0.1 }}
+                      className="group relative p-3 md:p-4 bg-white/5 backdrop-blur-lg rounded-xl shadow-lg
+                 border border-white/10 hover:border-white/20 transition-all"
+                    >
+                      <div className="flex items-center justify-between">
+                        {/* Material Info */}
+                        <div className="flex items-center gap-4">
+                          <div className="p-2 bg-white/10 rounded-lg">
+                            {material.isApproved ? (
+                              <FiCheckCircle className="w-6 h-6 text-green-400" />
+                            ) : (
+                              <FiPackage className="w-6 h-6 text-amber-400" />
+                            )}
+                          </div>
+
+                          <div>
+                            <h4 className="text-lg font-semibold text-gray-100">
+                              {material.name}
+                            </h4>
+                            <p className="text-gray-400 mt-1">
+                              Quantity: {material.quantity}
+                            </p>
+                          </div>
+                        </div>
+
+                        {/* Status and Actions */}
+                        <div className="flex items-center gap-4">
+                          <span
+                            className={`px-3 py-1 rounded-full text-sm font-medium ${
+                              material.isApproved
+                                ? "bg-green-500/20 text-green-400"
+                                : "bg-amber-500/20 text-amber-400"
+                            }`}
+                          >
+                            {material.isApproved ? "Approved" : "Pending"}
+                          </span>
+
+                          {!material.isApproved && (
+                            <motion.button
+                              whileHover={{ scale: 1.05 }}
+                              whileTap={{ scale: 0.95 }}
+                              onClick={() =>
+                                handleApproveMaterial(stage.name, material._id)
+                              }
+                              className="bg-gradient-to-r from-cyan-500 to-blue-600 text-white px-4 py-2 rounded-lg
+                         hover:from-cyan-400 hover:to-blue-500 transition-all flex items-center gap-2"
+                            >
+                              <FiCheck className="w-4 h-4" />
+                              Approve
+                            </motion.button>
+                          )}
+                        </div>
+                      </div>
+
+                      {/* Hover Glow Effect */}
+                      <div
+                        className="absolute inset-0 rounded-xl pointer-events-none
+                      group-hover:bg-gradient-to-r from-cyan-500/10 to-blue-500/10
+                      transition-opacity opacity-0 group-hover:opacity-100"
+                      />
+                    </motion.div>
+                  ))}
+                </div>
               </div>
 
               {/* Daily Updates */}
-              <div className="mt-6">
-                <h3 className="text-lg font-semibold">Daily Updates</h3>
-                {stage.updates.map((data, index) => (
-                  <div
-                    key={index}
-                    className="my-4 md:p-6 p-2 bg-gray-800 rounded-xl shadow-inner"
-                  >
-                    <h4 className="text-orange-500 text-lg">
-                      Date: {data.date}
-                    </h4>
+              <div className="mt-6 mb-6">
+                <h3 className="text-xl md:text-2xl font-bold bg-gradient-to-r from-blue-400 to-purple-500 bg-clip-text text-transparent">
+                  Daily Updates
+                </h3>
+                <div className="grid gap-4 mt-4">
+                  {stage.updates.map((data, index) => (
+                    <motion.div
+                      key={index}
+                      initial={{ opacity: 0, y: 20 }}
+                      animate={{ opacity: 1, y: 0 }}
+                      transition={{ duration: 0.3, delay: index * 0.1 }}
+                      className="group relative p-4 md:p-6 bg-white/5 backdrop-blur-lg rounded-2xl shadow-xl
+                 border border-white/10 hover:border-white/20 transition-all"
+                    >
+                      {/* Date Header */}
+                      <div className="flex items-center mb-4">
+                        <div className="h-6 w-1 md:h-8 bg-gradient-to-b from-blue-400 to-purple-500 rounded-full mr-3" />
+                        <h4 className="text-xl font-semibold text-blue-400">
+                          {new Date(data.date).toLocaleDateString("en-US", {
+                            weekday: "long",
+                            year: "numeric",
+                            month: "short",
+                            day: "numeric",
+                          })}
+                        </h4>
+                      </div>
 
-                    {/* Materials Used */}
-                    <p className="mt-4 font-semibold">Materials Used</p>
-                    {data.materialsUsed.length > 0 ? (
-                      <ul className="list-disc pl-5 mt-2">
-                        {data.materialsUsed.map((mat, i) => (
-                          <li key={i} className="mb-2">
-                            <span className="text-gray-200">
-                              Name: {mat.name} | Quantity:
-                              <b>{mat.quantity || "n/a"}</b>
-                            </span>
-                          </li>
-                        ))}
-                      </ul>
-                    ) : (
-                      <p className="text-gray-400">
-                        No materials data for this date.
-                      </p>
-                    )}
+                      {/* Materials Section */}
+                      <div className="mb-6">
+                        <div className="flex items-center gap-2 mb-3">
+                          <FiPackage className="w-5 h-5 text-purple-400" />
+                          <h5 className="font-medium text-lg text-gray-200">
+                            Materials Used
+                          </h5>
+                        </div>
 
-                    {/* Workers */}
-                    <p className="mt-4 font-semibold">Workers</p>
-                    {data.workers.length > 0 ? (
-                      <ul className="list-disc pl-5 mt-2">
-                        {data.workers.map((worker, i) => (
-                          <li key={i} className="mb-2">
-                            <span className="text-gray-200">
-                              Name: {worker.name} | Daily Wage:
-                              {worker.dailyWage}
+                        {data.materialsUsed.length > 0 ? (
+                          <div className="grid gap-2">
+                            {data.materialsUsed.map((mat, i) => (
+                              <div
+                                key={i}
+                                className="flex items-center justify-between p-3 bg-white/5 rounded-lg
+                           hover:bg-white/10 transition-colors"
+                              >
+                                <span className="text-gray-100 font-medium">
+                                  {mat.name}
+                                </span>
+                                <span className="text-blue-300 font-semibold">
+                                  {mat.quantity || "N/A"} units
+                                </span>
+                              </div>
+                            ))}
+                          </div>
+                        ) : (
+                          <div className="p-4 bg-white/5 rounded-lg flex items-center gap-3">
+                            <FiAlertCircle className="w-5 h-5 text-yellow-500" />
+                            <span className="text-gray-400">
+                              No materials recorded
                             </span>
-                          </li>
-                        ))}
-                      </ul>
-                    ) : (
-                      <p className="text-gray-400">
-                        No workers data for this date.
-                      </p>
-                    )}
-                  </div>
-                ))}
+                          </div>
+                        )}
+                      </div>
+
+                      {/* Workers Section */}
+                      <div>
+                        <div className="flex items-center gap-2 mb-3">
+                          <FiUsers className="w-5 h-5 text-green-400" />
+                          <h5 className="font-medium text-lg text-gray-200">
+                            Workers
+                          </h5>
+                        </div>
+
+                        {data.workers.length > 0 ? (
+                          <div className="grid gap-3">
+                            {data.workers.map((worker, i) => (
+                              <div
+                                key={i}
+                                className="flex items-center justify-between p-3 bg-white/5 rounded-lg
+                           hover:bg-white/10 transition-colors"
+                              >
+                                <div className="flex items-center gap-3">
+                                  <div className="w-8 h-8 rounded-full bg-blue-500/20 flex items-center justify-center">
+                                    <FiUser className="w-4 h-4 text-blue-400" />
+                                  </div>
+                                  <span className="text-gray-100">
+                                    {worker.name}
+                                  </span>
+                                </div>
+                                <span className="text-green-300 font-semibold">
+                                  ₹{worker.dailyWage}
+                                </span>
+                              </div>
+                            ))}
+                          </div>
+                        ) : (
+                          <div className="p-4 bg-white/5 rounded-lg flex items-center gap-3">
+                            <FiAlertCircle className="w-5 h-5 text-yellow-500" />
+                            <span className="text-gray-400">
+                              No workers recorded
+                            </span>
+                          </div>
+                        )}
+                      </div>
+
+                      {/* Hover Glow Effect */}
+                      <div
+                        className="absolute inset-0 rounded-2xl pointer-events-none
+                      group-hover:bg-gradient-to-r from-blue-500/10 to-purple-500/10
+                      transition-opacity opacity-0 group-hover:opacity-100"
+                      />
+                    </motion.div>
+                  ))}
+                </div>
               </div>
 
               {/* admin notify for stage */}
-              <div className="notify p-2 bg-gray-800 rounded-xl">
+              <div className="notify bg-gray-800 rounded-xl">
                 <ClientConfirmation
                   stage={stage}
                   onClientConfirm={handleClientConfirm}

@@ -1,6 +1,12 @@
-import { faComments } from "@fortawesome/free-solid-svg-icons";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import React, { useState } from "react";
+import { motion } from "framer-motion";
+import {
+  FiInbox,
+  FiMessageCircle,
+  FiMessageSquare,
+  FiSend,
+  FiX,
+} from "react-icons/fi";
 
 const MessagesSendingRecieving = ({
   messages,
@@ -13,87 +19,98 @@ const MessagesSendingRecieving = ({
   return (
     <div>
       {/* Floating Chat Icon */}
-      <button
-        className="fixed bottom-4 right-4 bg-gradient-to-r from-orange-500 to-yellow-500 text-white p-4 rounded-full shadow-lg hover:scale-110 transition-all duration-300 z-50"
+      <motion.button
+        whileHover={{ scale: 1.1 }}
+        whileTap={{ scale: 0.95 }}
+        className="fixed bottom-6 right-6 bg-white/10 backdrop-blur-lg border border-white/20 text-white p-5 rounded-full shadow-2xl hover:shadow-cyan-500/20 z-[999] transition-all duration-300"
         title="Chat"
         onClick={() => setChatVisible((prev) => !prev)}
       >
-        <FontAwesomeIcon icon={faComments} size="lg" />
-      </button>
+        <FiMessageCircle className="w-7 h-7 text-cyan-400" />
+      </motion.button>
 
       {/* Chat Window */}
       {chatVisible && (
-        <div className="fixed bottom-12 right-4 w-80 md:w-96 bg-gray-900 rounded-xl shadow-2xl overflow-hidden animate-slide-up">
+        <motion.div
+          initial={{ opacity: 0, y: 100 }}
+          animate={{ opacity: 1, y: 0 }}
+          exit={{ opacity: 0, y: 100 }}
+          className="fixed bottom-20 right-6 w-[95vw] max-w-96 md:w-96 bg-white/5 backdrop-blur-xl border border-white/20 rounded-xl shadow-2xl z-[999]"
+          style={{ maxHeight: "80vh" }}
+        >
           {/* Header */}
-          <div className="p-4 bg-gradient-to-r from-orange-500 to-yellow-500 text-white flex justify-between items-center">
-            <h3 className="text-lg font-semibold">Chat with Admin</h3>
+          <div className="p-4 bg-white/10 border-b border-white/20 flex justify-between items-center">
+            <div className="flex items-center gap-3">
+              <FiMessageSquare className="w-6 h-6 text-cyan-400" />
+              <h3 className="text-lg font-semibold text-gray-100">Live Chat</h3>
+            </div>
             <button
-              className="text-white hover:scale-125 transition-all duration-300"
+              className="p-1 text-gray-400 hover:text-cyan-400 transition-colors"
               onClick={() => setChatVisible(false)}
             >
-              &times;
+              <FiX className="w-6 h-6" />
             </button>
           </div>
 
           {/* Messages Area */}
-          <div className="p-4 max-h-64 overflow-y-auto scrollbar-thin scrollbar-thumb-gray-700 scrollbar-track-gray-800">
+          <div className="p-4 h-[50vh] md:h-96 overflow-y-auto scrollbar-thin scrollbar-thumb-white/20 scrollbar-track-transparent">
             {messages.length === 0 ? (
-              <p className="text-gray-400 text-center">No messages yet.</p>
+              <div className="flex flex-col items-center justify-center h-full text-gray-400">
+                <FiInbox className="w-12 h-12 mb-3" />
+                <p>No messages yet</p>
+              </div>
             ) : (
               messages.map((msg, index) => (
-                <div
+                <motion.div
                   key={index}
-                  className={`mb-4 p-3 rounded-lg shadow-md ${
+                  initial={{ opacity: 0, x: msg.sender === "Admin" ? -20 : 20 }}
+                  animate={{ opacity: 1, x: 0 }}
+                  className={`mb-4 p-3 rounded-lg ${
                     msg.sender === "Admin"
-                      ? "bg-gray-700 text-gray-200 text-left"
-                      : "bg-gradient-to-r from-orange-500 to-yellow-500 text-white text-right"
+                      ? "bg-gray-700/50 backdrop-blur mr-8"
+                      : "ml-8 bg-gradient-to-r from-cyan-500/40 to-blue-600/40"
                   }`}
                 >
-                  <p>{msg.message}</p>
-                  <p className="text-xs mt-2 opacity-75">
-                    {new Date(msg.sentAt).toLocaleString()}
-                  </p>
-                </div>
+                  <div className="flex justify-between items-start gap-2">
+                    <span className="text-sm font-medium text-cyan-300">
+                      {msg.sender}
+                    </span>
+                    <span className="text-xs text-gray-400">
+                      {new Date(msg.sentAt).toLocaleTimeString([], {
+                        hour: "2-digit",
+                        minute: "2-digit",
+                      })}
+                    </span>
+                  </div>
+                  <p className="mt-1 text-gray-100">{msg.message}</p>
+                </motion.div>
               ))
             )}
           </div>
 
           {/* Input Area */}
-          <div className="p-4 bg-gray-800 border-t border-gray-700">
-            <textarea
-              value={message}
-              onChange={(e) => setMessage(e.target.value)}
-              className="w-full p-2 rounded-md bg-gray-900 text-gray-200 border border-gray-700 focus:outline-none focus:ring-2 focus:ring-orange-500 resize-none"
-              rows="3"
-              placeholder="Type your message..."
-            />
-            <button
-              onClick={sendMessageToAdmin}
-              className="w-full bg-gradient-to-r from-orange-500 to-yellow-500 text-white font-semibold py-2 rounded-lg mt-2 hover:scale-105 transition-all duration-300"
-              disabled={!message.trim()}
-            >
-              Send
-            </button>
+          <div className="p-4 bg-white/5 border-t border-white/10">
+            <div className="relative">
+              <textarea
+                value={message}
+                onChange={(e) => setMessage(e.target.value)}
+                className="w-full p-3 pr-12 bg-white/5 backdrop-blur-sm text-gray-100 rounded-lg border border-white/20 focus:border-cyan-400 focus:ring-2 focus:ring-cyan-400/30 resize-none transition-all"
+                rows="2"
+                placeholder="Type your message..."
+              />
+              <motion.button
+                whileHover={{ scale: 1.05 }}
+                whileTap={{ scale: 0.95 }}
+                onClick={sendMessageToAdmin}
+                disabled={!message.trim()}
+                className="absolute bottom-3 right-3 p-2 bg-cyan-500/80 backdrop-blur rounded-lg hover:bg-cyan-400 transition-colors"
+              >
+                <FiSend className="w-5 h-5 text-white" />
+              </motion.button>
+            </div>
           </div>
-        </div>
+        </motion.div>
       )}
-
-      {/* Mobile Compatibility Styles */}
-      <style>{`
-        @keyframes slide-up {
-          from {
-            transform: translateY(100%);
-            opacity: 0;
-          }
-          to {
-            transform: translateY(0);
-            opacity: 1;
-          }
-        }
-        .animate-slide-up {
-          animation: slide-up 0.3s ease-out;
-        }
-      `}</style>
     </div>
   );
 };

@@ -59,7 +59,7 @@ const CheckProjects = () => {
     try {
       setLoading(true);
       const response = await axios.post(
-        `${electricaURL}http://localhost:5120/api/auth/remove-project`,
+        `${electricaURL}api/auth/remove-project`,
         { projectId, removeProject: true },
         { withCredentials: true }
       );
@@ -126,9 +126,9 @@ const CheckProjects = () => {
         </div>
       ) : (
         <div className="space-y-6">
-          <div className="flex justify-between items-center">
+          <div className="flex justify-between items-center lg:flex-row flex-col lg:gap-0 gap-4">
             <h1 className="text-3xl font-bold text-white">Your Projects</h1>
-            <div className="flex items-center bg-gray-700 text-white px-4 py-2 rounded-lg">
+            <div className="flex items-center bg-gray-700 text-white lg:px-2 px-4 lg:py-1 py-2 rounded-lg">
               <FontAwesomeIcon icon={faSearch} className="mr-2" />
               <input
                 type="text"
