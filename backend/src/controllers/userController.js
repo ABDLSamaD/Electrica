@@ -277,8 +277,16 @@ exports.logout = async (req, res) => {
       }
 
       // Optionally, clear the cookie
-      res.clearCookie("auth_token"); // This is the default cookie name for express-session
-      res.clearCookie("electrica"); // This is the default cookie name for express-session
+      res.clearCookie("auth_token", {
+        httpOnly: true,
+        secure: process.env.NODE_ENV === "production",
+        sameSite: process.env.NODE_ENV === "production" ? "None" : "Strict",
+      }); // This is the default cookie name for express-session
+      res.clearCookie("electrica", {
+        httpOnly: true,
+        secure: process.env.NODE_ENV === "production",
+        sameSite: process.env.NODE_ENV === "production" ? "None" : "Strict",
+      }); // This is the default cookie name for express-session
 
       // Return a success message
       res

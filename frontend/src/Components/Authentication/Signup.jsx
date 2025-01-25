@@ -71,7 +71,7 @@ const Signup = () => {
         setTimeout(() => {
           setLoading(false);
           navigate("/otpverify");
-        }, 19200);
+        }, 1900);
       } else {
         setLoading(false);
         setAlert({ type: response.data.type, message: response.data.message });
