@@ -59,7 +59,7 @@ const sessionConfig = {
     maxAge: 24 * 60 * 60 * 1000, // 1 day
     httpOnly: true,
     secure: process.env.NODE_ENV === "production", // Set to true in production with HTTPS
-    sameSite: process.env.NODE_ENV === "production" ? "None" : "Lax",
+    sameSite: "None",
   },
   store: MongoStore.create({
     mongoUrl: process.env.MONGO_URL,

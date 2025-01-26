@@ -221,7 +221,7 @@ exports.login = async (req, res) => {
     res.cookie("auth_token", token, {
       httpOnly: true, // Prevent access from JavaScript
       secure: process.env.NODE_ENV === "production", // Use secure cookies in production
-      sameSite: process.env.NODE_ENV === "production" ? "None" : "Strict",
+      sameSite: "None",
       maxAge: sessionMaxAge,
     });
 
@@ -554,12 +554,12 @@ exports.deleteAccount = async (req, res) => {
       res.clearCookie("auth_token", {
         httpOnly: true,
         secure: process.env.NODE_ENV === "production",
-        sameSite: process.env.NODE_ENV === "production" ? "None" : "Strict",
+        sameSite: "None",
       });
       res.clearCookie("electrica", {
         httpOnly: true,
         secure: process.env.NODE_ENV === "production",
-        sameSite: process.env.NODE_ENV === "production" ? "None" : "Strict",
+        sameSite: "None",
       });
 
       // Send a success response
