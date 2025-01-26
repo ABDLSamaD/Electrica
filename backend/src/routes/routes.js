@@ -12,6 +12,8 @@ const {
   resetPassword,
   getUserDetails,
   checkAuth,
+  resendForgotOtp,
+  deleteAccount,
 } = require("../controllers/userController");
 const {
   someProtectedController,
@@ -81,8 +83,10 @@ routes.get("/protected-endpoint", sessionAuth, someProtectedController);
 routes.post("/logout", sessionAuth, logout);
 routes.post("/set-logout-time", sessionAuth, setLogoutTime);
 routes.post("/forgot-password", forgotPassword);
+routes.post("/resend-forgot-otp", resendForgotOtp);
 routes.post("/verify-forgototp", verifyForgotOtp);
 routes.post("/reset-password", resetPassword);
+routes.post("/delete-account", deleteAccount);
 routes.post("/adduser-details", decodedToken, userDetail);
 routes.put("/updateuser-details", decodedToken, updateUserDetails);
 routes.post("/adduser-profileImg", decodedToken, profileImage);

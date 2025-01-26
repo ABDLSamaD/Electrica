@@ -47,7 +47,6 @@ exports.signUp = async (req, res) => {
         "Account Created Successfully. Please verify with OTP sent to your email.",
     });
   } catch (error) {
-    console.log(error.message);
     res.status(500).json({ type: "error", messsage: "Internal server error" });
   }
 };
@@ -233,7 +232,6 @@ exports.login = async (req, res) => {
       email: users.email,
       role: "user",
     };
-    console.log("Session after login:", req.session);
 
     // Send login email notification (catch potential errors)
     await loginMail(users);
@@ -241,14 +239,12 @@ exports.login = async (req, res) => {
     await users.save();
     res.status(200).json({ type: "success", message: "Login successfully" });
   } catch (error) {
-    console.error("Login error:", error.message);
     res.status(500).json({ type: "error", message: "Internal server error" });
   }
 };
 
 // check auth user
 exports.checkAuth = (req, res) => {
-  console.log(req.session.user);
   if (req.session.user) {
     return res
       .status(200)
@@ -358,7 +354,42 @@ exports.forgotPassword = async (req, res) => {
       resetToken,
     });
   } catch (error) {
-    // console.error(error.message);
+    res.status(500).json({ type: "error", message: "Internal server error" });
+  }
+};
+exports.resendForgotOtp = async (req, res) => {
+  const { email } = req.body;
+  try {
+    const user = await User.findOne({ email });
+    if (!user) {
+      return res.status(404).json({ type: "error", message: "User not found" });
+    }
+
+    const otp = Math.floor(100000 + Math.random() * 900000).toString();
+
+    const data = {
+      user: {
+        id: user.$isDeleted,
+      },
+    };
+    const resetToken = jwt.sign(data, process.env.JWT_SECRET, {
+      expiresIn: "10m",
+    });
+
+    user.otp = otp;
+    user.otpExpires = Date.now() + 10 * 60 * 1000; // 10 minutes validity
+    user.resetToken = resetToken;
+    user.resetTokenExpires = Date.now() + 10 * 60 * 1000;
+
+    await sendForgotOtpEmail(user.email, otp);
+    await user.save();
+
+    res.status(200).json({
+      type: "success",
+      message: "OTP has been sent to your email.",
+      resetToken,
+    });
+  } catch (error) {
     res.status(500).json({ type: "error", message: "Internal server error" });
   }
 };
@@ -415,7 +446,6 @@ exports.verifyForgotOtp = async (req, res) => {
       .status(200)
       .json({ type: "success", message: "OTP verified successfully." });
   } catch (error) {
-    console.error(error.message);
     res.status(500).json({ type: "error", message: "Internal server error" });
   }
 };
@@ -444,7 +474,6 @@ exports.resetPassword = async (req, res) => {
     });
 
     if (!user) {
-      console.log("error");
       return res
         .status(400)
         .json({ type: "error", message: "Invalid or expired reset token" });
@@ -462,7 +491,6 @@ exports.resetPassword = async (req, res) => {
       message: "Password has been reset successfully.",
     });
   } catch (error) {
-    console.error(error.message);
     res.status(500).json({ type: "er  ror", message: "Internal server error" });
   }
 };
@@ -483,7 +511,69 @@ exports.getUserDetails = async (req, res) => {
         .json({ type: "error", message: "user not found!" });
     res.json(user);
   } catch (error) {
-    console.error(error);
     res.status(500).json({ type: "error", message: "Internal server error" });
+  }
+};
+
+// delete account
+exports.deleteAccount = async (req, res) => {
+  const { userId, prompt } = req.body;
+  try {
+    // Check if the user exists
+    const user = await User.findById(userId);
+    if (!user) {
+      return res.status(404).json({
+        type: "error",
+        message: "User not found.",
+      });
+    }
+
+    // Generate the correct prompt (e.g., using the username or a fixed phrase)
+    const expectedPrompt = `Delete my account ${user.name}`;
+
+    // Validate the prompt
+    if (prompt !== expectedPrompt) {
+      return res.status(400).json({
+        type: "error",
+        message: "Invalid prompt. Please try again.",
+      });
+    }
+
+    // Delete the user
+    await User.findByIdAndDelete(userId);
+
+    req.session.destroy((err) => {
+      if (err) {
+        return res.status(500).json({
+          type: "error",
+          message: "An error occurred while deleting the account.",
+        });
+      }
+
+      // Clear cookies
+      res.clearCookie("auth_token", {
+        httpOnly: true,
+        secure: process.env.NODE_ENV === "production",
+        sameSite: process.env.NODE_ENV === "production" ? "None" : "Strict",
+      });
+      res.clearCookie("electrica", {
+        httpOnly: true,
+        secure: process.env.NODE_ENV === "production",
+        sameSite: process.env.NODE_ENV === "production" ? "None" : "Strict",
+      });
+
+      // Send a success response
+      return res.status(200).json({
+        type: "success",
+        message:
+          "Your account has been deleted successfully, and cookies have been removed.",
+      });
+    });
+  } catch (error) {
+    return res.status(500).json({
+      type: "error",
+      message:
+        "An error occurred while deleting the account. Please try again later.",
+    });
   }
 };

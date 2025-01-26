@@ -9,6 +9,7 @@ const GlobalVerificationEmail = ({
   otp,
   handleChange,
   resendOtp,
+  resendForgotOtp,
   loading,
   onkeyDown,
 }) => {
@@ -71,7 +72,10 @@ const GlobalVerificationEmail = ({
         </div>
 
         <div className="mt-4">
-          <button onClick={resendOtp} className="button-86 active:scale-105">
+          <button
+            onClick={resendOtp || resendForgotOtp}
+            className="button-86 active:scale-105"
+          >
             <span className="text-white">
               {loading ? "Otp resend" : "Resend OTP"}
             </span>

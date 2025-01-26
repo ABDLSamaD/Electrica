@@ -66,6 +66,34 @@ const VerifyForgotOtp = () => {
       setLoading(false);
     }
   };
+  const resendOtp = async () => {
+    setLoading(true);
+    try {
+      const response = await axios.post(
+        `${electricaURL}/api/auth/resend-forgot-otp`,
+        { email: emailForgot }
+      );
+      if (response.status === 200) {
+        setAlert({
+          type: response.data.type,
+          message: response.data.message,
+        });
+      }
+      setAlert({
+        type: response.data.type,
+        message: response.data.message,
+      });
+      setLoading(false);
+    } catch (error) {
+      setAlert({
+        type: err.response?.data?.type,
+        message: err.response?.data?.message,
+      });
+      setLoading(false);
+    } finally {
+      setLoading(false);
+    }
+  };
 
   return (
     <>
@@ -78,6 +106,7 @@ const VerifyForgotOtp = () => {
         handleChange={handleChange}
         onkeyDown={handleKeyDown}
         loading={loading}
+        resendForgotOtp={resendOtp}
       />
     </>
   );

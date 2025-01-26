@@ -1,5 +1,6 @@
 import React from "react";
 import { FaFacebook, FaTwitter, FaLinkedin, FaGithub } from "react-icons/fa";
+import { Link } from "react-router-dom";
 
 const AnimatedFooter = () => {
   return (
@@ -23,38 +24,38 @@ const AnimatedFooter = () => {
 
           {/* Social Media Icons */}
           <div className="flex space-x-6 text-2xl">
-            <a
-              href="https://www.facebook.com/profile.php?id=100023065290541"
+            <Link
+              to="https://www.facebook.com/profile.php?id=100023065290541"
               target="_blank"
               rel="noopener noreferrer"
               className="hover:text-blue-500 transition transform hover:scale-110"
             >
               <FaFacebook />
-            </a>
-            <a
-              href="https://twitter.com"
+            </Link>
+            <Link
+              to="https://twitter.com"
               target="_blank"
               rel="noopener noreferrer"
               className="hover:text-blue-400 transition transform hover:scale-110"
             >
               <FaTwitter />
-            </a>
-            <a
-              href="https://www.linkedin.com/in/abdul-samad-421793309/"
+            </Link>
+            <Link
+              to="https://www.linkedin.com/in/abdul-samad-421793309/"
               target="_blank"
               rel="noopener noreferrer"
               className="hover:text-blue-700 transition transform hover:scale-110"
             >
               <FaLinkedin />
-            </a>
-            <a
-              href="https://github.com/ABDLSamaD/"
+            </Link>
+            <Link
+              to="https://github.com/ABDLSamaD/"
               target="_blank"
               rel="noopener noreferrer"
               className="hover:text-gray-500 transition transform hover:scale-110"
             >
               <FaGithub />
-            </a>
+            </Link>
           </div>
         </div>
 
@@ -65,24 +66,24 @@ const AnimatedFooter = () => {
           </p>
 
           <div className="flex space-x-4 mt-2 md:mt-0">
-            <a
-              href="/about"
+            <Link
+              to="/"
+              className="hover:text-white transition hover:underline"
+            >
+              Home
+            </Link>
+            <Link
+              to="/about"
               className="hover:text-white transition hover:underline"
             >
               About Us
-            </a>
-            <a
-              href="/services"
+            </Link>
+            <Link
+              to="/services"
               className="hover:text-white transition hover:underline"
             >
               Services
-            </a>
-            <a
-              href="/contact"
-              className="hover:text-white transition hover:underline"
-            >
-              Contact
-            </a>
+            </Link>
           </div>
         </div>
       </div>

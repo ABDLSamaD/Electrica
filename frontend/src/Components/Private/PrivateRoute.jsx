@@ -23,6 +23,7 @@ const PrivateRoute = () => {
           setIsAuthenticated(false);
         }
       } catch (error) {
+        document.body.innerHTML += `<p className="flex items-center justify-center text-xl mt-32">${error.response?.data?.message}</p>`;
         setIsAuthenticated(false);
         setLoading(false);
       } finally {
