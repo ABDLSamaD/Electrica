@@ -61,7 +61,7 @@ const DashboardHome = () => {
       } finally {
         setLoader(false); // Stop loader
       }
-    }, 2000); // Reduced delay for better UX
+    }, 2300); // Reduced delay for better UX
 
     // Cleanup timer on unmount or dependencies change
     return () => clearTimeout(timer);

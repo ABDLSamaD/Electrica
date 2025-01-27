@@ -114,7 +114,6 @@ const Topbar = ({ user, electricaURL }) => {
             </button>
             <div className="hidden md:flex space-x-4">
               <SidebarLink to="/db-au-user" label="Home" end />
-              <SidebarLink to="/db-au-pages" label="Pages" />
               <SidebarLink to="/db-au-user/db-au-profile" label="Account" />
               <SidebarLink to="/db-au-user/checkstatus" label="Status" />
               <SidebarLink to="/db-au-user/project" label="Project" />
@@ -125,42 +124,59 @@ const Topbar = ({ user, electricaURL }) => {
             <AnimatePresence>
               {showMobileNav && (
                 <motion.nav
-                  initial="hidden"
-                  animate="visible"
-                  exit="exit"
-                  variants={navVariants}
-                  className="absolute top-16 left-0 right-0 bg-[rgba(255,255,255,0.95)] backdrop-blur-lg shadow-md text-gray-900 flex flex-col p-4 space-y-4 z-50 md:z-50 md:hidden"
+                  initial={{ opacity: 0, y: -20 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  exit={{ opacity: 0, y: -20 }}
+                  transition={{ duration: 0.3, ease: "easeInOut" }}
+                  className="absolute top-0 -left-3 right-20 w-full bg-gradient-to-r from-gray-900/80 to-blue-950 backdrop-blur-3xl shadow-lg text-white flex flex-col py-4 px-6 space-y-4 z-50"
                 >
+                  <div className="flex justify-between items-center mb-4">
+                    <h1 className="text-lg font-semibold tracking-wide">
+                      Menu
+                    </h1>
+                    <button
+                      onClick={toggleMobileNav}
+                      className="text-white p-2 rounded-full hover:bg-indigo-700 transition"
+                    >
+                      ✕
+                    </button>
+                  </div>
                   <SidebarLink
                     to="/db-au-user"
                     label="Home"
                     end
                     onClick={toggleMobileNav}
+                    className="hover:bg-indigo-700 px-4 py-2 rounded-lg transition text-sm"
                   />
                   <SidebarLink
                     to="/db-au-pages"
                     label="Pages"
                     onClick={toggleMobileNav}
+                    className="hover:bg-indigo-700 px-4 py-2 rounded-lg transition text-sm"
                   />
                   <SidebarLink
                     to="/db-au-user/db-au-profile"
                     label="Account"
                     onClick={toggleMobileNav}
+                    className="hover:bg-indigo-700 px-4 py-2 rounded-lg transition text-sm"
                   />
                   <SidebarLink
                     to="/db-au-user/checkstatus"
                     label="Status"
                     onClick={toggleMobileNav}
+                    className="hover:bg-indigo-700 px-4 py-2 rounded-lg transition text-sm"
                   />
                   <SidebarLink
                     to="/db-au-user/project"
                     label="Project"
                     onClick={toggleMobileNav}
+                    className="hover:bg-indigo-700 px-4 py-2 rounded-lg transition text-sm"
                   />
                   <SidebarLink
                     to="/db-au-user/db-au-setting"
                     label="Settings"
                     onClick={toggleMobileNav}
+                    className="hover:bg-indigo-700 px-4 py-2 rounded-lg transition text-sm"
                   />
                 </motion.nav>
               )}
@@ -195,43 +211,56 @@ const Topbar = ({ user, electricaURL }) => {
                   animate={{ opacity: 1, y: 0 }}
                   exit={{ opacity: 0, y: -10 }}
                   transition={{ duration: 0.3 }}
-                  className="absolute right-0 top-14 bg-[rgba(251,251,251,0.49)] backdrop:blur-3xl text-gray-300 shadow-lg rounded-lg z-50 w-64"
+                  className="absolute right-0 top-14 bg-gradient-to-br from-gray-900/90 to-gray-950/60 backdrop-blur-2xl shadow-lg rounded-2xl z-50 w-72 border border-white/20"
                 >
-                  <div className="flex flex-col items-center text-center p-4">
+                  <div className="flex flex-col items-center text-center p-6">
                     <img
                       src={user.profileImg}
                       alt="Profile"
-                      className="w-16 h-16 rounded-full shadow-md border-2 border-gray-200"
+                      className="w-20 h-20 rounded-full shadow-md border-4 border-white/50"
                     />
-                    <h2 className="mt-2 font-semibold">{user.name}</h2>
-                    <p className="text-sm text-gray-200">@mail: {user.email}</p>
+                    <h2 className="mt-3 text-lg font-semibold text-white">
+                      {user.name}
+                    </h2>
+                    <p className="text-sm text-gray-300">@mail: {user.email}</p>
                   </div>
-                  <div className="w-full h-px bg-gray-300"></div>
+                  <div className="w-full h-px bg-white/20 my-2"></div>
                   <div className="flex flex-col py-2">
                     <Link
-                      className="flex items-center gap-2 px-4 py-2 hover:bg-indigo-600 transition-all rounded-lg"
+                      className="flex items-center gap-3 px-6 py-3 hover:bg-indigo-600/50 transition-all rounded-xl"
                       to="/db-au-user/db-au-setting"
                     >
-                      <FontAwesomeIcon icon={faCog} />
-                      <span className="text-white">Settings</span>
+                      <FontAwesomeIcon
+                        icon={faCog}
+                        className="text-indigo-400"
+                      />
+                      <span className="text-gray-200 font-medium">
+                        Settings
+                      </span>
                     </Link>
                     <Link
-                      className="flex items-center gap-2 px-4 py-2 hover:bg-indigo-600 transition-all rounded-lg"
+                      className="flex items-center gap-3 px-6 py-3 hover:bg-indigo-600/50 transition-all rounded-xl"
                       to="/db-au-user/db-au-profile"
                     >
-                      <FontAwesomeIcon icon={faUser} />
-                      <span className="text-white">Profile</span>
+                      <FontAwesomeIcon
+                        icon={faUser}
+                        className="text-indigo-400"
+                      />
+                      <span className="text-gray-200 font-medium">Profile</span>
                     </Link>
                     <button
-                      className="flex items-center gap-2 px-4 py-2 hover:bg-red-900 transition-all rounded-lg"
+                      className="flex items-center gap-3 px-6 py-3 hover:bg-red-800/50 transition-all rounded-xl"
                       onClick={() => {
                         setTimeout(() => {
                           setModal(true);
                         }, 350);
                       }}
                     >
-                      <FontAwesomeIcon icon={faRightFromBracket} />
-                      <span className="text-red-200">Logout</span>
+                      <FontAwesomeIcon
+                        icon={faRightFromBracket}
+                        className="text-red-400"
+                      />
+                      <span className="text-red-300 font-medium">Logout</span>
                     </button>
                   </div>
                 </motion.div>
