@@ -1,7 +1,17 @@
-import React, { useEffect, useState } from "react";
+import React, { useState, useEffect } from "react";
 import { Link, useNavigate, useOutletContext } from "react-router-dom";
-import LoaderAll from "../../OtherComponents/LoaderAll";
 import { FaArrowLeft } from "react-icons/fa";
+import LoaderAll from "../../OtherComponents/LoaderAll";
+import {
+  ChevronLeft,
+  Mail,
+  Briefcase,
+  Calendar,
+  Shield,
+  MapPin,
+  User,
+  ExternalLink,
+} from "lucide-react";
 
 const UserProfile = () => {
   const navigate = useNavigate();
@@ -11,12 +21,12 @@ const UserProfile = () => {
   useEffect(() => {
     setTimeout(() => {
       setLoading(false);
-    }, 2000); // Reduced timeout for better UX
+    }, 1900); // Reduced timeout for better UX
   }, []);
 
   if (loading) {
     return (
-      <div className="flex items-center justify-center min-h-screen bg-gray-900">
+      <div className="flex items-center justify-center min-h-screen">
         <LoaderAll />
       </div>
     );
@@ -24,108 +34,127 @@ const UserProfile = () => {
 
   if (!users || users.length === 0) {
     return (
-      <div className="flex items-center justify-center min-h-screen bg-gray-900">
-        <h1 className="text-white text-3xl text-center">No users found</h1>
+      <div className="flex items-center justify-center min-h-screen bg-gray-800">
+        <h1 className="text-white text-3xl">No users found</h1>
       </div>
     );
   }
 
   return (
-    <div className="px-4 sm:px-6 lg:px-12 py-8 bg-gray-900 min-h-screen">
-      {/* Back Button */}
-      <button
-        className="mb-4 text-gray-500 hover:text-gray-200 flex items-center gap-2"
-        onClick={() => navigate(-1)}
-      >
-        <FaArrowLeft /> Go Back
-      </button>
-      <h1 className="text-3xl sm:text-4xl font-bold mb-8 text-center text-purple-300">
-        User Profiles
-      </h1>
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
-        {users.map((user) => (
-          <Link
-            to={`/db_au_admn/userprofile/${user._id}`}
-            key={user._id}
-            className="block"
-            title={`${user.name}'s profile`}
+    <div className="min-h-screen bg-[#0d1117] bg-[radial-gradient(ellipse_80%_80%_at_50%_-20%,rgba(120,119,198,0.3),rgba(255,255,255,0))]">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+        {/* Header */}
+        <div className="flex items-center justify-between flex-col lg:space-y-0 space-y-3 lg:flex-row mb-8">
+          <button
+            onClick={() => window.history.back()}
+            className="flex items-center space-x-2 text-gray-400 hover:text-white transition-colors relative group bg-white/5 px-4 py-2 rounded-lg backdrop-blur-lg border border-white/10"
           >
-            <div className="bg-gray-800 rounded-lg shadow-lg hover:shadow-xl transition-all duration-300 p-4 sm:p-6">
-              {/* User Image */}
-              <div className="flex items-center flex-wrap space-x-4 mb-4">
-                <div className="w-16 h-16 sm:w-20 sm:h-20">
-                  <img
-                    src={user.profileImg || "/placeholder-profile.png"}
-                    alt={`${user.name}'s avatar`}
-                    className="w-full h-full rounded-full object-cover"
-                  />
-                </div>
+            <ChevronLeft className="w-5 h-5" />
+            <span>Back</span>
+            <div className="absolute inset-0 bg-white/5 rounded-lg opacity-0 group-hover:opacity-100 transition-opacity" />
+          </button>
+          <h1 className="text-3xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-purple-400 to-indigo-400">
+            User Profiles
+          </h1>
+        </div>
 
-                <div>
-                  <h2 className="text-lg sm:text-xl font-semibold text-purple-300 truncate">
-                    {user.name}
-                  </h2>
-                  <p className="text-gray-400 text-sm">{user.role || "user"}</p>
+        {/* Users Grid */}
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
+          {users.map((user) => {
+            const userProjects = projects.filter((p) => p.user === user._id);
+
+            return (
+              <div key={user._id} className="group relative">
+                {/* 3D Tilt Effect Container */}
+                <div className="transform transition-all duration-300 group-hover:-translate-y-2 group-hover:rotate-1">
+                  {/* Glass Card */}
+                  <div className="relative overflow-hidden rounded-2xl bg-white/5 backdrop-blur-xl border border-white/10 shadow-[0_8px_32px_rgba(0,0,0,0.37)]">
+                    {/* Background Gradient */}
+                    <div className="absolute inset-0 bg-gradient-to-br from-purple-500/10 to-indigo-500/10 opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
+
+                    {/* Content */}
+                    <div className="relative p-6">
+                      {/* Header */}
+                      <div className="flex items-start justify-between mb-6">
+                        <div className="flex items-center space-x-4">
+                          <div className="relative">
+                            <div className="w-20 h-20 rounded-xl overflow-hidden ring-2 ring-purple-500/30 shadow-lg">
+                              <img
+                                src={user.profileImg}
+                                alt={user.name}
+                                className="w-full h-full object-cover"
+                              />
+                            </div>
+                            {user.isVerified && (
+                              <div className="absolute -bottom-1 -right-1 bg-green-500/80 backdrop-blur-sm text-white p-1 rounded-full">
+                                <Shield className="w-4 h-4" />
+                              </div>
+                            )}
+                          </div>
+                          <div>
+                            <h2 className="text-xl font-bold text-white">
+                              {user.name}
+                            </h2>
+                            <p className="text-purple-400">{user.role}</p>
+                          </div>
+                        </div>
+                      </div>
+
+                      {/* Info Grid */}
+                      <div className="grid grid-cols-1 gap-4 mb-6">
+                        <div className="space-y-1">
+                          <div className="flex items-center space-x-2 text-gray-300">
+                            <Mail className="w-4 h-4" />
+                            <span className="text-sm text-gray-500">
+                              {user.email}
+                            </span>
+                          </div>
+                          <div className="flex items-center space-x-2 text-gray-400">
+                            <MapPin className="w-4 h-4" />
+                            <span className="text-sm text-gray-500">
+                              {user.city || "N/A"}
+                            </span>
+                          </div>
+                        </div>
+                        <div className="space-y-1">
+                          <div className="flex items-center space-x-2 text-gray-400">
+                            <Calendar className="w-4 h-4" />
+                            <span className="text-sm text-gray-500">
+                              {new Date(user.createdAt).toLocaleDateString(
+                                "en-US",
+                                {
+                                  month: "short",
+                                  year: "numeric",
+                                }
+                              )}
+                            </span>
+                          </div>
+                          <div className="flex items-center space-x-2 text-gray-400">
+                            <Briefcase className="w-4 h-4" />
+                            <span className="text-sm text-cyan-900">
+                              {userProjects.length} Projects
+                            </span>
+                          </div>
+                        </div>
+                      </div>
+
+                      {/* Action Button */}
+                      <button className="mt-6 w-full bg-gradient-to-r from-gray-500 to-indigo-500 text-white font-medium py-2 px-4 rounded-lg hover:from-purple-600 hover:to-indigo-600 transition-all duration-300 flex items-center justify-center space-x-2 group border border-white/10">
+                        <Link
+                          to={`/db_au_admn/userprofile/${user._id}`}
+                          className="flex p-1 space-x-1"
+                        >
+                          <span>View Full Profile</span>
+                          <ExternalLink className="w-4 h-4 transform group-hover:translate-x-1 transition-transform" />
+                        </Link>
+                      </button>
+                    </div>
+                  </div>
                 </div>
               </div>
-
-              {/* User Info */}
-              <div className="text-gray-300 space-y-2 text-sm sm:text-base">
-                <p>
-                  <span className="font-medium">Email: </span>
-                  {user.email}
-                </p>
-                <p>
-                  <span className="font-medium">Phone: </span>
-                  {user.phone || "N/A"}
-                </p>
-                <p>
-                  <span className="font-medium">City: </span>
-                  {user.city || "N/A"}
-                </p>
-              </div>
-
-              {/* Project Info */}
-              {projects && projects.length > 0 ? (
-                <div className="mt-4">
-                  <h3 className="text-base font-semibold text-purple-300">
-                    Projects:
-                  </h3>
-                  <ul className="list-disc ml-5 space-y-1 text-sm text-gray-400">
-                    {Array.isArray(projects) && projects.length > 0 ? (
-                      projects.slice(0, 3).map((project, index) => (
-                        <li key={index}>
-                          <span className="text-purple-300 font-medium">
-                            {project.name}
-                          </span>
-                          {`: ${project.description?.slice(0, 50) || ""}...`}
-                        </li>
-                      ))
-                    ) : (
-                      <li className="text-gray-500 italic">
-                        No projects available
-                      </li>
-                    )}
-                    {Array.isArray(projects) && projects.length > 3 && (
-                      <li className="text-gray-500">+ more...</li>
-                    )}
-                  </ul>
-                </div>
-              ) : (
-                <p className="text-gray-400 text-sm mt-4">
-                  No projects listed.
-                </p>
-              )}
-
-              {/* Action Button */}
-              <div className="mt-6 text-right">
-                <button className="px-4 py-2 sm:px-6 sm:py-3 bg-blue-600 text-white text-sm sm:text-base rounded-md hover:bg-blue-500 transition-all">
-                  View Profile
-                </button>
-              </div>
-            </div>
-          </Link>
-        ))}
+            );
+          })}
+        </div>
       </div>
     </div>
   );

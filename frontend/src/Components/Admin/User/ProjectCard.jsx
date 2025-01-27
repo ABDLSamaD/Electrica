@@ -3,7 +3,13 @@ import { Link } from "react-router-dom";
 import { CheckCircle, Circle, House, XCircle } from "lucide-react";
 import axios from "axios";
 
-const ProjectCard = ({ project, userId, electricaURL, refreshProjects }) => {
+const ProjectCard = ({
+  project,
+  userId,
+  electricaURL,
+  refreshProjects,
+  searchQuery,
+}) => {
   const [isStarting, setIsStarting] = useState(false);
   const [hasStarted, setHasStarted] = useState(project.startStage);
   const [modalOpen, setModalOpen] = useState(false);
@@ -37,11 +43,18 @@ const ProjectCard = ({ project, userId, electricaURL, refreshProjects }) => {
     setModalOpen(true);
   };
 
+  // Highlight search term
+  const highlightSearch = (text) => {
+    if (!searchQuery) return text;
+    const regex = new RegExp(`(${searchQuery})`, "gi");
+    return text.replace(regex, `<mark class="bg-yellow-200">$1</mark>`);
+  };
+
   const renderStages = () => {
     return project.stages?.map((stage, index) => (
       <div
         key={index}
-        className={`flex items-center lg:flex-row flex-col lg:justify-center justify-start lg:p-3 p-1 mb-3 rounded-lg transition-transform transform ${
+        className={`flex items-center lg:flex-row flex-col lg:justify-between justify-start lg:p-3 p-1 mb-3 rounded-lg transition-transform transform ${
           stage.isCompleted ? "bg-green-100" : "bg-gray-100"
         } shadow-sm hover:scale-105`}
       >
@@ -73,7 +86,7 @@ const ProjectCard = ({ project, userId, electricaURL, refreshProjects }) => {
 
   return (
     <div
-      className={`p-6 rounded-lg shadow-xl transition-transform transform ${
+      className={`lg:p-6 p-1 rounded-lg shadow-xl transition-transform transform ${
         project.status === "approved"
           ? "bg-gradient-to-r from-indigo-900/70 to-indigo-950/80  "
           : "bg-gradient-to-r from-gray-700 to-gray-600"
@@ -81,9 +94,12 @@ const ProjectCard = ({ project, userId, electricaURL, refreshProjects }) => {
     >
       <div className="flex flex-col justify-center items-center gap-2">
         <House style={{ color: "#ffa" }} />
-        <h1 className="text-2xl font-bold text-white mb-4 text-center">
-          {project.projectName || "Untitled Project"}
-        </h1>
+        <h1
+          className="text-2xl font-bold text-white mb-4 text-center"
+          dangerouslySetInnerHTML={{
+            __html: highlightSearch(project.projectName || "Untitled Project"),
+          }}
+        ></h1>
       </div>
 
       <h4
@@ -144,7 +160,7 @@ const ProjectCard = ({ project, userId, electricaURL, refreshProjects }) => {
 
       {/* modal open for daily updates details of stage */}
       {modalOpen && activeStage && (
-        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center z-50">
           <div className="bg-white p-6 rounded-lg shadow-lg max-w-md w-full relative">
             <h2 className="text-lg font-bold text-gray-800 mb-4">
               Updates for {activeStage.name}
@@ -156,7 +172,7 @@ const ProjectCard = ({ project, userId, electricaURL, refreshProjects }) => {
                   className="p-3 bg-gray-100 rounded-lg shadow-sm text-sm text-gray-700"
                 >
                   <h4 className="font-bold text-gray-950 mb-2">
-                    {new Date(update.date).toLocaleDateString()} -
+                    {new Date(update.date).toLocaleDateString()} -{" "}
                     {new Date(update.date).toLocaleTimeString()}
                   </h4>
                   {update.description && (
@@ -186,7 +202,7 @@ const ProjectCard = ({ project, userId, electricaURL, refreshProjects }) => {
                       <ul className="list-disc list-inside text-gray-600">
                         {update.workers.map((worker, workerIndex) => (
                           <li key={workerIndex}>
-                            {worker.name} - dailyWaige: {worker.dailyWage}
+                            {worker.name} - dailyWage: {worker.dailyWage}
                           </li>
                         ))}
                       </ul>
