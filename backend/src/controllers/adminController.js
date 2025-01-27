@@ -147,13 +147,11 @@ exports.logoutAdmin = async (req, res) => {
           httpOnly: true, // Prevent access from JavaScript
           secure: process.env.NODE_ENV === "production", // Use secure cookies in production
           sameSite: "None",
-          maxAge: sessionMaxAge,
         }); // Clear session cookie
         res.clearCookie("admin_auth", {
           httpOnly: true, // Prevent access from JavaScript
           secure: process.env.NODE_ENV === "production", // Use secure cookies in production
           sameSite: "None",
-          maxAge: sessionMaxAge,
         }); // Clear session cookie
         res.status(200).json({ message: "Logged out successfully" });
       });
