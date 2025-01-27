@@ -33,35 +33,39 @@ const DashboardHome = () => {
   const [page, setPage] = useState(false);
 
   useEffect(() => {
+    // Reset states initially
+    setLoader(false);
+    setError(null);
     setPage(false);
+
+    if (!user) {
+      setData(null);
+      setError("User data fetching soon...");
+      return;
+    }
+
     if (!projects || projects.length === 0) {
       setPage(false);
     } else {
       setPage(true);
     }
-    if (!user) {
-      setLoader(false);
-      setData(null);
-      setPage(false);
-      setError("User data fetching soon...");
-      return;
-    }
 
     setLoader(true);
-    setError(null);
 
+    // Timer to simulate data loading
     const timer = setTimeout(() => {
       try {
-        setData(user);
-        setLoader(false);
+        setData(user); // Load user data
       } catch (err) {
         setError("Failed to load user data.");
-        setLoader(false);
+      } finally {
+        setLoader(false); // Stop loader
       }
-    }, 2400); // Reduced delay for better UX
+    }, 2000); // Reduced delay for better UX
 
+    // Cleanup timer on unmount or dependencies change
     return () => clearTimeout(timer);
-  }, [user, projects]);
+  }, [user, projects]); // Only runs when `user` or `projects` change
 
   const projectCompletionData = {
     labels: ["Week 1", "Week 2", "Week 3", "Week 4", "Week 5"],

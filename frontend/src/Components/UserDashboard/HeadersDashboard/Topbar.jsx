@@ -195,7 +195,7 @@ const Topbar = ({ user, electricaURL }) => {
                   animate={{ opacity: 1, y: 0 }}
                   exit={{ opacity: 0, y: -10 }}
                   transition={{ duration: 0.3 }}
-                  className="absolute right-0 top-14 bg-[rgba(1,1,1,0.39)] backdrop:blur-3xl text-gray-300 shadow-lg rounded-lg z-50 w-64"
+                  className="absolute right-0 top-14 bg-[rgba(251,251,251,0.49)] backdrop:blur-3xl text-gray-300 shadow-lg rounded-lg z-50 w-64"
                 >
                   <div className="flex flex-col items-center text-center p-4">
                     <img
