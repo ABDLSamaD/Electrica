@@ -142,8 +142,16 @@ exports.logoutAdmin = async (req, res) => {
         if (err) {
           return res.status(500).json({ message: "Error logging out" });
         }
-        res.clearCookie("electrica"); // Clear session cookie
-        res.clearCookie("admin_auth"); // Clear session cookie
+        res.clearCookie("electrica", {
+          httpOnly: true, // Prevent access from JavaScript
+          secure: true, // Use secure cookies in production
+          sameSite: "None",
+        }); // Clear session cookie
+        res.clearCookie("admin_auth", {
+          httpOnly: true, // Prevent access from JavaScript
+          secure: true, // Use secure cookies in production
+          sameSite: "None",
+        }); // Clear session cookie
         res.status(200).json({ message: "Logged out successfully" });
       });
     } catch (error) {
