@@ -11,6 +11,7 @@ const {
   verifyForgotOtp,
   resendOTP,
   checkAdminAuth,
+  changePassword,
 } = require("../controllers/adminController");
 // const adminAuth = require("../middleware/adminAuth");
 const {
@@ -51,6 +52,7 @@ router.post("/resend-otp", resendOTP);
 router.post("/verify-forgotOTP", adminAuth, verifyForgotOtp); // and adminAuth is checking token inside of cookies
 router.post("/reset-paswrd", adminAuth, resetPassword);
 router.post("/logout", sessionAdminAuth, logoutAdmin);
+router.post("/change-password", adminAuth, changePassword);
 router.get("/get_admin", adminAuth, getAdmin); //get admin details
 router.get("/get_all_users", adminAuth, getAllUser); // fetech all user
 router.get("/:id/activity", adminAuth, getAllUserActivity);

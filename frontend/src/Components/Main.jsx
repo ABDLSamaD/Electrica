@@ -60,6 +60,7 @@ const Stepone = React.lazy(() => import("./Admin/Projectsteps/Stepone"));
 const AddMaterial = React.lazy(import("./Admin/Projectsteps/AddMaterial"));
 import NotifyClientModal from "./Admin/Projectsteps/Notifycient";
 import LoaderAll from "./OtherComponents/LoaderAll";
+import AdminSettings from "./Admin/AdminSettings";
 
 // Admin Dashboard End
 
@@ -180,6 +181,7 @@ const Main = () => {
           <Route element={<AdminPrivateRoute />}>
             <Route path="/db_au_admn" element={<Admin />}>
               <Route index element={<AdminHome />} />
+              <Route path="admn-setting" element={<AdminSettings />} />
               <Route path="userprofile" element={<UserProfile />} />
               <Route path="projectusers" element={<ProjectsUser />} />
               <Route

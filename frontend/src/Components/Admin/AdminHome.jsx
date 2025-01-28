@@ -67,11 +67,11 @@ const AdminHome = () => {
   const COLORS = ["#4caf50", "#2196f3", "#f44336"];
 
   return (
-    <div className="px-6 py-8 min-h-screen bg-gradient-to-br from-gray-900 via-black to-gray-800">
-      <h1 className="text-4xl font-extrabold mb-8 bg-gradient-to-r from-purple-400 via-pink-500 to-red-500 bg-clip-text text-transparent">
+    <div className="px-4 sm:px-6 py-8 min-h-screen bg-gradient-to-br from-gray-900 via-black to-gray-800">
+      <h1 className="text-3xl sm:text-4xl font-extrabold mb-6 bg-gradient-to-r from-purple-400 via-pink-500 to-red-500 bg-clip-text text-transparent">
         Admin Dashboard
       </h1>
-      <p className="text-lg text-gray-300 mb-6">
+      <p className="text-base sm:text-lg text-gray-300 mb-6">
         Hello{" "}
         <span className="text-cyan-400 font-semibold text-xl mx-2 tracking-wider">
           {admin.username}
@@ -80,25 +80,27 @@ const AdminHome = () => {
       </p>
 
       {/* Statistics */}
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-10">
-        <div className="p-6 rounded-xl shadow-lg bg-gradient-to-br from-indigo-600 to-blue-500 text-white">
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 mb-8">
+        <div className="p-4 sm:p-6 rounded-xl shadow-lg bg-gradient-to-br from-indigo-600 to-blue-500 text-white">
           <h2 className="text-lg font-semibold">Total Users</h2>
-          <p className="text-3xl font-bold mt-2">{totalUsers}</p>
+          <p className="text-2xl sm:text-3xl font-bold mt-2">{totalUsers}</p>
         </div>
-        <div className="p-6 rounded-xl shadow-lg bg-gradient-to-br from-green-600 to-teal-500 text-white">
+        <div className="p-4 sm:p-6 rounded-xl shadow-lg bg-gradient-to-br from-green-600 to-teal-500 text-white">
           <h2 className="text-lg font-semibold">Total Projects</h2>
-          <p className="text-3xl font-bold mt-2">{totalProjects}</p>
+          <p className="text-2xl sm:text-3xl font-bold mt-2">{totalProjects}</p>
         </div>
-        <div className="p-6 rounded-xl shadow-lg bg-gradient-to-br from-pink-600 to-red-500 text-white">
+        <div className="p-4 sm:p-6 rounded-xl shadow-lg bg-gradient-to-br from-pink-600 to-red-500 text-white">
           <h2 className="text-lg font-semibold">Active Projects</h2>
-          <p className="text-3xl font-bold mt-2">{activeProjects}</p>
+          <p className="text-2xl sm:text-3xl font-bold mt-2">
+            {activeProjects}
+          </p>
         </div>
       </div>
 
       {/* Complex Graphs Section */}
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-10">
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
         {/* Line Chart - User Activity */}
-        <div className="bg-white/10 p-6 rounded-lg shadow-lg backdrop-blur-md">
+        <div className="bg-white/10 p-4 sm:p-6 rounded-lg shadow-lg backdrop-blur-md">
           <h3 className="text-xl font-semibold text-purple-400 mb-4">
             User Login Activity
           </h3>
@@ -119,7 +121,7 @@ const AdminHome = () => {
         </div>
 
         {/* Pie Chart - Project Status */}
-        <div className="bg-white/10 p-6 rounded-lg shadow-lg backdrop-blur-md">
+        <div className="bg-white/10 p-4 sm:p-6 rounded-lg shadow-lg backdrop-blur-md">
           <h3 className="text-xl font-semibold text-purple-400 mb-4">
             Project Status Distribution
           </h3>
@@ -148,7 +150,7 @@ const AdminHome = () => {
         </div>
 
         {/* Bar Chart - Project Creation */}
-        <div className="bg-white/10 p-6 rounded-lg shadow-lg backdrop-blur-md">
+        <div className="bg-white/10 p-4 sm:p-6 rounded-lg shadow-lg backdrop-blur-md col-span-1 lg:col-span-2">
           <h3 className="text-xl font-semibold text-purple-400 mb-4">
             Recent Project Creation
           </h3>

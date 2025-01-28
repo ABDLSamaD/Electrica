@@ -87,7 +87,7 @@ exports.loginAdmin = async (req, res) => {
     res.cookie("admin_auth", token, {
       httpOnly: true, // Prevent access from JavaScript
       secure: process.env.NODE_ENV === "production", // Use secure cookies in production
-      sameSite: "None", // Use secure cookies in production
+      sameSite: process.env.NODE_ENV === "production" ? "None" : "Strict", // Use secure cookies in production
       maxAge: 30 * 24 * 60 * 60 * 1000, // 30 days or session-only
     });
 
@@ -110,7 +110,6 @@ exports.loginAdmin = async (req, res) => {
 
     res.status(200).json({ type: "success", message: "Login successfull" });
   } catch (error) {
-    console.error("Login error:", error.message);
     res.status(500).json({ type: "error", message: "Internal server error" });
   }
 };
@@ -143,18 +142,8 @@ exports.logoutAdmin = async (req, res) => {
         if (err) {
           return res.status(500).json({ message: "Error logging out" });
         }
-        res.clearCookie("electrica", {
-          httpOnly: true, // Prevent access from JavaScript
-          secure: process.env.NODE_ENV === "production", // Use secure cookies in production
-          sameSite: "None",
-          maxAge: sessionMaxAge,
-        }); // Clear session cookie
-        res.clearCookie("admin_auth", {
-          httpOnly: true, // Prevent access from JavaScript
-          secure: process.env.NODE_ENV === "production", // Use secure cookies in production
-          sameSite: "None",
-          maxAge: sessionMaxAge,
-        }); // Clear session cookie
+        res.clearCookie("electrica"); // Clear session cookie
+        res.clearCookie("admin_auth"); // Clear session cookie
         res.status(200).json({ message: "Logged out successfully" });
       });
     } catch (error) {
@@ -341,7 +330,6 @@ exports.getAllUser = async (req, res) => {
     );
     res.status(200).json(users);
   } catch (error) {
-    console.error(error.message);
     res.status(500).json({ type: "error", message: "Internal server error" });
   }
 };
@@ -357,5 +345,52 @@ exports.getAllUserActivity = async (req, res) => {
     res.status(200).json({ email: user.email, activityLog: user.activityLog });
   } catch (error) {
     res.status(500).json({ message: "Error fetching activity log", error });
+  }
+};
+
+// Change password function
+exports.changePassword = async (req, res) => {
+  const { currentPassword, newPassword } = req.body;
+  const userId = req.admin.id; // Assuming `req.user` is populated with user data after authentication
+
+  try {
+    // Fetch the admin user from the database
+    const admin = await Admin.findById(userId);
+
+    if (!admin) {
+      return res
+        .status(404)
+        .json({ type: "error", message: "Admin not found" });
+    }
+
+    // Check if the current password matches
+    const isMatch = await bcrypt.compare(currentPassword, admin.password);
+    if (!isMatch) {
+      return res
+        .status(400)
+        .json({ type: "error", message: "Incorrect current password" });
+    }
+
+    // Hash the new password
+    const hashedPassword = await bcrypt.hash(newPassword, 10);
+
+    // Update the password in the database
+    admin.password = hashedPassword;
+    sendEmail(
+      admin.email,
+      "Password change",
+      "Password has been changed success"
+    );
+    await admin.save();
+
+    res
+      .status(200)
+      .json({ type: "success", message: "Password updated successfully" });
+  } catch (error) {
+    console.log(error.message);
+    res.status(500).json({
+      type: "error",
+      message: "An error occurred. Please try again later.",
+    });
   }
 };

@@ -77,11 +77,16 @@ const Admin = () => {
   }, []);
   // console.log(users);
   return (
-    <div className="flex h-screen bg-gradient-to-br from-gray-900 via-black to-gray-800 text-white">
+    <div className="flex flex-col h-screen text-white">
+      {/* Top Bar */}
       <Sidebar connection={electricaURL} admin={admin} />
-      <main className="flex-1 p-1 lg:p-2 ml-[67px] lg:ml-[60px] overflow-y-auto">
+
+      {/* Main Content */}
+      <main className="flex-1 p-1 lg:p-2 mt-16">
+        {" "}
+        {/* mt-16 to account for the height of the TopBar */}
         <div className="max-w-full mx-auto">
-          <div className="backdrop-blur-md bg-white/10 shadow-lg min-h-screen md:p-5 p-2">
+          <div className="md:p-5 p-2 min-h-screen">
             {message && <p>{message}</p>}
             <Outlet
               context={{
