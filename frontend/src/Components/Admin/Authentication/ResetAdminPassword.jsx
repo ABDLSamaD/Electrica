@@ -51,19 +51,21 @@ const ResetAdminPassword = () => {
   };
 
   return (
-    <div className="max-w-md mx-auto p-6 flex h-screen flex-col justify-center">
-      <div className="container shadow-xl p-4">
+    <div className="min-h-screen flex items-center justify-center bg-gray-900 p-4">
+      <div className="w-full max-w-md bg-gray-800 rounded-lg shadow-lg p-8">
         {alert && (
           <Alert type={type} message={message} onClose={() => setAlert(null)} />
         )}
-        <div className="flex items-center justify-center flex-col">
-          <FontAwesomeIcon icon={faLock} size="2x" />
-          <h2 className="text-4xl font-bold text-gray-800 mb-5 mt-2">
-            Reset Password
-          </h2>
-          <p className="mb-5 text-gray-500">Must be at least 8 characters</p>
+        <div className="flex flex-col items-center justify-center space-y-4">
+          <FontAwesomeIcon
+            icon={faLock}
+            size="2xl"
+            className="text-orange-500"
+          />
+          <h2 className="text-3xl font-bold text-orange-500">Reset Password</h2>
+          <p className="text-gray-300">Must be at least 8 characters</p>
         </div>
-        <form onSubmit={handleResetPassword}>
+        <form onSubmit={handleResetPassword} className="mt-6 space-y-6">
           <input
             type="password"
             value={newPassword}
@@ -71,21 +73,21 @@ const ResetAdminPassword = () => {
             onChange={(e) => setNewPassword(e.target.value)}
             placeholder="Enter new password"
             required
-            className="w-full p-2 border rounded mb-4"
+            className="w-full p-3 bg-gray-700 border border-gray-600 rounded-lg text-gray-100 placeholder-gray-400 focus:outline-none focus:border-orange-500"
           />
           <button
             type="submit"
-            className="w-full bg-blue-500 text-white py-2 rounded hover:bg-blue-600"
+            className="w-full bg-orange-500 text-white py-3 rounded-lg hover:bg-orange-600 transition duration-300"
           >
             Reset Password
           </button>
-          <div
-            className="flex items-center justify-center mt-4"
-            title="back to login"
-          >
-            <Link to="/signin">
+          <div className="flex items-center justify-center mt-4">
+            <Link
+              to="/signin"
+              className="flex items-center text-gray-300 hover:text-orange-500 transition duration-300"
+            >
               <FontAwesomeIcon icon={faArrowLeft} size="sm" />
-              <span className="mx-2">back to login</span>
+              <span className="ml-2">Back to Login</span>
             </Link>
           </div>
         </form>

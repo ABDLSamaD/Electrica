@@ -50,48 +50,50 @@ const VerifyADMNOTP = () => {
   };
 
   return (
-    <div className="max-w-md mx-auto p-6 bg-white rounded shadow-md mt-10">
-      {alert && (
-        <Alert type={type} message={message} onClose={() => setAlert(null)} />
-      )}
-      <div className="flex item-center flex-col justify-center w-full">
-        <FontAwesomeIcon
-          icon={faEnvelope}
-          size="2xl"
-          style={{ color: "#4b4949" }}
-        />
-        <h2 className="text-4xl text-center text-gray-800 mb-5">Verify OTP</h2>
-        <p className="text-gray-500 mb-5 text-center mr-2">
-          we sent a code to
-          <span className="font-bold text-xl text-gray-900">{emailForgot}</span>
-        </p>
-      </div>
-      <form onSubmit={handleVerifyOtp}>
-        <input
-          type="number"
-          id="otp"
-          value={otp}
-          onChange={handleOtpChange}
-          placeholder="Enter OTP"
-          required
-          className="w-full p-2 border border-solid border-blue-500 rounded-lg mb-4"
-        />
-        <button
-          type="submit"
-          className="w-full bg-blue-500 text-white py-2 rounded hover:bg-blue-600"
-        >
-          Verify OTP
-        </button>
-        <div
-          className="flex items-center justify-center mt-4"
-          title="back to login"
-        >
-          <Link to="/signin">
-            <FontAwesomeIcon icon={faArrowLeft} size="sm" />
-            <span className="mx-2">back to login</span>
-          </Link>
+    <div className="min-h-screen flex items-center justify-center bg-gray-900 p-4">
+      <div className="w-full max-w-md bg-gray-800 rounded-lg shadow-lg p-8">
+        {alert && (
+          <Alert type={type} message={message} onClose={() => setAlert(null)} />
+        )}
+        <div className="flex flex-col items-center justify-center space-y-4">
+          <FontAwesomeIcon
+            icon={faEnvelope}
+            size="2xl"
+            className="text-orange-500"
+          />
+          <h2 className="text-3xl font-bold text-orange-500">Verify OTP</h2>
+          <p className="text-gray-300 text-center">
+            We sent a code to{" "}
+            <span className="font-bold text-orange-500">{emailForgot}</span>
+          </p>
         </div>
-      </form>
+        <form onSubmit={handleVerifyOtp} className="mt-6 space-y-6">
+          <input
+            type="number"
+            id="otp"
+            value={otp}
+            onChange={handleOtpChange}
+            placeholder="Enter OTP"
+            required
+            className="w-full p-3 bg-gray-700 border border-gray-600 rounded-lg text-gray-100 placeholder-gray-400 focus:outline-none focus:border-orange-500"
+          />
+          <button
+            type="submit"
+            className="w-full bg-orange-500 text-white py-3 rounded-lg hover:bg-orange-600 transition duration-300"
+          >
+            Verify OTP
+          </button>
+          <div className="flex items-center justify-center mt-4">
+            <Link
+              to="/admn-sign"
+              className="flex items-center text-gray-300 hover:text-orange-500 transition duration-300"
+            >
+              <FontAwesomeIcon icon={faArrowLeft} size="sm" />
+              <span className="ml-2">Back to Login</span>
+            </Link>
+          </div>
+        </form>
+      </div>
     </div>
   );
 };

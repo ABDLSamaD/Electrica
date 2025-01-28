@@ -20,6 +20,7 @@ const {
 } = require("../validators/userValidators");
 const validateRequest = require("../middleware/validationMiddleware");
 const adminAuth = require("../middleware/adminAuth");
+const adminAuths = require("../middleware/adminAuths");
 const {
   blockUser,
   unbanUser,
@@ -49,8 +50,8 @@ router.post("/signin", loginValidation, validateRequest, loginAdmin);
 router.get("/check-adminauth", sessionAdminAuth, checkAdminAuth); // check session authorization
 router.post("/forgt-paswrd", forgotPassword);
 router.post("/resend-otp", resendOTP);
-router.post("/verify-forgotOTP", adminAuth, verifyForgotOtp); // and adminAuth is checking token inside of cookies
-router.post("/reset-paswrd", adminAuth, resetPassword);
+router.post("/verify-forgotOTP", adminAuths, verifyForgotOtp); // and adminAuth is checking token inside of cookies
+router.post("/reset-paswrd", adminAuths, resetPassword);
 router.post("/logout", sessionAdminAuth, logoutAdmin);
 router.post("/change-password", adminAuth, changePassword);
 router.get("/get_admin", adminAuth, getAdmin); //get admin details

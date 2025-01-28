@@ -66,14 +66,14 @@ exports.loginAdmin = async (req, res) => {
     if (!admin) {
       return res
         .status(404)
-        .json({ type: "error", message: "Admin not found!" });
+        .json({ type: "error", message: "Email not found" });
     }
 
     const isMatch = await bcrypt.compare(password, admin.password);
     if (!isMatch) {
       return res
         .status(401)
-        .json({ type: "error", message: "Wrong Password!" });
+        .json({ type: "error", message: "Invalid credentials" });
     }
 
     const data = { id: admin.id, role: "admin" };
@@ -180,6 +180,8 @@ exports.forgotPassword = async (req, res) => {
     admin.otp = randomOtp;
     admin.otpExpires = new Date(Date.now() + 10 * 60 * 1000);
     admin.resetToken = token;
+
+    sendEmail(admin.email, "FORGOT OTP", randomOtp);
     await admin.save();
 
     res.status(200).json({

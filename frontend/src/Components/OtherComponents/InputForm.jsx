@@ -23,11 +23,11 @@ const InputForm = ({
   };
   return (
     <form
-      className="my-3 p-8 form_container rounded-xl w-fit h-fit flex flex-col items-center justify-center gap-4"
+      className="my-3 lg:p-8 p-6 form_container rounded-xl flex flex-col items-center justify-center gap-4"
       onSubmit={hanldeLogin}
     >
       <div className="title_container flex items-center justify-center flex-col gap-3">
-        <h1 className="title m-0 text-4xl font-bold text-gray-950">
+        <h1 className="title m-0 lg:text-4xl text-2xl font-bold text-gray-950">
           Login to your account
         </h1>
         <span
@@ -38,7 +38,7 @@ const InputForm = ({
           experience.
         </span>
       </div>
-      <div className="relative input_form flex flex-col w-full">
+      <div className="relative input_form flex flex-col flex-wrap w-full">
         <label
           htmlFor="email"
           className="block text-sm font-medium text-gray-400 traking-wider"
@@ -86,7 +86,7 @@ const InputForm = ({
           />
         </div>
       </div>
-      <div className="forgot-password w-full flex justify-between">
+      <div className="forgot-password w-full flex lg:justify-between justify-center items-center lg:flex-row flex-col gap-2 lg:gap-0">
         <label className="flex items-center w-auto p-1">
           <input
             onChange={onChange}
@@ -100,7 +100,7 @@ const InputForm = ({
           to={passLink}
           className="text-cyan-600 hover:underline text-sm font-semibold"
         >
-          forgot password ?
+          Forgot password?
         </Link>
       </div>
       <button

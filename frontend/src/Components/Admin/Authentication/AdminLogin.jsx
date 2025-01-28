@@ -47,7 +47,7 @@ const AdminLogin = () => {
         setAlert({ type: response.data.type, message: response.data.message });
         setTimeout(() => {
           navigate("/db_au_admn");
-        }, 2000);
+        }, 1800);
       } else {
         setMiniLoader(false);
         setAlert({ type: response.data.type, message: response.data.message });
