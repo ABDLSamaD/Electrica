@@ -1,8 +1,8 @@
+import React, { useEffect, useState } from "react";
+import { useNavigate, useOutletContext, useParams } from "react-router-dom";
 import { faArrowLeft, faTrash } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { useSpring, animated } from "@react-spring/web";
-import React, { useEffect, useState } from "react";
-import { useNavigate, useOutletContext, useParams } from "react-router-dom";
 import LoaderAll from "../../OtherComponents/LoaderAll";
 import axios from "axios";
 import Alert from "../../OtherComponents/Alert";
@@ -240,136 +240,146 @@ const AddMaterial = () => {
   );
 
   return (
-    <div className="p-8 max-w-3xl mx-auto bg-gray-800 text-gray-300 rounded-lg">
-      <button
-        className="p-2 mb-4 text-white hover:text-gray-200"
-        title="go back"
-        onClick={() => navigate(-1)}
-      >
-        <FontAwesomeIcon icon={faArrowLeft} size="1x" />
-      </button>
-      {/* alert */}
-      {alert && (
-        <Alert
-          type={alert.type}
-          message={alert.message}
-          onClose={() => setAlert(null)}
-        />
-      )}
-
-      <h1 className="md:text-3xl text-2xl font-semibold mb-6 text-center text-blue-400">
-        Project: {project.projectName}
-      </h1>
-      <h2 className="md:text-2xl text-xl font-semibold text-center text-blue-500">
-        Add Material to Stage: {stageName}
-      </h2>
-
-      <div className="md:mt-6 mt-10 mb-4">
-        <h3 className="text-xl font-medium mb-2">Existing Materials:</h3>
-        <ul className="space-y-2">
-          {stage.materials.length > 0 ? (
-            stage.materials.map((material, index) => (
-              <animated.li
-                key={index}
-                style={materialAnimation}
-                className="flex justify-between items-center gap-2 mt-2"
-              >
-                <span className="text-sm text-cyan-50">{material.name}</span>
-                <span
-                  className={
-                    material.isApproved ? "text-green-500" : "text-yellow-500"
-                  }
-                >
-                  {material.isApproved ? "Approved" : "Waiting"}
-                </span>
-                {!material.isApproved && (
-                  <button
-                    className="text-red-500"
-                    onClick={() => handleRemoveMaterial(material.name)}
-                  >
-                    <FontAwesomeIcon icon={faTrash} />
-                  </button>
-                )}
-              </animated.li>
-            ))
-          ) : (
-            <p>No materials added yet.</p>
-          )}
-        </ul>
-      </div>
-
-      {/* Display messages */}
-      {message && <p className="text-green-500">{message}</p>}
-      {error && <p className="text-red-500">{error}</p>}
-
-      {/* Add New Materials */}
-      <div className="mt-10 md:mt-6">
-        <h2 className="text-xl font-medium mb-4">Add New Materials:</h2>
-        {newMaterials.map((material, index) => (
-          <div key={index} className="mb-6 space-y-6">
-            <input
-              type="text"
-              name="name"
-              value={material.name}
-              onChange={(e) => handleMaterialChange(index, e)}
-              placeholder="Material Name"
-              className="w-full md:p-4 p-2 bg-gray-700 text-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
-            />
-            <input
-              type="number"
-              name="quantity"
-              value={material.quantity}
-              onChange={(e) => handleMaterialChange(index, e)}
-              placeholder="Quantity"
-              className="w-full md:p-4 p-2 bg-gray-700 text-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
-            />
-            <div className="flex justify-between items-center">
-              <button
-                type="button"
-                onClick={() => removeMaterialFields(index)}
-                className="text-red-500 hover:text-red-700"
-              >
-                Remove <FontAwesomeIcon icon={faTrash} />
-              </button>
-              <span className="text-xs text-gray-500">
-                Added on: {material.addedAt.toLocaleString()}
-              </span>
-            </div>
-          </div>
-        ))}
+    <div className="p-8 w-full bg-gray-900 text-gray-100 min-h-screen">
+      <div className="max-w-7xl mx-auto">
         <button
-          type="button"
-          onClick={addMaterialFields}
-          disabled={isAnyMaterialApproved}
-          className="bg-blue-600 text-white px-3 py-3 rounded-lg w-auto hover:bg-blue-700 mt-4 md:px-6 md:w-full"
+          className="p-2 mb-4 text-white hover:text-gray-200"
+          title="go back"
+          onClick={() => navigate(-1)}
         >
-          Add More Materials
+          <FontAwesomeIcon icon={faArrowLeft} size="1x" />
         </button>
-      </div>
+        {/* alert */}
+        {alert && (
+          <Alert
+            type={alert.type}
+            message={alert.message}
+            onClose={() => setAlert(null)}
+          />
+        )}
 
-      {/* Submit Button */}
-      <button
-        onClick={handleSubmit}
-        className="bg-green-600 text-white md:px-8 px-6 py-3 rounded-lg hover:bg-green-700 mt-8 md:w-full w-auto"
-      >
-        {isLoading ? <LoaderAll /> : "Submit"}
-      </button>
+        <h1 className="text-4xl font-bold mb-6 text-center text-blue-400">
+          Project: {project.projectName}
+        </h1>
+        <h2 className="text-2xl font-semibold text-center text-blue-500">
+          Add Material to Stage: {stageName}
+        </h2>
 
-      {/* Display Pending Materials (Waiting) */}
-      <div className="mt-6">
-        <h3 className="text-xl font-medium mb-4">
-          Materials Pending Approval:
-        </h3>
-        {stage.materials
-          .filter((material) => material.status === "waiting")
-          .map((material, index) => (
-            <div key={index} className="mb-4 flex justify-between items-center">
-              <span>
-                {material.name} (Quantity: {material.quantity})
-              </span>
-              <div className="text-yellow-500">Waiting for client approval</div>
+        <div className="mt-8 mb-6">
+          <h3 className="text-xl font-medium mb-4">Existing Materials:</h3>
+          <ul className="space-y-2">
+            {stage.materials.length > 0 ? (
+              stage.materials.map((material, index) => (
+                <animated.li
+                  key={index}
+                  style={materialAnimation}
+                  className="flex justify-between items-center gap-2 mt-2 p-3 bg-gray-800 rounded-lg"
+                >
+                  <span className="text-sm text-cyan-50">{material.name}</span>
+                  <span
+                    className={
+                      material.isApproved ? "text-green-500" : "text-yellow-500"
+                    }
+                  >
+                    {material.isApproved ? "Approved" : "Waiting"}
+                  </span>
+                  {!material.isApproved && (
+                    <button
+                      className="text-red-500 hover:text-red-700"
+                      onClick={() => handleRemoveMaterial(material.name)}
+                    >
+                      <FontAwesomeIcon icon={faTrash} />
+                    </button>
+                  )}
+                </animated.li>
+              ))
+            ) : (
+              <p className="text-gray-400">No materials added yet.</p>
+            )}
+          </ul>
+        </div>
+
+        {/* Display messages */}
+        {message && <p className="text-green-500">{message}</p>}
+        {error && <p className="text-red-500">{error}</p>}
+
+        {/* Add New Materials */}
+        <div className="mt-8">
+          <h2 className="text-xl font-medium mb-4">Add New Materials:</h2>
+          {newMaterials.map((material, index) => (
+            <div
+              key={index}
+              className="mb-6 space-y-4 p-4 bg-gray-800 rounded-lg"
+            >
+              <input
+                type="text"
+                name="name"
+                value={material.name}
+                onChange={(e) => handleMaterialChange(index, e)}
+                placeholder="Material Name"
+                className="w-full p-3 bg-gray-700 text-gray-100 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+              />
+              <input
+                type="number"
+                name="quantity"
+                value={material.quantity}
+                onChange={(e) => handleMaterialChange(index, e)}
+                placeholder="Quantity"
+                className="w-full p-3 bg-gray-700 text-gray-100 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+              />
+              <div className="flex justify-between items-center">
+                <button
+                  type="button"
+                  onClick={() => removeMaterialFields(index)}
+                  className="text-red-500 hover:text-red-700"
+                >
+                  Remove <FontAwesomeIcon icon={faTrash} />
+                </button>
+                <span className="text-xs text-gray-400">
+                  Added on: {material.addedAt.toLocaleString()}
+                </span>
+              </div>
             </div>
           ))}
+          <button
+            type="button"
+            onClick={addMaterialFields}
+            disabled={isAnyMaterialApproved}
+            className="bg-blue-600 text-white px-4 py-3 rounded-lg w-full hover:bg-blue-700 mt-4 disabled:bg-blue-400 disabled:cursor-not-allowed"
+          >
+            Add More Materials
+          </button>
+        </div>
+
+        {/* Submit Button */}
+        <button
+          onClick={handleSubmit}
+          className="bg-green-600 text-white px-6 py-3 rounded-lg hover:bg-green-700 mt-8 w-full"
+        >
+          {isLoading ? <LoaderAll /> : "Submit"}
+        </button>
+
+        {/* Display Pending Materials (Waiting) */}
+        <div className="mt-8">
+          <h3 className="text-xl font-medium mb-4">
+            Materials Pending Approval:
+          </h3>
+          {stage.materials
+            .filter((material) => material.status === "waiting")
+            .map((material, index) => (
+              <div
+                key={index}
+                className="mb-4 flex justify-between items-center p-3 bg-gray-800 rounded-lg"
+              >
+                <span>
+                  {material.name} (Quantity: {material.quantity})
+                </span>
+                <div className="text-yellow-500">
+                  Waiting for client approval
+                </div>
+              </div>
+            ))}
+        </div>
       </div>
     </div>
   );

@@ -57,7 +57,9 @@ import EachProfile from "./Admin/User/EachProfile";
 import ProjectReview from "./Admin/User/ProjectReview";
 import ProjectsUser from "./Admin/User/ProjectsUser";
 const Stepone = React.lazy(() => import("./Admin/Projectsteps/Stepone"));
-const AddMaterial = React.lazy(import("./Admin/Projectsteps/AddMaterial"));
+const AddMaterial = React.lazy(() =>
+  import("./Admin/Projectsteps/AddMaterial")
+);
 import NotifyClientModal from "./Admin/Projectsteps/Notifycient";
 import LoaderAll from "./OtherComponents/LoaderAll";
 import AdminSettings from "./Admin/AdminSettings";

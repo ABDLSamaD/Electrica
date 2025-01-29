@@ -1,11 +1,11 @@
 import React from "react";
 import {
-  FaEdit,
-  FaPlus,
-  FaTrashAlt,
+  FaClipboardList,
   FaTools,
   FaUsers,
-  FaClipboardList,
+  FaTrashAlt,
+  FaPlus,
+  FaEdit,
 } from "react-icons/fa";
 
 const MaterialForm = ({
@@ -39,17 +39,17 @@ const MaterialForm = ({
   };
 
   return (
-    <div className="text-gray-200 p-2 lg:p-5">
-      <div className="lg:max-w-4xl max-w-3xl mx-auto lg:p-8 p-2 backdrop-filter backdrop-blur-lg bg-opacity-30 border border-gray-700">
-        <h1 className="text-xl lg:text-3xl font-bold text-gray-100 mb-2 text-center">
+    <div className="bg-gray-900 p-4 lg:p-8">
+      <div className="lg:max-w-7xl max-w-full mx-auto p-6 backdrop-blur-lg bg-opacity-30 border border-gray-700 rounded-lg shadow-lg">
+        <h1 className="text-2xl lg:text-4xl font-bold text-gray-100 mb-4 text-center">
           {project.projectName}
         </h1>
-        <h2 className="text-base md:text-2xl font-semibold text-blue-400 mb-8 text-center">
+        <h2 className="text-lg lg:text-2xl font-semibold text-blue-400 mb-6 text-center">
           Current Stage: {stageName}
         </h2>
 
         <form onSubmit={handleSubmit} className="space-y-8">
-          {/* detail input */}
+          {/* Detail Input */}
           <div className="space-y-4">
             <label className="block text-gray-100 text-base lg:text-lg font-semibold mb-2">
               <FaClipboardList className="inline-block mr-2" />
@@ -61,7 +61,7 @@ const MaterialForm = ({
               onChange={(e) =>
                 setUpdates([{ ...updates[0], details: e.target.value }])
               }
-              className="w-full p-1 lg:p-3 lg:text-lg text-sm rounded-lg bg-gray-700 border border-gray-600 focus:outline-none focus:ring-2 focus:ring-blue-500 text-gray-200 placeholder-gray-400 resize-vertical"
+              className="w-full p-3 text-lg rounded-lg bg-gray-700 border border-gray-600 focus:outline-none focus:ring-2 focus:ring-blue-500 text-gray-200 placeholder-gray-400 resize-vertical"
               required
               rows={4}
             />
@@ -77,7 +77,7 @@ const MaterialForm = ({
               {project?.currentMaterials?.map((mat, index) => (
                 <div
                   key={index}
-                  className={`lg:p-4 p-2 rounded-lg shadow-md border transition-all duration-300 ${
+                  className={`p-4 rounded-lg shadow-md border transition-all duration-300 ${
                     mat.finished
                       ? "bg-green-700 border-green-500"
                       : mat.quantity <= 0
@@ -85,12 +85,12 @@ const MaterialForm = ({
                       : "bg-gray-700 border-gray-600"
                   }`}
                 >
-                  <h3 className="lg:text-lg text-base font-semibold text-gray-100">
+                  <h3 className="text-lg font-semibold text-gray-100">
                     {mat?.name || "Material Name"}
                   </h3>
                   <p className="text-sm text-gray-400">
                     Available:{" "}
-                    <span className="text-base text-gray-200">
+                    <span className="text-lg text-gray-200">
                       {mat.quantity || 0}
                     </span>
                   </p>
@@ -116,7 +116,7 @@ const MaterialForm = ({
                     <div className="mt-4">
                       <label
                         htmlFor={`use-qty-${index}`}
-                        className="block lg:text-sm text-xs text-gray-300 mb-2"
+                        className="block text-xs text-gray-300 mb-2"
                       >
                         Use Quantity:
                       </label>
@@ -128,7 +128,7 @@ const MaterialForm = ({
                         onChange={(e) =>
                           handleMaterialChange(index, e.target.value)
                         }
-                        className="md:p-2 p-1 w-full rounded bg-gray-600 border border-gray-500 text-gray-200 focus:ring-2 focus:ring-blue-500 focus:outline-none transition-colors duration-300"
+                        className="p-3 w-full rounded-lg bg-gray-600 border border-gray-500 text-gray-200 focus:ring-2 focus:ring-blue-500 focus:outline-none"
                       />
                     </div>
                   )}
@@ -137,16 +137,16 @@ const MaterialForm = ({
             </div>
           </div>
 
-          {/* workers */}
-          <div className="space-y-4">
-            <h2 className="md:text-2xl text-lg font-bold text-white flex items-center">
+          {/* Workers Section */}
+          <div className="space-y-6">
+            <h2 className="text-xl lg:text-2xl font-bold text-white flex items-center">
               <FaUsers className="mr-2" />
               Workers Assigned
             </h2>
             {updates[0].workers.map((worker, index) => (
               <div
                 key={index}
-                className="flex flex-col sm:flex-row gap-4 items-center bg-gray-700 md:p-4 p-2 rounded-lg"
+                className="flex flex-col sm:flex-row gap-4 items-center bg-gray-700 p-4 rounded-lg"
               >
                 <input
                   type="text"
@@ -155,7 +155,7 @@ const MaterialForm = ({
                   onChange={(e) =>
                     handleWorkerChange(index, "name", e.target.value)
                   }
-                  className="flex-grow md:p-3 p-2 rounded-lg bg-gray-600 border border-gray-500 focus:outline-none focus:ring-2 focus:ring-blue-500 text-gray-200 placeholder-gray-400"
+                  className="flex-grow p-3 rounded-lg bg-gray-600 border border-gray-500 focus:outline-none focus:ring-2 focus:ring-blue-500 text-gray-200"
                 />
                 <input
                   type="number"
@@ -164,12 +164,12 @@ const MaterialForm = ({
                   onChange={(e) =>
                     handleWorkerChange(index, "dailyWage", e.target.value)
                   }
-                  className="flex-grow md:p-3 p-2 rounded-lg bg-gray-600 border border-gray-500 focus:outline-none focus:ring-2 focus:ring-blue-500 text-gray-200 placeholder-gray-400"
+                  className="flex-grow p-3 rounded-lg bg-gray-600 border border-gray-500 focus:outline-none focus:ring-2 focus:ring-blue-500 text-gray-200"
                 />
                 <button
                   type="button"
                   onClick={() => handleRemoveWorker(index)}
-                  className="text-red-500 hover:text-red-700 transition-colors duration-300"
+                  className="text-red-500 hover:text-red-700"
                   aria-label="Remove worker"
                 >
                   <FaTrashAlt size={24} />
