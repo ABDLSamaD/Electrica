@@ -8,6 +8,7 @@ import {
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import React, { useState } from "react";
 import { Link } from "react-router-dom";
+import LoginLoader from "./LoginLoader";
 
 const InputForm = ({
   hanldeLogin,
@@ -22,33 +23,27 @@ const InputForm = ({
     setIsPasswordVisible(!isPasswordVisible);
   };
   return (
-    <form
-      className="my-3 lg:p-8 p-6 form_container rounded-xl flex flex-col items-center justify-center gap-4"
-      onSubmit={hanldeLogin}
-    >
-      <div className="title_container flex items-center justify-center flex-col gap-3">
-        <h1 className="title m-0 lg:text-4xl text-2xl font-bold text-gray-950">
+    <form className="flex flex-col gap-4" onSubmit={hanldeLogin}>
+      <div className="text-center">
+        <h1 className="text-2xl sm:text-3xl font-bold text-gray-950">
           Login to your account
         </h1>
-        <span
-          style={{ maxWidth: "80%" }}
-          className="subtitle text-xs text-center text-gray-400 leading-5"
-        >
-          Get started with our app, just sigin an account and enjoy the
+        <p className="text-xs sm:text-sm text-gray-500 max-w-xs mx-auto mt-2">
+          Get started with our app, just sign in to your account and enjoy the
           experience.
-        </span>
+        </p>
       </div>
-      <div className="relative input_form flex flex-col flex-wrap w-full">
+      <div className="relative mt-3 w-full">
         <label
           htmlFor="email"
-          className="block text-sm font-medium text-gray-400 traking-wider"
+          className="block text-sm font-medium text-gray-500"
         >
           Email
         </label>
         <input
           id="email"
           type="email"
-          className="input_field outline-none mt-1 border border-solid border-blue-200 p-3 rounded-xl"
+          className="input_field outline-none mt-1 border border-solid border-blue-200 p-3 rounded-xl w-full pl-8"
           placeholder="Enter your email"
           onChange={onChange}
           name="email"
@@ -56,9 +51,12 @@ const InputForm = ({
           autoComplete="off"
           required
         />
-        <FontAwesomeIcon icon={faEnvelope} id="emailicon" />
+        <FontAwesomeIcon
+          icon={faEnvelope}
+          className="absolute left-3 top-10 text-gray-950"
+        />
       </div>
-      <div className="relative input_form flex flex-col w-full">
+      <div className="relative w-full mt-3">
         <label
           htmlFor="password"
           className="block text-sm font-medium text-gray-400 traking-wider"
@@ -68,14 +66,17 @@ const InputForm = ({
         <input
           id="password"
           type={isPasswordVisible ? "text" : "password"}
-          className="input_field outline-none mt-1 border border-solid border-blue-200 p-3 rounded-xl"
+          className="input_field outline-none mt-1 border border-solid border-blue-200 p-3 rounded-xl w-full pl-8"
           onChange={onChange}
           name="password"
           value={credential.password}
           autoComplete="off"
           required
         />
-        <FontAwesomeIcon icon={faLock} id="passwordicon" />
+        <FontAwesomeIcon
+          icon={faLock}
+          className="absolute left-3 top-10 text-gray-950"
+        />
         <div
           onClick={togglePasswordVisibility}
           className="show-pass absolute cursor-pointer"
@@ -86,38 +87,36 @@ const InputForm = ({
           />
         </div>
       </div>
-      <div className="forgot-password w-full flex lg:justify-between justify-center items-center lg:flex-row flex-col gap-2 lg:gap-0">
-        <label className="flex items-center w-auto p-1">
+      <div className="flex flex-col sm:flex-row justify-between items-center w-full text-sm">
+        <label className="flex items-center">
           <input
-            onChange={onChange}
             type="checkbox"
             name="rememberMe"
-            checked={credential.rememberMe} // Sync state with checkbox
+            onChange={onChange}
+            checked={credential.rememberMe}
           />
-          <span className="ml-1 font-bold text-gray-400">Remember Me</span>
+          <span className="ml-2 text-gray-500">Remember Me</span>
         </label>
         <Link
           to={passLink}
-          className="text-cyan-600 hover:underline text-sm font-semibold"
+          className="text-cyan-600 hover:underline font-semibold"
         >
           Forgot password?
         </Link>
       </div>
       <button
         type="submit"
-        className={`w-full rounded-md p-2 focus:scale-105 bg-gray-800 hover:bg-gray-900 transition-all duration-300 ${
-          miniLoader ? "opacity-70 cursor-not-allowed" : "hover:bg-cyan-700"
+        className={`w-full p-3 tracking-wider rounded-md text-white font-bold transition-all duration-300 ${
+          miniLoader
+            ? "bg-gray-500 cursor-not-allowed"
+            : "bg-gray-800 hover:bg-gray-900"
         }`}
         disabled={miniLoader}
       >
-        <span className="text-xl text-white font-mono font-bold mr-2">
-          {miniLoader ? "Signing in..." : "Sign In"}
-        </span>
-        <FontAwesomeIcon
-          icon={faSignInAlt}
-          className="text-gray-600"
-          size="1x"
-        />
+        {miniLoader ? <LoginLoader /> : "Sign In"}
+        {!miniLoader && (
+          <FontAwesomeIcon icon={faSignInAlt} className="ml-2 text-gray-400" />
+        )}
       </button>
     </form>
   );

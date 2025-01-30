@@ -81,7 +81,10 @@ const SignIn = () => {
   return (
     <>
       {loader && <Loader />} {/* Full loader */}
-      <div id="signin">
+      <div
+        id="signin"
+        className="flex flex-col items-center justify-center min-h-screen p-4 sm:p-8"
+      >
         {alert && (
           <Alert
             type={alert.type}
@@ -89,12 +92,12 @@ const SignIn = () => {
             onClose={() => setAlert(null)}
           />
         )}
-        <div className="back relative w-full text-3xl pt-2 transition-all text-gray-200">
-          <Link to="/" className="mx-2 text-gray-200" title="Go back">
-            <FontAwesomeIcon icon={faArrowLeft} size="2xs" color="gray" />
-          </Link>
-        </div>
-        <div className="relative h-full flex items-center justify-center flex-col">
+        <div className="w-full max-w-md form_container rounded-xl p-6 sm:p-8">
+          <div className="back relative w-full text-3xl pt-2 transition-all text-gray-200">
+            <Link to="/" className="mx-2 text-gray-200" title="Go back">
+              <FontAwesomeIcon icon={faArrowLeft} size="2xs" color="gray" />
+            </Link>
+          </div>
           <InputForm
             hanldeLogin={handleSignin}
             onChange={onChange}

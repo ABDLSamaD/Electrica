@@ -65,7 +65,10 @@ const AdminLogin = () => {
   return (
     <>
       {loader && <Loader />}
-      <div id="adminsignin">
+      <div
+        id="signin"
+        className="flex flex-col items-center justify-center min-h-screen p-4 sm:p-8"
+      >
         {alert && (
           <Alert
             type={alert.type}
@@ -73,12 +76,12 @@ const AdminLogin = () => {
             onClose={() => setAlert(null)}
           />
         )}
-        <div className="back relative w-full text-3xl transition-all">
-          <Link to="/" className="mx-2" title="Go back">
-            <FontAwesomeIcon icon={faArrowLeft} size="2xs" />
-          </Link>
-        </div>
-        <div className="w-90 h-full flex items-center justify-center flex-col">
+        <div className="w-full max-w-md form_container rounded-xl p-6 sm:p-8">
+          <div className="back relative w-full text-3xl transition-all">
+            <Link to="/" className="mx-2" title="Go back">
+              <FontAwesomeIcon icon={faArrowLeft} size="2xs" color="gray" />
+            </Link>
+          </div>
           <InputForm
             hanldeLogin={hanldeLogin}
             onChange={onChange}
