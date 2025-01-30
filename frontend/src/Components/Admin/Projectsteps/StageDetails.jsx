@@ -31,7 +31,6 @@ function StageDetails({ electricaURL, projectId, stageName }) {
           setStageData(response.data);
         }
       } catch (err) {
-        console.error("Error fetching stage data:", err.message);
         setError("Failed to fetch stage data. Please try again.");
       } finally {
         setLoading(false);

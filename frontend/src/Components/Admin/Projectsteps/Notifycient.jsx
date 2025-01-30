@@ -26,16 +26,16 @@ const NotifyClientModal = ({ onClose, projectId, baackendURL, stageName }) => {
         setAlert({ type: "success", message: "message was sent success" });
         setMessage(""); // Clear the message field
       } else {
+        setIsLoading(false);
         setAlert({ type: "error", message: response.data.message });
       }
     } catch (error) {
+      setIsLoading(false);
       setAlert({
         type: "error",
         message:
           error.response?.data?.message || "Failed to send notification.",
       });
-    } finally {
-      setIsLoading(false);
     }
   };
 

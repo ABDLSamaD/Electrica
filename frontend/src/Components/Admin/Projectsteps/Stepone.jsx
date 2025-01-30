@@ -181,7 +181,6 @@ const Stepone = () => {
     }
   };
 
-  // complete stage handler
   const handleCompleteStage = async (projectId, stageName) => {
     setLoading(true);
     try {
@@ -192,19 +191,17 @@ const Stepone = () => {
       );
       if (response.status === 200) {
         setAlert({ type: response.data.type, message: response.data.message });
-        setTimeout(() => {
-          fetchUsers();
-        }, 786);
+        fetchUsers();
       } else {
         setAlert({ type: response.data.type, message: response.data.message });
+        setLoading(false);
       }
     } catch (error) {
+      setLoading(false);
       setAlert({
         type: error.response?.data?.type,
         message: error.response?.data?.message,
       });
-    } finally {
-      setLoading(false);
     }
   };
 

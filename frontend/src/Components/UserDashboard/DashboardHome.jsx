@@ -34,7 +34,6 @@ const DashboardHome = () => {
 
   useEffect(() => {
     // Reset states initially
-    setLoader(false);
     setError(null);
     setPage(false);
 
