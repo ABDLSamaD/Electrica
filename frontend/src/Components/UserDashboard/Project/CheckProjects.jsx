@@ -31,7 +31,7 @@ const highlightText = (text, query) => {
 };
 
 const CheckProjects = () => {
-  const { fetchUser, projects, fetchProject, electricaURL } =
+  const { user, fetchUser, projects, fetchProject, electricaURL } =
     useOutletContext();
   const navigate = useNavigate();
   const [loading, setLoading] = useState(false);
@@ -142,100 +142,113 @@ const CheckProjects = () => {
 
           {filteredProjects.length > 0 ? (
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-              {filteredProjects.map((project) => (
-                <div
-                  key={project._id}
-                  className="p-6 rounded-lg shadow-md bg-gray-800 relative overflow-hidden"
-                >
-                  <div className="flex justify-between items-center">
-                    <h2 className="text-2xl font-semibold text-white">
-                      {project.stages.every(
-                        (stage) => stage.isCompleted && "Project Complete"
-                      )}
-                      {highlightText(project.projectName, searchQuery)}{" "}
-                      {/* Highlight project name */}
-                    </h2>
-                    {project.status === "Accepted" && (
-                      <FontAwesomeIcon
-                        icon={faCheckCircle}
-                        className="text-green-400 text-3xl"
-                      />
-                    )}
-                  </div>
-                  <p className="text-sm text-gray-400 my-2 flex items-center">
-                    <FontAwesomeIcon icon={faTasks} className="mr-2" />
-                    Created: {new Date(project.createdAt).toLocaleDateString()}
-                  </p>
-                  <p className="text-gray-400 mb-4">
-                    {highlightText(project.projectDescription, searchQuery)}{" "}
-                    {/* Highlight project description */}
-                  </p>
+              {filteredProjects
+                .filter((project) => project.user === user._id) // Filter user's projects
+                .map((project) => (
                   <div
-                    className={`py-2 px-4 rounded-md font-medium text-sm text-center mt-3`}
-                    style={{
-                      backgroundColor:
-                        project.status === "Accepted"
-                          ? "#a5f3d3aa"
-                          : project.status === "Pending"
-                          ? "#fde36e"
-                          : "#fcd6d6",
-                      color:
-                        project.status === "Accepted"
-                          ? "bg-green-600"
-                          : project.status === "Pending"
-                          ? "#e0a800"
-                          : "#d63b3b",
-                    }}
+                    key={project._id}
+                    className="p-6 rounded-lg shadow-lg bg-gray-800 relative overflow-hidden transition-transform transform hover:scale-105 hover:shadow-xl"
                   >
-                    Status: {project.status}
+                    {/* Header Section */}
+                    <div className="flex justify-between items-center mb-4">
+                      <h2 className="text-2xl font-semibold text-white truncate">
+                        {project.stages.every((stage) => stage.isCompleted) && (
+                          <span className="bg-green-600 text-white text-sm px-2 py-1 rounded-full mr-2">
+                            Project Complete
+                          </span>
+                        )}
+                        {highlightText(project.projectName, searchQuery)}
+                      </h2>
+                      {project.status === "Accepted" && (
+                        <FontAwesomeIcon
+                          icon={faCheckCircle}
+                          className="text-green-400 text-3xl"
+                        />
+                      )}
+                    </div>
+
+                    {/* Project Details */}
+                    <p className="text-sm text-gray-400 mb-4 flex items-center">
+                      <FontAwesomeIcon icon={faTasks} className="mr-2" />
+                      Created:{" "}
+                      {new Date(project.createdAt).toLocaleDateString()}
+                    </p>
+                    <p className="text-gray-400 mb-6">
+                      {highlightText(project.projectDescription, searchQuery)}
+                    </p>
+
+                    {/* Status Badge */}
+                    <div
+                      className={`py-2 px-4 rounded-full font-medium text-sm text-center inline-block mb-6`}
+                      style={{
+                        backgroundColor:
+                          project.status === "Accepted"
+                            ? "#a5f3d3aa"
+                            : project.status === "Pending"
+                            ? "#fde36e"
+                            : "#fcd6d6",
+                        color:
+                          project.status === "Accepted"
+                            ? "#065f46"
+                            : project.status === "Pending"
+                            ? "#e0a800"
+                            : "#d63b3b",
+                      }}
+                    >
+                      Status: {project.status}
+                    </div>
+
+                    {/* Client and Project Info */}
+                    <div className="space-y-3 mb-6">
+                      <p className="flex items-center text-sm text-gray-400">
+                        <FontAwesomeIcon icon={faUser} className="mr-2" />
+                        <span className="font-medium text-gray-100 mr-1">
+                          Client:
+                        </span>{" "}
+                        {highlightText(project.clientName, searchQuery)}
+                      </p>
+                      <p className="flex items-center text-sm text-gray-400">
+                        <FontAwesomeIcon icon={faCity} className="mr-2" />
+                        <span className="font-medium text-gray-100 mr-1">
+                          City:
+                        </span>{" "}
+                        {highlightText(project.projectCity, searchQuery)}
+                      </p>
+                      <p className="flex items-center text-sm text-gray-400">
+                        <FontAwesomeIcon icon={faDollarSign} className="mr-2" />
+                        <span className="font-medium text-gray-100 mr-1">
+                          Total Cost:
+                        </span>{" "}
+                        ${project.totalCost}
+                      </p>
+                    </div>
+
+                    {/* Action Buttons */}
+                    <div className="flex flex-col sm:flex-row gap-3">
+                      <button
+                        onClick={() =>
+                          navigate(
+                            `/db-au-user/checkstatus/projectreview-1-9&/${project._id}`
+                          )
+                        }
+                        className="flex-1 bg-emerald-600 text-white py-3 rounded-lg hover:bg-emerald-700 transition flex items-center justify-center"
+                      >
+                        Check Project
+                      </button>
+                      <button
+                        onClick={() => removeProject(project._id)}
+                        className="flex-1 bg-red-600 text-white py-3 rounded-lg hover:bg-red-700 transition flex items-center justify-center"
+                      >
+                        <FontAwesomeIcon icon={faTrash} className="mr-2" />{" "}
+                        Remove
+                      </button>
+                    </div>
                   </div>
-                  <div className="text-sm mt-6">
-                    <p className="flex items-center">
-                      <FontAwesomeIcon icon={faUser} className="mr-2" />
-                      <span className="font-medium text-gray-400">
-                        Client:
-                      </span>{" "}
-                      {highlightText(project.clientName, searchQuery)}{" "}
-                      {/* Highlight client name */}
-                    </p>
-                    <p className="flex items-center">
-                      <FontAwesomeIcon icon={faCity} className="mr-2" />
-                      <span className="font-medium text-gray-400">
-                        City:
-                      </span>{" "}
-                      {highlightText(project.projectCity, searchQuery)}{" "}
-                      {/* Highlight project city */}
-                    </p>
-                    <p className="flex items-center">
-                      <FontAwesomeIcon icon={faDollarSign} className="mr-2" />
-                      <span className="font-medium text-gray-400">
-                        Total Cost:
-                      </span>{" "}
-                      ${project.totalCost}
-                    </p>
-                  </div>
-                  <button
-                    onClick={() =>
-                      navigate(
-                        `/db-au-user/checkstatus/projectreview-1-9&/${project._id}`
-                      )
-                    }
-                    className="mt-6 w-full bg-emerald-600 text-white py-3 rounded-lg hover:bg-emerald-700 transition"
-                  >
-                    Check Project
-                  </button>
-                  <button
-                    onClick={() => removeProject(project._id)}
-                    className="mt-3 w-full bg-red-600 text-white py-3 rounded-lg hover:bg-red-700 transition"
-                  >
-                    <FontAwesomeIcon icon={faTrash} className="mr-3" /> Remove
-                  </button>
-                </div>
-              ))}
+                ))}
             </div>
           ) : (
             <p className="text-center text-gray-400">
-              No projects match your search criteria.
+              No projects match your search criteria or no projects available.
             </p>
           )}
         </div>
