@@ -20,6 +20,7 @@ import {
   FiUsers,
 } from "react-icons/fi";
 import LoaderAll from "../../OtherComponents/LoaderAll";
+import LoginLoader from "../../OtherComponents/LoginLoader";
 import Alert from "../../OtherComponents/Alert";
 import MessagesSendingRecieving from "./MessagesSendingRecieving";
 import ClientConfirmation from "./ClientConfirmation";
@@ -30,6 +31,7 @@ const StageManagement = () => {
   const { projectId } = useParams();
   const [project, setProject] = useState(null);
   const [loading, setLoading] = useState(true);
+  const [loadingapprovematerial, setLoadingApproveMaterial] = useState(false);
   const [isCompleted, setIsCompleted] = useState(false);
   const [error, setError] = useState("");
   const [successMessage, setSuccessMessage] = useState("");
@@ -72,7 +74,7 @@ const StageManagement = () => {
   }, [projects, projectId]);
 
   const handleApproveMaterial = async (stageName, materialId) => {
-    setLoading(true);
+    setLoadingApproveMaterial(true);
     try {
       const response = await axios.post(
         `${electricaURL}/api/auth/approve-material`,
@@ -99,10 +101,10 @@ const StageManagement = () => {
         }));
         fetchProject();
       }
+      setLoadingApproveMaterial(false);
     } catch (err) {
       setError("Failed to approve material. Please try again.");
-    } finally {
-      setLoading(false);
+      setLoadingApproveMaterial(false);
     }
   };
 
@@ -150,6 +152,7 @@ const StageManagement = () => {
       if (response.status === 200) {
         setAlert({ type: response.data.type, message: response.data.message });
         // Refresh data or handle UI updates
+        fetchProject();
       } else {
         setAlert({
           type: response.data.type,
@@ -348,27 +351,27 @@ const StageManagement = () => {
                 </div>
 
                 {/* Status Grid */}
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                   {/* Status Card */}
                   <motion.div
                     whileHover={{ y: -5 }}
-                    className="p-4 md:p-6 bg-white/5 backdrop-blur-lg rounded-2xl border border-white/10 hover:border-white/20 transition-all"
+                    className="p-4 sm:p-5 md:p-6 bg-white/5 backdrop-blur-lg rounded-2xl border border-white/10 hover:border-white/20 transition-all"
                   >
-                    <div className="flex items-center gap-4">
-                      <div className="p-3 bg-white/10 rounded-xl">
+                    <div className="flex flex-col sm:flex-row items-start sm:items-center gap-4">
+                      <div className="p-3 bg-white/10 rounded-xl flex-shrink-0">
                         {stage?.isCompleted ? (
-                          <FiCheckCircle className="w-8 h-8 text-green-400" />
+                          <FiCheckCircle className="w-7 sm:w-8 h-7 sm:h-8 text-green-400" />
                         ) : (
-                          <FiClock className="w-8 h-8 text-amber-400" />
+                          <FiClock className="w-7 sm:w-8 h-7 sm:h-8 text-amber-400" />
                         )}
                       </div>
-                      <div>
-                        <h3 className="text-lg font-semibold text-gray-300 mb-1">
+                      <div className="w-full">
+                        <h3 className="text-base sm:text-lg font-semibold text-gray-300 mb-1">
                           Project Status
                         </h3>
-                        <div className="flex items-center gap-2">
+                        <div className="flex flex-wrap items-center gap-2">
                           <span
-                            className={`px-3 py-1 rounded-full text-sm ${
+                            className={`px-3 py-1 rounded-full text-xs sm:text-sm ${
                               stage?.isCompleted
                                 ? "bg-green-500/20 text-green-400"
                                 : "bg-amber-500/20 text-amber-400"
@@ -377,7 +380,7 @@ const StageManagement = () => {
                             {stage?.isCompleted ? "Completed" : "In Progress"}
                           </span>
                           {!stage?.isCompleted && (
-                            <span className="text-xs text-gray-400">
+                            <span className="text-xs sm:text-sm text-gray-400">
                               Est. completion: {stage.estimatedCompletion}
                             </span>
                           )}
@@ -389,23 +392,23 @@ const StageManagement = () => {
                   {/* Client Confirmation Card */}
                   <motion.div
                     whileHover={{ y: -5 }}
-                    className="p-6 bg-white/5 backdrop-blur-lg rounded-2xl border border-white/10 hover:border-white/20 transition-all"
+                    className="p-4 sm:p-5 md:p-6 bg-white/5 backdrop-blur-lg rounded-2xl border border-white/10 hover:border-white/20 transition-all"
                   >
-                    <div className="flex items-center gap-4">
-                      <div className="p-3 bg-white/10 rounded-xl">
+                    <div className="flex flex-col sm:flex-row items-start sm:items-center gap-4">
+                      <div className="p-3 bg-white/10 rounded-xl flex-shrink-0">
                         {stage.clientConfirmation.isConfirmed ? (
-                          <FiThumbsUp className="w-8 h-8 text-green-400" />
+                          <FiThumbsUp className="w-7 sm:w-8 h-7 sm:h-8 text-green-400" />
                         ) : (
-                          <FiAlertTriangle className="w-8 h-8 text-amber-400" />
+                          <FiAlertTriangle className="w-7 sm:w-8 h-7 sm:h-8 text-amber-400" />
                         )}
                       </div>
-                      <div>
-                        <h3 className="text-lg font-semibold text-gray-300 mb-1">
+                      <div className="w-full">
+                        <h3 className="text-base sm:text-lg font-semibold text-gray-300 mb-1">
                           Client Confirmation
                         </h3>
-                        <div className="flex items-center gap-2">
+                        <div className="flex flex-wrap items-center gap-2">
                           <span
-                            className={`px-3 py-1 rounded-full text-sm ${
+                            className={`px-3 py-1 rounded-full text-xs sm:text-sm ${
                               stage.clientConfirmation.isConfirmed
                                 ? "bg-green-500/20 text-green-400"
                                 : "bg-amber-500/20 text-amber-400"
@@ -416,7 +419,7 @@ const StageManagement = () => {
                               : "Pending Approval"}
                           </span>
                           {stage.clientConfirmation.isConfirmed && (
-                            <span className="text-xs text-gray-400">
+                            <span className="text-xs sm:text-sm text-gray-400">
                               Confirmed on:{" "}
                               {new Date(
                                 stage.clientConfirmation.date
@@ -432,21 +435,21 @@ const StageManagement = () => {
 
               {/* Materials approve */}
               <div className="mt-6">
-                <h3 className="text-xl md:text-2xl font-bold bg-gradient-to-r from-green-400 to-cyan-500 bg-clip-text text-transparent">
+                <h3 className="text-lg sm:text-xl md:text-2xl font-bold bg-gradient-to-r from-green-400 to-cyan-500 bg-clip-text text-transparent">
                   Materials
                 </h3>
 
-                <div className="grid gap-2 mt-4">
+                <div className="grid gap-3 mt-4 sm:grid-cols-1 md:grid-cols-2 lg:grid-cols-3">
                   {stage.materials.map((material, index) => (
                     <motion.div
                       key={material._id}
                       initial={{ opacity: 0, x: -20 }}
                       animate={{ opacity: 1, x: 0 }}
                       transition={{ duration: 0.3, delay: index * 0.1 }}
-                      className="group relative p-3 md:p-4 bg-white/5 backdrop-blur-lg rounded-xl shadow-lg
-                 border border-white/10 hover:border-white/20 transition-all"
+                      className="group relative p-3 sm:p-4 md:p-5 bg-white/5 backdrop-blur-lg rounded-xl shadow-lg
+       border border-white/10 hover:border-white/20 transition-all"
                     >
-                      <div className="flex items-center justify-between">
+                      <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3">
                         {/* Material Info */}
                         <div className="flex items-center gap-4">
                           <div className="p-2 bg-white/10 rounded-lg">
@@ -458,19 +461,19 @@ const StageManagement = () => {
                           </div>
 
                           <div>
-                            <h4 className="text-lg font-semibold text-gray-100">
+                            <h4 className="text-base sm:text-lg font-semibold text-gray-100">
                               {material.name}
                             </h4>
-                            <p className="text-gray-400 mt-1">
+                            <p className="text-gray-400 text-sm sm:text-base mt-1">
                               Quantity: {material.quantity}
                             </p>
                           </div>
                         </div>
 
                         {/* Status and Actions */}
-                        <div className="flex items-center gap-4">
+                        <div className="flex items-center gap-4 flex-wrap">
                           <span
-                            className={`px-3 py-1 rounded-full text-sm font-medium ${
+                            className={`px-3 py-1 rounded-full text-xs sm:text-sm font-medium ${
                               material.isApproved
                                 ? "bg-green-500/20 text-green-400"
                                 : "bg-amber-500/20 text-amber-400"
@@ -486,11 +489,16 @@ const StageManagement = () => {
                               onClick={() =>
                                 handleApproveMaterial(stage.name, material._id)
                               }
-                              className="bg-gradient-to-r from-cyan-500 to-blue-600 text-white px-4 py-2 rounded-lg
-                         hover:from-cyan-400 hover:to-blue-500 transition-all flex items-center gap-2"
+                              disabled={loadingapprovematerial}
+                              className="bg-gradient-to-r from-cyan-500 to-blue-600 text-white px-3 py-1 sm:px-4 sm:py-2 rounded-lg
+                 hover:from-cyan-400 hover:to-blue-500 transition-all flex items-center gap-2 text-xs sm:text-sm"
                             >
                               <FiCheck className="w-4 h-4" />
-                              Approve
+                              {loadingapprovematerial ? (
+                                <LoginLoader />
+                              ) : (
+                                "Approve"
+                              )}
                             </motion.button>
                           )}
                         </div>
@@ -499,8 +507,8 @@ const StageManagement = () => {
                       {/* Hover Glow Effect */}
                       <div
                         className="absolute inset-0 rounded-xl pointer-events-none
-                      group-hover:bg-gradient-to-r from-cyan-500/10 to-blue-500/10
-                      transition-opacity opacity-0 group-hover:opacity-100"
+          group-hover:bg-gradient-to-r from-cyan-500/10 to-blue-500/10
+          transition-opacity opacity-0 group-hover:opacity-100"
                       />
                     </motion.div>
                   ))}
@@ -620,6 +628,7 @@ const StageManagement = () => {
                       />
                     </motion.div>
                   ))}
+                  {!stage.updates && <p>Stage in progress</p>}
                 </div>
               </div>
 
