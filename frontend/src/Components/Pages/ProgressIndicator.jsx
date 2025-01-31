@@ -3,7 +3,7 @@ import { motion } from "framer-motion";
 
 const ProgressIndicator = ({ stages, activeStage }) => {
   return (
-    <div className="fixed left-0 top-1/2 transform -translate-y-1/2 ml-4 z-50">
+    <div className="fixed lg:left-0 -left-3.5 top-1/2 transform -translate-y-1/2 ml-4 z-auto lg:50">
       <div className="flex flex-col items-center space-y-4">
         {Array.from({ length: stages }).map((_, index) => (
           <React.Fragment key={index}>

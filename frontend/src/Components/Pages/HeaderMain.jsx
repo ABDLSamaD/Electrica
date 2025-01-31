@@ -128,42 +128,69 @@ const HeaderMain = () => {
         <button onClick={toggleNav} className="absolute top-4 right-4">
           <FontAwesomeIcon icon={faBars} className="text-white text-2xl" />
         </button>
-        <ul className="flex flex-col mt-20 space-y-4 p-4">
+        <div className="logo pt-10 pl-3">
+          <h2 className="text-gray-200 text-2xl hover:text-gray-300 transition-all">
+            <Link to="/">
+              Electrica
+              <span className="text-sm text-cyan-200 relative top-3 -left-2">
+                web
+              </span>
+            </Link>
+          </h2>
+        </div>
+        <ul className="flex flex-col mt-20 space-y-4 p-4 z-50">
           <li>
-            <Link
+            <NavLink
               to="/"
               onClick={toggleNav}
-              className="text-white hover:text-indigo-400"
+              className={({ isActive }) =>
+                isActive
+                  ? "text-indigo-400"
+                  : "text-gray-300 hover:text-indigo-400"
+              }
+              end
             >
               Home
-            </Link>
+            </NavLink>
           </li>
           <li>
-            <Link
+            <NavLink
               to="/about"
               onClick={toggleNav}
-              className="text-white hover:text-indigo-400"
+              className={({ isActive }) =>
+                isActive
+                  ? "text-indigo-400"
+                  : "text-gray-300 hover:text-indigo-400"
+              }
             >
               About
-            </Link>
+            </NavLink>
           </li>
           <li>
-            <Link
+            <NavLink
               to="/project-details"
               onClick={toggleNav}
-              className="text-white hover:text-indigo-400"
+              className={({ isActive }) =>
+                isActive
+                  ? "text-indigo-400"
+                  : "text-gray-300 hover:text-indigo-400"
+              }
             >
               Project
-            </Link>
+            </NavLink>
           </li>
           <li>
-            <Link
+            <NavLink
               to="/service"
               onClick={toggleNav}
-              className="text-white hover:text-indigo-400"
+              className={({ isActive }) =>
+                isActive
+                  ? "text-indigo-400"
+                  : "text-gray-300 hover:text-indigo-400"
+              }
             >
               Services
-            </Link>
+            </NavLink>
           </li>
           {isAuthenticatedUser ? (
             <button
