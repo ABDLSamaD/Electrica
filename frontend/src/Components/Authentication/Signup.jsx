@@ -12,7 +12,7 @@ import {
 } from "@fortawesome/free-solid-svg-icons";
 import Alert from "../OtherComponents/Alert";
 import PasswordChecker from "../OtherComponents/PasswordChecker";
-import Loader from "../OtherComponents/Loader";
+import LoginLoader from "../OtherComponents/LoginLoader";
 import axios from "axios";
 
 const Signup = () => {
@@ -84,14 +84,6 @@ const Signup = () => {
       });
     }
   };
-
-  if (loading) {
-    return (
-      <div className="flex items-center justify-center w-screen h-screen z-50 bg-zinc-100/10 backdrop-blur-xl">
-        <Loader />
-      </div>
-    );
-  }
 
   return (
     <div
@@ -206,9 +198,10 @@ const Signup = () => {
           <button
             type="submit"
             className="w-full p-3 bg-blue-600 text-white font-semibold rounded-lg hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500"
+            disabled={loading}
           >
-            Signup
-            <FontAwesomeIcon icon={faUserPlus} className="ml-2" />
+            {loading ? <LoginLoader /> : "Signup"}
+            {!loading && <FontAwesomeIcon icon={faUserPlus} className="ml-2" />}
           </button>
           <p className="text-center text-gray-600 text-sm">
             Already have an account?{" "}
