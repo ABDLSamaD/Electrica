@@ -1,6 +1,7 @@
 import React from "react";
 import Alert from "./Alert";
 import { Link } from "react-router-dom";
+import LoginLoader from "./LoginLoader";
 
 const GlobalVerificationEmail = ({
   alert,
@@ -51,8 +52,9 @@ const GlobalVerificationEmail = ({
           <button
             type="submit"
             className="w-full mt-4 bg-orange-600 hover:bg-orange-700 text-white font-semibold p-3 rounded-lg transition-all transform hover:scale-105 focus:scale-105"
+            disabled={loading}
           >
-            {loading ? "OTP submitting" : "Confirm OTP"}
+            {loading ? <LoginLoader /> : "Confirm OTP"}
           </button>
         </form>
 

@@ -2,7 +2,6 @@ import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
 import GlobalVerificationEmail from "../OtherComponents/GlobalVerificationEmail";
-import Loader from "../OtherComponents/Loader";
 
 const EmailVerification = () => {
   const navigate = useNavigate();
@@ -49,20 +48,20 @@ const EmailVerification = () => {
           message: response.data.message,
         });
 
-        setTimeout(() => navigate("/signin"), 3000);
+        setTimeout(() => navigate("/signin"), 1200);
       } else {
+        setLoading(false);
         setAlert({
           type: response.data.type,
           message: response.data.message,
         });
       }
     } catch (err) {
+      setLoading(false);
       setAlert({
         type: err.response?.data?.type,
         message: err.response?.data?.message,
       });
-    } finally {
-      setLoading(false);
     }
   };
 
@@ -80,25 +79,25 @@ const EmailVerification = () => {
           type: response.data.type,
           message: response.data.message,
         });
+        setLoading(false);
       } else {
+        setLoading(false);
         setAlert({
           type: response.data.type,
           message: response.data.message,
         });
       }
     } catch (err) {
+      setLoading(false);
       setAlert({
         type: err.response?.data?.type,
         message: err.response?.data?.message,
       });
-    } finally {
-      setLoading(false);
     }
   };
 
   return (
     <div>
-      {loading && <Loader />}
       <GlobalVerificationEmail
         alert={alert}
         setAlert={setAlert}
