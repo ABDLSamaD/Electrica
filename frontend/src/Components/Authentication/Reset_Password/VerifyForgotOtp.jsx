@@ -47,14 +47,16 @@ const VerifyForgotOtp = () => {
           type: response.data.type,
           message: response.data.message,
         });
+        setLoading(false);
         setTimeout(() => {
           navigate("/reset-password");
-        }, 2000);
+        }, 1200);
       } else {
         setAlert({
           type: response.data.type,
           message: response.data.message,
         });
+        setLoading(false);
       }
     } catch (err) {
       setLoading(false);
@@ -62,8 +64,6 @@ const VerifyForgotOtp = () => {
         type: err.response?.data?.type,
         message: err.response?.data?.message,
       });
-    } finally {
-      setLoading(false);
     }
   };
   const resendOtp = async () => {
@@ -78,20 +78,20 @@ const VerifyForgotOtp = () => {
           type: response.data.type,
           message: response.data.message,
         });
+        setLoading(false);
+      } else {
+        setAlert({
+          type: response.data.type,
+          message: response.data.message,
+        });
+        setLoading(false);
       }
-      setAlert({
-        type: response.data.type,
-        message: response.data.message,
-      });
-      setLoading(false);
     } catch (error) {
+      setLoading(false);
       setAlert({
         type: err.response?.data?.type,
         message: err.response?.data?.message,
       });
-      setLoading(false);
-    } finally {
-      setLoading(false);
     }
   };
 
