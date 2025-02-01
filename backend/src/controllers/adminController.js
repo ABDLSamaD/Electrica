@@ -4,7 +4,6 @@ const crypto = require("crypto");
 const Admin = require("../models/admin");
 const { sendEmail } = require("../utils/mail");
 const User = require("../models/user");
-// const user = require("../models/user");
 
 exports.registerAdmin = async (req, res) => {
   try {
@@ -60,20 +59,22 @@ exports.loginAdmin = async (req, res) => {
         .json({ type: "error", message: "Already logged in" });
     }
 
-    const { email, password } = req.body;
+    const { email, username, password } = req.body;
 
-    const admin = await Admin.findOne({ email });
+    const admin = await Admin.findOne({
+      $or: [{ username: username }, { email: email }],
+    });
     if (!admin) {
       return res
         .status(404)
-        .json({ type: "error", message: "Email not found" });
+        .json({ type: "error", message: "Username or Email not found" });
     }
 
     const isMatch = await bcrypt.compare(password, admin.password);
     if (!isMatch) {
       return res
         .status(401)
-        .json({ type: "error", message: "Invalid credentials" });
+        .json({ type: "error", message: "Wrong Password!" });
     }
 
     const data = { id: admin.id, role: "admin" };
@@ -142,16 +143,8 @@ exports.logoutAdmin = async (req, res) => {
         if (err) {
           return res.status(500).json({ message: "Error logging out" });
         }
-        res.clearCookie("electrica", {
-          httpOnly: true, // Prevent access from JavaScript
-          secure: true, // Use secure cookies in production
-          sameSite: "None",
-        }); // Clear session cookie
-        res.clearCookie("admin_auth", {
-          httpOnly: true, // Prevent access from JavaScript
-          secure: true, // Use secure cookies in production
-          sameSite: "None",
-        }); // Clear session cookie
+        res.clearCookie("electrica"); // Clear session cookie
+        res.clearCookie("admin_auth"); // Clear session cookie
         res.status(200).json({ message: "Logged out successfully" });
       });
     } catch (error) {
@@ -182,6 +175,7 @@ exports.forgotPassword = async (req, res) => {
     admin.resetToken = token;
 
     sendEmail(admin.email, "FORGOT OTP", randomOtp);
+
     await admin.save();
 
     res.status(200).json({
@@ -324,7 +318,7 @@ exports.getAdmin = async (req, res) => {
     if (!admin)
       return res
         .status(401)
-        .json({ type: "error", message: "user not found!" });
+        .json({ type: "error", message: "admin not found!" });
     res.json(admin);
   } catch (error) {
     res.status(500).json({ type: "error", message: "Internal server error" });
@@ -402,5 +396,40 @@ exports.changePassword = async (req, res) => {
       type: "error",
       message: "An error occurred. Please try again later.",
     });
+  }
+};
+
+exports.removeUser = async (req, res) => {
+  try {
+    const { userId, remove } = req.body;
+    const adminId = req.admin.id;
+    const admin = await Admin.findById(adminId);
+    if (!admin) {
+      return res
+        .status(400)
+        .json({ type: "error", message: "Admin not found" });
+    }
+
+    const user = await User.findById(userId);
+    if (!user) {
+      return res.status(400).json({ type: "error", message: "User not found" });
+    }
+
+    if (remove) {
+      const removedUser = {
+        name: user.name,
+        email: user.email,
+        removedAt: new Date(),
+      };
+      admin.removedUsers.push(removedUser);
+      await admin.save();
+
+      await User.findByIdAndDelete(userId);
+      res.status(200).json({ type: "success", message: "User removed" });
+    } else {
+      res.status(200).json({ type: "info", message: "User not removed" });
+    }
+  } catch (error) {
+    res.status(500).json({ type: "error", message: "Internal server error" });
   }
 };

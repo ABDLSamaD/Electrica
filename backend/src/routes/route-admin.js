@@ -12,6 +12,7 @@ const {
   resendOTP,
   checkAdminAuth,
   changePassword,
+  removeUser,
 } = require("../controllers/adminController");
 // const adminAuth = require("../middleware/adminAuth");
 const {
@@ -56,6 +57,7 @@ router.post("/logout", sessionAdminAuth, logoutAdmin);
 router.post("/change-password", adminAuth, changePassword);
 router.get("/get_admin", adminAuth, getAdmin); //get admin details
 router.get("/get_all_users", adminAuth, getAllUser); // fetech all user
+router.post("/remove-user", adminAuth, removeUser); // remove user
 router.get("/:id/activity", adminAuth, getAllUserActivity);
 router.post("/project-status", adminAuth, updateProjectStatus); // admin approved client project request
 router.post("/start-project", adminAuth, startStaged); // admin approved client project then start add details
