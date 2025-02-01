@@ -1,15 +1,15 @@
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
 import axios from "axios";
 import { useNavigate, useOutletContext } from "react-router-dom";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faArrowLeft, faCamera } from "@fortawesome/free-solid-svg-icons";
 import "../dashboard.css";
 import Alert from "../../OtherComponents/Alert";
-import LoaderAll from "../../OtherComponents/LoaderAll";
+import LoginLoader from "../../OtherComponents/LoginLoader";
 
 const AddProjectForm = () => {
   const navigate = useNavigate();
-  const { user, electricaURL } = useOutletContext();
+  const { user, fetchUser, fetchProject, electricaURL } = useOutletContext();
 
   const handleBack = () => {
     navigate(-1); // Navigate to the previous route
@@ -74,30 +74,24 @@ const AddProjectForm = () => {
       );
       if (response.status === 200) {
         setAlert({ type: response.data.type, message: response.data.message });
+        fetchUser();
+        fetchProject();
+        setLoading(false);
         setTimeout(() => {
           navigate("/db-au-user/checkstatus");
         }, 2301);
       } else {
+        setLoading(false);
         setAlert({ type: response.data.type, message: response.data.message });
       }
     } catch (error) {
+      setLoading(false);
       setAlert({
         type: error.response?.data?.type,
         message: error.response?.data?.message,
       });
-      setLoading(false);
-    } finally {
-      setLoading(false);
     }
   };
-
-  if (loading) {
-    return (
-      <div className="min-h-screen flex items-center justify-center">
-        <LoaderAll />
-      </div>
-    );
-  }
 
   return (
     <div className="p-4 mt-2 animate-fade-in">
@@ -237,8 +231,8 @@ const AddProjectForm = () => {
             </div>
           </div>
         </div>
-        <button type="submit" className="buttons">
-          <p>Submit project</p>
+        <button type="submit" className="buttons" disabled={loading}>
+          {loading ? <LoginLoader /> : <p>Submit project</p>}
         </button>
       </form>
     </div>

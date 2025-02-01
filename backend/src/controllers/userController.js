@@ -528,6 +528,14 @@ exports.deleteAccount = async (req, res) => {
       });
     }
 
+    const project = await Project.find({ user: userId });
+    if (!project) {
+      return res.status(404).json({
+        type: "error",
+        message: "Project not found.",
+      });
+    }
+
     // Generate the correct prompt (e.g., using the username or a fixed phrase)
     const expectedPrompt = `Delete my account ${user.name}`;
 
@@ -538,6 +546,9 @@ exports.deleteAccount = async (req, res) => {
         message: "Invalid prompt. Please try again.",
       });
     }
+
+    // before deleting user
+    await Project.deleteMany({ user: userId });
 
     // Delete the user
     await User.findByIdAndDelete(userId);
@@ -554,12 +565,12 @@ exports.deleteAccount = async (req, res) => {
       res.clearCookie("auth_token", {
         httpOnly: true,
         secure: process.env.NODE_ENV === "production",
-        sameSite: "None",
+        sameSite: process.env.NODE_ENV === "production" ? "None" : "Strict",
       });
       res.clearCookie("electrica", {
         httpOnly: true,
         secure: process.env.NODE_ENV === "production",
-        sameSite: "None",
+        sameSite: process.env.NODE_ENV === "production" ? "None" : "Strict",
       });
 
       // Send a success response
@@ -570,6 +581,7 @@ exports.deleteAccount = async (req, res) => {
       });
     });
   } catch (error) {
+    console.error("Error deleting account:", error);
     return res.status(500).json({
       type: "error",
       message:
