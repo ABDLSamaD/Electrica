@@ -8,6 +8,7 @@ import {
 } from "react-router-dom";
 import Alert from "../../OtherComponents/Alert";
 import LoaderAll from "../../OtherComponents/LoaderAll";
+import { Calendar, Clock, Info, User } from "lucide-react";
 
 const ProjectReview = () => {
   const navigate = useNavigate();
@@ -32,8 +33,8 @@ const ProjectReview = () => {
         setUser(matchedUser || null);
         setProject(matchedProject || null);
         setSelectedStatus(matchedProject?.status || "submitted");
+        setTimeout(() => setLoading(false), 1200);
       }
-      setLoading(false);
     };
 
     fetchData();
@@ -117,62 +118,67 @@ const ProjectReview = () => {
   }
 
   return (
-    <div className="flex items-center justify-center p-6 min-h-screen bg-gray-900 text-white">
-      <div className="max-w-3xl w-full bg-gray-800 shadow-lg rounded-lg overflow-hidden text-gray-400">
-        <div className="p-6">
-          <h1 className="text-2xl font-bold mb-4">Project Review</h1>
-          <h2 className="text-xl mb-2">
-            User: <span className="text-gray-200">{user.name}</span>
-          </h2>
-          <h2 className="text-xl mb-2">
-            Project:
-            <span className="text-gray-200">{project.projectName}</span>
-          </h2>
-          <p className="mb-4">
-            <strong>Created At:</strong>
-            {new Date(project.createdAt).toLocaleDateString()}
-          </p>
-          <p className="mb-4">
-            <strong>Status:</strong> {project.status}
-          </p>
+    <div className="flex items-center justify-center p-6 min-h-screen bg-gray-900 text-gray-200">
+      {alert && (
+        <Alert
+          type={alert.type}
+          message={alert.message}
+          onClose={() => setAlert(null)}
+        />
+      )}
+      <div className="w-full max-w-3xl bg-white/10 backdrop-blur-lg rounded-2xl shadow-xl p-6 border border-white/20">
+        <h1 className="text-3xl font-bold mb-6 text-white drop-shadow-lg">
+          Project Review
+        </h1>
 
-          {alert && (
-            <Alert
-              type={alert.type}
-              message={alert.message}
-              onClose={() => setAlert(null)}
-            />
-          )}
-
-          <div className="mb-4">
+        <div className="space-y-4">
+          <div className="flex items-center space-x-2 text-white">
+            <User className="text-blue-400" />
+            <span className="text-lg font-semibold">{user.name}</span>
+          </div>
+          <div className="flex items-center space-x-2 text-white">
+            <Info className="text-green-400" />
+            <span className="text-lg font-semibold">{project.projectName}</span>
+          </div>
+          <div className="flex items-center space-x-2 text-white">
+            <Calendar className="text-yellow-400" />
+            <span>
+              Created: {new Date(project.createdAt).toLocaleDateString()}
+            </span>
+          </div>
+          <div className="flex items-center space-x-2 text-white">
+            <Clock className="text-purple-400" />
+            <span>Status: {project.status}</span>
+          </div>
+          <div className="space-y-2">
             <label
               htmlFor="statusReason"
-              className="block text-gray-400 text-sm mb-2"
+              className="block text-sm font-medium text-white"
             >
-              Reason for Status Change:
+              Reason for Status Change
             </label>
             <input
-              type="text"
               id="statusReason"
+              type="text"
+              className="w-full p-3 bg-white/10 text-white rounded-lg border border-white/20 focus:outline-none focus:ring-2 focus:ring-blue-400 backdrop-blur-md"
               placeholder="Enter reason"
               value={statusReason}
               onChange={(e) => setStatusReason(e.target.value)}
-              className="w-full bg-gray-700 text-sm p-2 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
             />
           </div>
 
-          <div className="mb-4">
+          <div className="space-y-2">
             <label
               htmlFor="status-update"
-              className="block text-gray-400 text-sm mb-2"
+              className="block text-sm font-medium text-white"
             >
-              Update Status:
+              Update Status
             </label>
             <select
               id="status-update"
+              className="w-full p-3 bg-gray-900/60 text-white rounded-lg border border-white/20 focus:outline-none focus:ring-2 focus:ring-blue-400 backdrop-blur-md"
               value={selectedStatus}
               onChange={(e) => handleStatusChange(e.target.value)}
-              className="w-full bg-gray-700 text-white rounded p-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
             >
               <option value="submitted">Submitted</option>
               <option value="approved">Approved</option>
@@ -182,8 +188,8 @@ const ProjectReview = () => {
           </div>
 
           <button
+            className="w-full bg-blue-500 hover:bg-blue-600 text-white py-3 rounded-lg transition-all disabled:opacity-50 shadow-lg hover:shadow-blue-500/50"
             onClick={submitStatusUpdate}
-            className="w-full bg-purple-600 hover:bg-purple-700 text-white py-2 rounded-lg transition-all"
             disabled={updating}
           >
             {updating ? "Updating..." : "Update Status"}
