@@ -1,8 +1,23 @@
 import React, { useEffect, useState } from "react";
 import Main from "./Components/Main";
+import OfflineScreen from "./Components/OtherComponents/OfflineScreen";
 
 const App = () => {
-  return <Main />;
+  const [isOnline, setIsOnline] = useState(navigator.onLine);
+
+  useEffect(() => {
+    const handleOnline = () => setIsOnline(true);
+    const handleOffline = () => setIsOnline(false);
+
+    window.addEventListener("online", handleOnline);
+    window.addEventListener("offline", handleOffline);
+
+    return () => {
+      window.removeEventListener("online", handleOnline);
+      window.removeEventListener("offline", handleOffline);
+    };
+  }, []);
+  return <>{isOnline ? <Main /> : <OfflineScreen />}</>;
 };
 
 export default App;
