@@ -1,4 +1,5 @@
 const express = require("express");
+const multer = require("multer");
 const routes = express.Router();
 const {
   signUp,
@@ -61,6 +62,10 @@ const signupRateLimiter = rateLimit({
   message: "Too many signup attempts, please try again later.",
 });
 
+// Multer storage (Temporary for handling file uploads)
+const storage = multer.memoryStorage();
+const upload = multer({ storage });
+
 // routes
 routes.post(
   "/signup",
@@ -92,7 +97,7 @@ routes.put("/updateuser-details", decodedToken, updateUserDetails);
 routes.post("/adduser-profileImg", decodedToken, profileImage);
 routes.post("/change-password", decodedToken, changepassword);
 routes.get("/user-info", decodedToken, getUserDetails);
-routes.post("/project", decodedToken, project); //add project details
+routes.post("/project", decodedToken, upload.array("projectPics", 5), project); //add project details
 routes.post("/remove-project", decodedToken, removeProject); //add project details
 routes.get("/project-details", decodedToken, getProjectDetails); // get project details from admin add
 routes.post("/client-confirmation", decodedToken, clientConfirmStageCompletion); // client confirmation for dalay work of stages

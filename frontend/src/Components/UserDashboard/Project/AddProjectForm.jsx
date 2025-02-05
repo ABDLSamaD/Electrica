@@ -2,7 +2,11 @@ import React, { useState } from "react";
 import axios from "axios";
 import { useNavigate, useOutletContext } from "react-router-dom";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faArrowLeft, faCamera } from "@fortawesome/free-solid-svg-icons";
+import {
+  faArrowLeft,
+  faCamera,
+  faTrash,
+} from "@fortawesome/free-solid-svg-icons";
 import "../dashboard.css";
 import Alert from "../../OtherComponents/Alert";
 import LoginLoader from "../../OtherComponents/LoginLoader";
@@ -22,10 +26,12 @@ const AddProjectForm = () => {
     projectAddress: user.address || "",
     projectName: "",
     projectCity: user.city || "",
-    projectPics: null, // Handle file uploads here
+    projectPics: [], // Handle file uploads here
   });
   const [alert, setAlert] = useState(null);
   const [loading, setLoading] = useState(false);
+  const [picMessage, setPicMessage] = useState("");
+  const [uploadImage, setUploadImage] = useState(null);
 
   const handleInputChange = (e) => {
     const { name, value } = e.target;
@@ -35,16 +41,73 @@ const AddProjectForm = () => {
     });
   };
 
+  // Upload images to Cloudinary
+  const uploadImagesToCloudinary = async (files) => {
+    if (!files || files.length === 0) {
+      setPicMessage("Please select at least one image.");
+      return [];
+    }
+
+    setUploadImage(true);
+    setPicMessage(null);
+
+    const uploadPromises = files.map(async (file) => {
+      if (file.type === "image/jpeg" || file.type === "image/png") {
+        const data = new FormData();
+        data.append("file", file);
+        data.append("upload_preset", "electrica-profile");
+        data.append("cloud_name", "dchie2dvi");
+
+        try {
+          const res = await fetch(import.meta.env.VITE_CLOUDINARY_URL, {
+            method: "POST",
+            body: data,
+          });
+
+          const responseData = await res.json();
+          return responseData.secure_url; // Use `secure_url` for HTTPS
+        } catch (error) {
+          setPicMessage("Error uploading images. Please try again.");
+          return null;
+        }
+      } else {
+        setPicMessage("Invalid file type. Please select JPEG or PNG.");
+        return null;
+      }
+    });
+
+    const imageUrls = await Promise.all(uploadPromises);
+    setUploadImage(false);
+
+    return imageUrls.filter((url) => url !== null); // Remove failed uploads
+  };
+
   const handleFileChange = (e) => {
+    const files = Array.from(e.target.files);
     setFormData({
       ...formData,
-      projectPics: e.target.files[0],
+      projectPics: files,
+    });
+  };
+
+  const handleRemoveImage = (index) => {
+    const updatedImages = formData.projectPics.filter((_, i) => i !== index);
+    setFormData({
+      ...formData,
+      projectPics: updatedImages,
     });
   };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     setLoading(true);
+
+    const imageUrls = await uploadImagesToCloudinary(formData.projectPics);
+
+    if (imageUrls.length === 0) {
+      setLoading(false);
+      return;
+    }
 
     try {
       const {
@@ -54,29 +117,35 @@ const AddProjectForm = () => {
         projectAddress,
         projectName,
         projectCity,
-        projectPics,
       } = formData;
+
+      const newFormData = new FormData(); // Create a new FormData instance
+
+      // Append text fields to the FormData object
+      newFormData.append("clientName", clientName);
+      newFormData.append("clientNumber", clientNumber);
+      newFormData.append("projectDescription", projectDescription);
+      newFormData.append("projectAddress", projectAddress);
+      newFormData.append("projectName", projectName);
+      newFormData.append("projectCity", projectCity);
+
+      // Append files to FormData
+      imageUrls.forEach((url) => {
+        newFormData.append("projectPics", url);
+      });
 
       const response = await axios.post(
         `${electricaURL}/api/auth/project`,
-        {
-          clientName,
-          clientNumber,
-          projectDescription,
-          projectAddress,
-          projectName,
-          projectCity,
-          projectPics,
-        },
+        newFormData,
         {
           withCredentials: true,
         }
       );
       if (response.status === 200) {
         setAlert({ type: response.data.type, message: response.data.message });
+        setLoading(false);
         fetchUser();
         fetchProject();
-        setLoading(false);
         setTimeout(() => {
           navigate("/db-au-user/checkstatus");
         }, 2301);
@@ -90,6 +159,8 @@ const AddProjectForm = () => {
         type: error.response?.data?.type,
         message: error.response?.data?.message,
       });
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -121,6 +192,7 @@ const AddProjectForm = () => {
           project.
         </p>
       </div>
+      {/* ```jsx */}
       <form
         onSubmit={handleSubmit}
         className="gap-10 grid grid-cols-1 md:grid-cols-2 text-white animate-slide-in-up"
@@ -218,21 +290,47 @@ const AddProjectForm = () => {
               type="file"
               multiple
               onChange={handleFileChange}
+              accept="image/*"
               className="absolute inset-0 w-full h-full opacity-0 cursor-pointer"
             />
             <div className="flex flex-col items-center justify-center">
               <FontAwesomeIcon
-                icon={faCamera}
+                icon={!uploadImage && faCamera}
                 className="text-4xl text-gray-500 mb-2"
               />
               <p className="text-gray-600 font-medium animate-pulse">
-                Click to upload images
+                {uploadImage ? "Uploading..." : "Upload Project Images"}
               </p>
             </div>
           </div>
+          {/* Image Previews */}
+          {formData.projectPics.length > 0 &&
+            (uploadImage ? (
+              "wait image load"
+            ) : (
+              <div className="mt-4 flex flex-wrap gap-4">
+                {formData.projectPics.map((file, index) => (
+                  <div key={index} className="relative">
+                    <img
+                      src={URL.createObjectURL(file)} // Create a preview URL for the image
+                      alt={`preview-${index}`}
+                      className="w-24 h-24 object-cover rounded-md"
+                    />
+                    <button
+                      type="button"
+                      onClick={() => handleRemoveImage(index)}
+                      className="absolute top-0 right-0 bg-red-500 text-white rounded-full p-1 text-xs"
+                    >
+                      <FontAwesomeIcon icon={faTrash} />
+                    </button>
+                  </div>
+                ))}
+              </div>
+            ))}
         </div>
+
         <button type="submit" className="buttons" disabled={loading}>
-          {loading ? <LoginLoader /> : <p>Submit project</p>}
+          <p>{loading ? <LoginLoader /> : "Submit"}</p>
         </button>
       </form>
     </div>

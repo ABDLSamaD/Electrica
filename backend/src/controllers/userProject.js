@@ -17,6 +17,19 @@ exports.project = async (req, res) => {
       projectPics,
     } = req.body;
 
+    if (
+      !clientName ||
+      !clientNumber ||
+      !projectDescription ||
+      !projectAddress ||
+      !projectName ||
+      !projectCity
+    ) {
+      return res
+        .status(400)
+        .json({ type: "error", message: "All fields are required" });
+    }
+
     let userId = req.user.id;
     const user = await User.findById(userId);
     if (!user)
@@ -66,7 +79,7 @@ exports.project = async (req, res) => {
       projectAddress,
       projectName,
       projectCity,
-      projectPics,
+      projectPics: req.body.projectPics || [],
       status: "submitted", // Initially set the status to 'submitted'
       stages: initialStages,
       user: userId, // Reference to the user who created the project
