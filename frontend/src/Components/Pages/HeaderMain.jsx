@@ -40,7 +40,7 @@ const HeaderMain = () => {
   };
 
   return (
-    <header className="fixed top-8 left-0 right-0 z-50 shadow-sm h-auto">
+    <header className="fixed top-4 left-0 right-0 z-50 shadow-sm h-auto">
       <div className="container p-3 flex items-center justify-between font-sans rounded-xl backdrop-blur-lg bg-[hsla(242,88.4%,66.3%,0.12)]">
         <div className="logo">
           <h2 className="text-gray-200 text-2xl hover:text-gray-300 transition-all">
