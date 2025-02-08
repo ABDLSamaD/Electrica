@@ -49,8 +49,6 @@ const DashboardHome = () => {
       setPage(true);
     }
 
-    setLoader(true);
-
     // Timer to simulate data loading
     const timer = setTimeout(() => {
       try {
@@ -60,7 +58,7 @@ const DashboardHome = () => {
       } finally {
         setLoader(false); // Stop loader
       }
-    }, 2300); // Reduced delay for better UX
+    }, 1900); // Reduced delay for better UX
 
     // Cleanup timer on unmount or dependencies change
     return () => clearTimeout(timer);
@@ -80,7 +78,7 @@ const DashboardHome = () => {
   };
 
   return (
-    <div className="relative top-10 p-6 text-gray-200 bg-gray-800/20 backdrop-blur-lg rounded min-h-screen">
+    <div className="relative top-10 p-6 text-gray-200 min-h-screen">
       {loader ? (
         <div className="min-h-screen grid place-content-center">
           <LoaderAll />
@@ -89,20 +87,20 @@ const DashboardHome = () => {
         <div className="text-red-500 text-sm text-center">{error}</div>
       ) : (
         <>
-          <h1 className="text-3xl font-bold text-teal-400">
+          <h1 className="text-3xl font-bold text-blue-600">
             Welcome, {data?.name || "User"}!
           </h1>
-          <p className="text-sm text-gray-400 mt-1">
+          <p className="text-sm text-gray-200 mt-1">
             Here’s an overview of your dashboard:
           </p>
 
           {/* User Insights Section */}
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mt-6">
-            <div className="bg-gray-800 p-4 rounded-md shadow-md">
-              <h2 className="text-lg font-semibold text-teal-300">
+            <div className="bg-gray-800/50 backdrop-blur-sm p-4 rounded-md shadow-md">
+              <h1 className="text-2xl font-semibold text-blue-500">
                 Your Statistics
-              </h2>
-              <ul className="mt-3 text-gray-400">
+              </h1>
+              <ul className="mt-3 text-gray-300 text-base">
                 <li>
                   <strong>Active Projects:</strong>
                   {projects ? projects.length : 0}
@@ -121,7 +119,7 @@ const DashboardHome = () => {
 
             {/* Graph Section */}
             <div className="bg-gray-800 p-4 rounded-md shadow-md">
-              <h2 className="text-lg font-semibold text-teal-300">
+              <h2 className="text-lg font-semibold text-blue-500">
                 Project Progress
               </h2>
               <Line
@@ -135,11 +133,11 @@ const DashboardHome = () => {
           <div className="mt-6">
             {page ? (
               <div className="flex gap-4 items-center">
-                <p className="text-gray-400">
+                <p className="text-gray-200">
                   Check the current status of your project:
                 </p>
                 <button
-                  className="bg-teal-500 text-white px-4 py-2 rounded-md hover:bg-teal-600"
+                  className="bg-blue-700 text-white px-4 py-2 rounded-md hover:bg-blue-600"
                   onClick={() => navigate("checkstatus")}
                 >
                   Check Status
@@ -160,22 +158,22 @@ const DashboardHome = () => {
 
           {/* Electrica Details Section */}
           <div className="mt-10 bg-gray-800 p-6 rounded-md shadow-md">
-            <h2 className="text-xl font-semibold text-teal-400">
+            <h2 className="text-xl font-semibold text-blue-600">
               About Electrica
             </h2>
-            <p className="mt-3 text-gray-400">
+            <p className="mt-3 text-gray-200">
               Electrica is your comprehensive solution for managing and
               monitoring projects efficiently. From initiation to completion,
               Electrica ensures every step of your project is streamlined for
               success.
             </p>
-            <ul className="list-disc pl-5 mt-4 text-gray-400">
+            <ul className="list-disc pl-5 mt-4 text-gray-200">
               <li>Real-time project tracking and updates</li>
               <li>Seamless collaboration with team members</li>
               <li>Comprehensive analytics and insights</li>
               <li>Customizable workflows to suit your needs</li>
             </ul>
-            <p className="mt-4 text-gray-400">
+            <p className="mt-4 text-gray-200">
               Discover the power of Electrica by starting your first project
               today!
             </p>
