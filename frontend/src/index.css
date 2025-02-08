@@ -30,10 +30,10 @@ body {
   height: 100%;
   scroll-behavior: smooth;
 }
-body {
+/* body {
   background: hsla(0, 0%, 13%, 1) url(./assets/background.png) no-repeat center
     center/cover;
-}
+} */
 ::selection {
   background: #e8e4f72e;
   color: rgb(255, 255, 255);

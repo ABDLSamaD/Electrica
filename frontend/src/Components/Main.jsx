@@ -22,6 +22,7 @@ import AdminLogin from "./Admin/Authentication/AdminLogin";
 import ForgotAdminPassword from "./Admin/Authentication/ForgotAdminPassword";
 import VerifyADMNOTP from "./Admin/Authentication/VerifyADMNOTP";
 import ResetAdminPassword from "./Admin/Authentication/ResetAdminPassword";
+import { Background } from "./OtherComponents/Background";
 // Website Pages End
 
 // User Dashboard Start
@@ -98,114 +99,119 @@ const Main = () => {
           </div>
         }
       >
-        <Routes>
-          <Route path="/" element={<Home />} />
-          <Route path="/about" element={<About />} />
-          <Route path="/project-details" element={<ProjectDetails />} />
-          <Route path="/service" element={<ElectricalServicePage />} />
-          <Route
-            path="/signin"
-            element={
-              <UserPublicRoute>
-                <SignIn />
-              </UserPublicRoute>
-            }
-          />
-          <Route path="/signup" element={<Signup />} />
-          {/* User forgot password */}
-          <Route path="/forgot_password" element={<Forgot />} />
-          <Route path="*" element={<Errornotfound />} />
+        <Background>
+          <Routes>
+            <Route path="/" element={<Home />} />
+            <Route path="/about" element={<About />} />
+            <Route path="/project-details" element={<ProjectDetails />} />
+            <Route path="/service" element={<ElectricalServicePage />} />
+            <Route
+              path="/signin"
+              element={
+                <UserPublicRoute>
+                  <SignIn />
+                </UserPublicRoute>
+              }
+            />
+            <Route path="/signup" element={<Signup />} />
+            {/* User forgot password */}
+            <Route path="/forgot_password" element={<Forgot />} />
+            <Route path="*" element={<Errornotfound />} />
 
-          {/* Admin Authentication Routes */}
-          <Route
-            path="/admn-sign"
-            element={
-              <AdminPublicRoute>
-                <AdminLogin />
-              </AdminPublicRoute>
-            }
-          />
-          <Route path="/admn-forgot_pswrd" element={<ForgotAdminPassword />} />
-          <Route
-            path="/verifyOTPADMIN"
-            element={
-              <PrivateAdmnRoute>
-                <VerifyADMNOTP />
-              </PrivateAdmnRoute>
-            }
-          />
-          <Route
-            path="/reset_adminPssWord"
-            element={
-              <PrivateAdmnRoute>
-                <ResetAdminPassword />
-              </PrivateAdmnRoute>
-            }
-          />
+            {/* Admin Authentication Routes */}
+            <Route
+              path="/admn-sign"
+              element={
+                <AdminPublicRoute>
+                  <AdminLogin />
+                </AdminPublicRoute>
+              }
+            />
+            <Route
+              path="/admn-forgot_pswrd"
+              element={<ForgotAdminPassword />}
+            />
+            <Route
+              path="/verifyOTPADMIN"
+              element={
+                <PrivateAdmnRoute>
+                  <VerifyADMNOTP />
+                </PrivateAdmnRoute>
+              }
+            />
+            <Route
+              path="/reset_adminPssWord"
+              element={
+                <PrivateAdmnRoute>
+                  <ResetAdminPassword />
+                </PrivateAdmnRoute>
+              }
+            />
 
-          {/* User Forgot Password */}
-          <Route
-            path="/veify_forgot_otp"
-            element={
-              <PrivateRouteResetPass>
-                <VerifyForgotOtp />
-              </PrivateRouteResetPass>
-            }
-          />
-          <Route
-            path="/reset-password"
-            element={
-              <PrivateRouteResetPass>
-                <ResetPassword />
-              </PrivateRouteResetPass>
-            }
-          />
-          <Route path="/otpverify" element={<EmailVerification />} />
+            {/* User Forgot Password */}
+            <Route
+              path="/veify_forgot_otp"
+              element={
+                <PrivateRouteResetPass>
+                  <VerifyForgotOtp />
+                </PrivateRouteResetPass>
+              }
+            />
+            <Route
+              path="/reset-password"
+              element={
+                <PrivateRouteResetPass>
+                  <ResetPassword />
+                </PrivateRouteResetPass>
+              }
+            />
+            <Route path="/otpverify" element={<EmailVerification />} />
 
-          {/* User Dashboard Routes */}
-          <Route element={<PrivateRoute />}>
-            <Route path="/db-au-user" element={<DashboardLayout />}>
-              <Route index element={<DashboardHome />} />
-              <Route path="dbauabout" element={<DashboardAbout />} />
-              <Route path="project" element={<ProjectDoc />} />
-              <Route path="checkstatus" element={<CheckProjects />} />
-              <Route
-                path="checkstatus/projectreview-1-9&/:projectId"
-                element={<StageManagement />}
-              />
-              <Route path="project/prjfrom" element={<AddProjectForm />} />
-              <Route path="db-au-profile" element={<Profile />} />
-              <Route path="db-au-setting" element={<Setting />} />
+            {/* User Dashboard Routes */}
+            <Route element={<PrivateRoute />}>
+              <Route path="/db-au-user" element={<DashboardLayout />}>
+                <Route index element={<DashboardHome />} />
+                <Route path="dbauabout" element={<DashboardAbout />} />
+                <Route path="project" element={<ProjectDoc />} />
+                <Route path="checkstatus" element={<CheckProjects />} />
+                <Route
+                  path="checkstatus/projectreview-1-9&/:projectId"
+                  element={<StageManagement />}
+                />
+                <Route path="project/prjfrom" element={<AddProjectForm />} />
+                <Route path="db-au-profile" element={<Profile />} />
+                <Route path="db-au-setting" element={<Setting />} />
+              </Route>
             </Route>
-          </Route>
 
-          {/* Admin Dashboard Routes */}
-          <Route element={<AdminPrivateRoute />}>
-            <Route path="/db_au_admn" element={<Admin />}>
-              <Route index element={<AdminHome />} />
-              <Route path="admn-setting" element={<AdminSettings />} />
-              <Route path="userprofile" element={<UserProfile />} />
-              <Route path="projectusers" element={<ProjectsUser />} />
-              <Route
-                path="projectusers/stageone/:projectId"
-                element={<Stepone />}
-              />
-              <Route
-                path="projectusers/stageone/:projectId/addmaterial/:stageName/notify-client"
-                element={<NotifyClientModal />}
-              />
-              <Route
-                path="projectusers/stageone/:projectId/addmaterial/:stageName"
-                element={<AddMaterial />}
-              />
-              <Route
-                path="userprofile/:userId/projectreview/:projectId"
-                element={<ProjectReview />}
-              />
-              <Route path="userprofile/:userId" element={<EachProfile />} />
+            {/* Admin Dashboard Routes */}
+            <Route element={<AdminPrivateRoute />}>
+              <Route path="/db_au_admn" element={<Admin />}>
+                <Route index element={<AdminHome />} />
+                <Route path="admn-setting" element={<AdminSettings />} />
+                <Route path="userprofile" element={<UserProfile />} />
+                <Route path="projectusers" element={<ProjectsUser />} />
+                <Route
+                  path="projectusers/stageone/:projectId"
+                  element={<Stepone />}
+                />
+                <Route
+                  path="projectusers/stageone/:projectId/addmaterial/:stageName/notify-client"
+                  element={<NotifyClientModal />}
+                />
+                <Route
+                  path="projectusers/stageone/:projectId/addmaterial/:stageName"
+                  element={<AddMaterial />}
+                />
+                <Route
+                  path="userprofile/:userId/projectreview/:projectId"
+                  element={<ProjectReview />}
+                />
+                <Route path="userprofile/:userId" element={<EachProfile />} />
+              </Route>
             </Route>
-          </Route>
-        </Routes>
+          </Routes>
+        </Background>
       </Suspense>
       {/* </CSSTransition>
       )} */}
