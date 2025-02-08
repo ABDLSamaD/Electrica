@@ -36,7 +36,7 @@ const AdvancedFuturisticCards = () => {
           {cards.map((card, index) => (
             <motion.div
               key={index}
-              className="relative overflow-hidden rounded-2xl bg-black/60 border border-gray-800 h-[490px]"
+              className="relative overflow-hidden rounded-2xl bg-black/60 border border-gray-800"
               initial={{ opacity: 0, y: 50 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.5, delay: index * 0.2 }}
@@ -44,7 +44,7 @@ const AdvancedFuturisticCards = () => {
               onHoverEnd={() => setHoveredCard(null)}
             >
               <div className="absolute inset-0 bg-gradient-to-br from-gray-900 to-black" />
-              <div className="relative p-8 h-full flex flex-col justify-between z-10">
+              <div className="relative p-8 h-full w-full flex flex-col justify-between z-10">
                 <div>
                   <motion.div
                     className="text-6xl mb-6"

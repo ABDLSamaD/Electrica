@@ -230,6 +230,7 @@ span {
   box-shadow: 2px 0px 6px #00000033;
   border: 0.2px solid gray;
   border-radius: 10px;
+  backdrop-filter: blur(22px);
 }
 .logo_container {
   background: linear-gradient(

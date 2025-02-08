@@ -15,7 +15,7 @@ const Background = React.memo(({ children }) => {
       <div className="absolute left-1/2 h-full w-12 sm:w-24 md:w-36 lg:w-48 -translate-x-1/2 bg-black/25 sm:bg-black/50 md:bg-black/75 shadow-[inset_0_0_20px_rgba(255,255,255,0.1)] backdrop-blur-md will-change-transform" />
 
       {/* Content container */}
-      <div className="relative z-10 p-4 sm:p-8">{children}</div>
+      <div className="relative z-10">{children}</div>
     </div>
   );
 });
