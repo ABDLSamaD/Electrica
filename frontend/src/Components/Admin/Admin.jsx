@@ -77,7 +77,7 @@ const Admin = () => {
   }, []);
   // console.log(users);
   return (
-    <div className="flex flex-col h-screen text-white">
+    <div className="flex flex-col min-h-screen text-white">
       {/* Top Bar */}
       <Sidebar connection={electricaURL} admin={admin} />
 

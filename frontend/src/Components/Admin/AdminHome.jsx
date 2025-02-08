@@ -67,7 +67,7 @@ const AdminHome = () => {
   const COLORS = ["#4caf50", "#2196f3", "#f44336"];
 
   return (
-    <div className="px-4 sm:px-6 py-8 min-h-screen bg-gradient-to-br from-gray-900 via-black to-gray-800">
+    <div className="px-4 sm:px-6 py-8 min-h-screen">
       <h1 className="text-3xl sm:text-4xl font-extrabold mb-6 bg-gradient-to-r from-purple-400 via-pink-500 to-red-500 bg-clip-text text-transparent">
         Admin Dashboard
       </h1>
