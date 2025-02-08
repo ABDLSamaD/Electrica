@@ -86,7 +86,7 @@ const Admin = () => {
         {" "}
         {/* mt-16 to account for the height of the TopBar */}
         <div className="max-w-full mx-auto">
-          <div className="md:p-5 p-2 min-h-screen">
+          <div className="md:p-5 p-2">
             {message && <p>{message}</p>}
             <Outlet
               context={{

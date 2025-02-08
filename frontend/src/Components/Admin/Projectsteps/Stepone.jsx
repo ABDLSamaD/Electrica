@@ -12,6 +12,7 @@ import StageDetails from "./StageDetails";
 import LoaderAll from "../../OtherComponents/LoaderAll";
 import DropdownMenu from "./DropdownMenu";
 import Material_worker from "./Material_worker";
+import { ArrowLeft } from "lucide-react";
 
 const Stepone = () => {
   const navigate = useNavigate();
@@ -181,6 +182,7 @@ const Stepone = () => {
     }
   };
 
+  // complete stage handler
   const handleCompleteStage = async (projectId, stageName) => {
     setLoading(true);
     try {
@@ -267,7 +269,7 @@ const Stepone = () => {
   // /* Display when all stages are completed */
 
   return isProjectCompleted ? (
-    <div className="w-full h-dvh bg-green-300/5 backdrop-blur-2xl flex flex-col justify-center items-center text-white p-8 lg:p-3">
+    <div className="w-full min-h-screen flex flex-col justify-center items-center text-white p-8 lg:p-3">
       <h2 className="text-3xl font-bold mb-4">Project Completed</h2>
       <p className="mb-6">All stages are successfully completed!</p>
       <button
@@ -278,13 +280,23 @@ const Stepone = () => {
       </button>
     </div>
   ) : (
-    <div className="min-h-screen relative bg-gradient-to-br from-gray-900 via-gray-800 to-black lg:bg-white/5 lg:backdrop-blur-xl text-gray-200 p-4 lg:p-1">
+    <div className="relative text-gray-200 p-4 lg:p-1">
       {/* Back Button */}
       <button
-        className="mb-4 text-gray-500 hover:text-gray-200 flex items-center md:flex-row md:ml-0 ml-6 flex-col gap-2"
-        onClick={() => navigate(-1)}
+        className="p-2 text-white hover:text-blue-400 transition-colors duration-200 flex gap-2 items-center select-none"
+        title="Go back"
       >
-        <FaArrowLeft /> Go Back
+        <ArrowLeft className="w-6 h-6" />
+        <div className="text-md">
+          <span
+            className="text-gray-200 hover:text-blue-600 cursor-pointer select-none"
+            onClick={() => navigate("/db_au_admn/projectusers")}
+          >
+            Projectusers
+          </span>
+          <span className="text-gray-200 select-none"> / </span>
+          <span className="text-gray-500 select-none">Add details</span>
+        </div>
       </button>
       {/* alert */}
       {alert && (
@@ -320,7 +332,7 @@ const Stepone = () => {
 
       {/* Stage Details */}
       {stageShow && (
-        <div className="mt-10 bg-gray-900 rounded-lg p-4">
+        <div className="mt-10 w-full p-4">
           <StageDetails
             electricaURL={electricaURL}
             projectId={projectId}
