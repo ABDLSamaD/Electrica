@@ -1,7 +1,9 @@
 import React from "react";
-import PointRateCard from "./PointRateCard";
-import ProjectStagesCard from "./ProjectStagesCard";
-import ProjectSubmissionCard from "./ProjectSubmissionCard";
+import {
+  PointRateCard,
+  ProjectSubmissionCard,
+  ProjectStagesCard,
+} from "./PointRateCard";
 import electricalwiring from "../../../../assets/electricalwiringandcircuitborad.png";
 import electricalwiringbuilding from "../../../../assets/electricalwiringandbuilding.png";
 import { Link } from "react-router-dom";
@@ -10,7 +12,7 @@ const Documentation = () => {
   return (
     <div className="min-h-screen p-2">
       <div className="max-w-7xl mx-auto">
-        <h1 className="text-4xl font-bold text-gray-950 mb-8 text-center">
+        <h1 className="text-4xl font-bold text-blue-400 mb-8 text-center">
           Electrician Project Documentation
         </h1>
 
@@ -41,17 +43,17 @@ const Documentation = () => {
           <img
             src={electricalwiring}
             alt="Electrician working on a circuit board"
-            className="rounded-lg shadow-md"
+            className="rounded-lg shadow-md w-96 h-96"
           />
           <img
             src={electricalwiringbuilding}
             alt="Electrical wiring in a building"
-            className="rounded-lg shadow-md"
+            className="rounded-lg shadow-md w-96 h-96"
           />
           <img
-            src="/placeholder.svg?height=200&width=300"
+            src="https://i.pinimg.com/736x/01/ae/62/01ae624049422e0b5fc440d6757a497a.jpg"
             alt="Electrician installing a light fixture"
-            className="rounded-lg shadow-md"
+            className="rounded-lg shadow-md w-96 h-96"
           />
         </div>
       </div>

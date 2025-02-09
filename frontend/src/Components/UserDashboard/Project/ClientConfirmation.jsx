@@ -41,7 +41,7 @@ const ClientConfirmation = ({ stage, onClientConfirm }) => {
 
   return (
     <motion.div
-      className="notify w-full max-w-lg sm:max-w-xl md:max-w-2xl lg:max-w-3xl mx-auto"
+      className="max-w-full mx-auto"
       initial={{ opacity: 0 }}
       animate={{ opacity: 1 }}
       transition={{ duration: 0.3 }}

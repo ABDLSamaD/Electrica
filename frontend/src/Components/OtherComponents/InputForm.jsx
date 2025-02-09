@@ -109,7 +109,7 @@ const InputForm = ({
         className={`w-full p-3 tracking-wider rounded-md text-white font-bold transition-all duration-300 ${
           miniLoader
             ? "bg-gray-500 cursor-not-allowed"
-            : "bg-gray-800 hover:bg-gray-900"
+            : "bg-gray-950 hover:bg-gray-800"
         }`}
         disabled={miniLoader}
       >

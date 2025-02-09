@@ -10,10 +10,11 @@ import {
   faCity,
   faDollarSign,
   faPlus,
-  faSearch, // Add search icon
+  faSearch,
 } from "@fortawesome/free-solid-svg-icons";
 import { useNavigate, useOutletContext } from "react-router-dom";
 import axios from "axios";
+import { motion } from "framer-motion";
 
 // Helper function to highlight matching text
 const highlightText = (text, query) => {
@@ -21,7 +22,7 @@ const highlightText = (text, query) => {
   const regex = new RegExp(`(${query})`, "gi");
   return text.split(regex).map((part, index) =>
     part.toLowerCase() === query.toLowerCase() ? (
-      <span key={index} className="bg-yellow-300">
+      <span key={index} className="bg-yellow-300 text-black px-1 rounded">
         {part}
       </span>
     ) : (
@@ -35,7 +36,7 @@ const CheckProjects = () => {
     useOutletContext();
   const navigate = useNavigate();
   const [loading, setLoading] = useState(false);
-  const [searchQuery, setSearchQuery] = useState(""); // State for search query
+  const [searchQuery, setSearchQuery] = useState("");
 
   useEffect(() => {
     if (projects && projects.length > 0) {
@@ -86,7 +87,7 @@ const CheckProjects = () => {
   };
 
   const handleSearchChange = (e) => {
-    setSearchQuery(e.target.value); // Update search query state
+    setSearchQuery(e.target.value);
   };
 
   // Filter projects based on search query
@@ -98,21 +99,25 @@ const CheckProjects = () => {
   );
 
   return (
-    <div className="p-6 text-white bg-[rgba(1,1,1,0.1)] backdrop-blur-lg min-h-screen">
+    <div className="p-6 text-white min-h-screen">
       <div className="mb-8 flex justify-between items-center">
-        <button
+        <motion.button
           onClick={goBack}
           className="flex items-center text-gray-400 hover:text-gray-300 transition"
+          whileHover={{ scale: 1.05 }}
+          whileTap={{ scale: 0.95 }}
         >
           <FontAwesomeIcon icon={faArrowLeft} size="lg" className="mr-2" /> Go
           Back
-        </button>
-        <button
+        </motion.button>
+        <motion.button
           className="flex items-center bg-indigo-600 text-white px-6 py-3 rounded-lg hover:bg-indigo-700 transition"
           onClick={projectAdd}
+          whileHover={{ scale: 1.05 }}
+          whileTap={{ scale: 0.95 }}
         >
           <FontAwesomeIcon icon={faPlus} className="mr-3" /> Add Project
-        </button>
+        </motion.button>
       </div>
 
       {loading ? (
@@ -128,7 +133,10 @@ const CheckProjects = () => {
         <div className="space-y-6">
           <div className="flex justify-between items-center lg:flex-row flex-col lg:gap-0 gap-4">
             <h1 className="text-3xl font-bold text-white">Your Projects</h1>
-            <div className="flex items-center bg-gray-700 text-white lg:px-2 px-4 lg:py-1 py-2 rounded-lg">
+            <motion.div
+              className="flex items-center bg-gray-700 text-white lg:px-4 px-4 lg:py-2 py-2 rounded-lg"
+              whileHover={{ scale: 1.02 }}
+            >
               <FontAwesomeIcon icon={faSearch} className="mr-2" />
               <input
                 type="text"
@@ -137,17 +145,20 @@ const CheckProjects = () => {
                 value={searchQuery}
                 onChange={handleSearchChange}
               />
-            </div>
+            </motion.div>
           </div>
 
           {filteredProjects.length > 0 ? (
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
               {filteredProjects
-                .filter((project) => project.user === user._id) // Filter user's projects
-                .map((project) => (
-                  <div
+                .filter((project) => project.user === user._id)
+                .map((project, index) => (
+                  <motion.div
                     key={project._id}
-                    className="p-6 rounded-lg shadow-lg bg-gray-800 relative overflow-hidden transition-transform transform hover:scale-105 hover:shadow-xl"
+                    className="p-6 rounded-lg shadow-lg bg-gray-200/10 backdrop-blur-md relative overflow-hidden transition-transform transform hover:scale-105 hover:shadow-xl"
+                    initial={{ opacity: 0, y: 20 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ duration: 0.3, delay: index * 0.1 }}
                   >
                     {/* Header Section */}
                     <div className="flex justify-between items-center mb-4">
@@ -182,15 +193,15 @@ const CheckProjects = () => {
                       className={`py-2 px-4 rounded-full font-medium text-sm text-center inline-block mb-6`}
                       style={{
                         backgroundColor:
-                          project.status === "Accepted"
-                            ? "#a5f3d3aa"
-                            : project.status === "Pending"
+                          project.status === "approved"
+                            ? "rgba(221,221,221,0.1)"
+                            : project.status === "pending"
                             ? "#fde36e"
                             : "#fcd6d6",
                         color:
-                          project.status === "Accepted"
-                            ? "#065f46"
-                            : project.status === "Pending"
+                          project.status === "approved"
+                            ? "#ddf"
+                            : project.status === "pending"
                             ? "#e0a800"
                             : "#d63b3b",
                       }}
@@ -225,25 +236,29 @@ const CheckProjects = () => {
 
                     {/* Action Buttons */}
                     <div className="flex flex-col sm:flex-row gap-3">
-                      <button
+                      <motion.button
                         onClick={() =>
                           navigate(
                             `/db-au-user/checkstatus/projectreview-1-9&/${project._id}`
                           )
                         }
-                        className="flex-1 bg-emerald-600 text-white py-3 rounded-lg hover:bg-emerald-700 transition flex items-center justify-center"
+                        className="flex-1 bg-blue-600 text-white py-3 rounded-lg hover:bg-blue-700 transition flex items-center justify-center"
+                        whileHover={{ scale: 1.05 }}
+                        whileTap={{ scale: 0.95 }}
                       >
                         Check Project
-                      </button>
-                      <button
+                      </motion.button>
+                      <motion.button
                         onClick={() => removeProject(project._id)}
                         className="flex-1 bg-red-600 text-white py-3 rounded-lg hover:bg-red-700 transition flex items-center justify-center"
+                        whileHover={{ scale: 1.05 }}
+                        whileTap={{ scale: 0.95 }}
                       >
                         <FontAwesomeIcon icon={faTrash} className="mr-2" />{" "}
                         Remove
-                      </button>
+                      </motion.button>
                     </div>
-                  </div>
+                  </motion.div>
                 ))}
             </div>
           ) : (
