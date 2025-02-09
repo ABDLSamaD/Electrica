@@ -4,10 +4,10 @@ import { Link } from "react-router-dom";
 
 const AnimatedFooter = () => {
   return (
-    <footer className="relative bg-gray-900 text-gray-300 py-8">
+    <footer className="relative bg-gray-900/30 shadow text-gray-300 py-8">
       {/* Animated Gradient Background */}
       <div
-        className="absolute inset-0 bg-gradient-to-r from-purple-500 via-pink-500 to-red-500
+        className="absolute inset-0 bg-gradient-to-r from-purple-500/40 via-pink-500/30 to-red-500/20
         animate-gradient-x opacity-20 pointer-events-none"
       ></div>
 
@@ -79,7 +79,7 @@ const AnimatedFooter = () => {
               About Us
             </Link>
             <Link
-              to="/service"
+              to="/services"
               className="hover:text-white transition hover:underline"
             >
               Services

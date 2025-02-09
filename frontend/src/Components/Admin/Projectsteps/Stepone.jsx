@@ -7,12 +7,12 @@ import {
   useParams,
 } from "react-router-dom";
 import Alert from "../../OtherComponents/Alert";
-import { FaArrowLeft } from "react-icons/fa";
 import StageDetails from "./StageDetails";
 import LoaderAll from "../../OtherComponents/LoaderAll";
 import DropdownMenu from "./DropdownMenu";
 import Material_worker from "./Material_worker";
 import { ArrowLeft } from "lucide-react";
+import MessagesSendingRecieving from "../../UserDashboard/Project/MessagesSendingRecieving";
 
 const Stepone = () => {
   const navigate = useNavigate();
@@ -37,6 +37,9 @@ const Stepone = () => {
   const [alert, setAlert] = useState(null);
   const [stageShow, setStageShow] = useState(false); // for timing of an component shows
   const [isProjectCompleted, setIsProjectCompleted] = useState(false);
+  const [messageUser, setMessageUser] = useState([]);
+  const [messageAdmin, setMessageAdmin] = useState([]);
+  const [message, setMessage] = useState("");
   // states end
 
   useEffect(() => {
@@ -52,6 +55,8 @@ const Stepone = () => {
           const currentStage = matchedProject.stages.find(
             (stage) => !stage.isCompleted
           );
+          setMessageUser(matchedProject.clientMessages);
+          setMessageAdmin(matchedProject.adminMessages);
           const allStagesCompleted = matchedProject.stages.every(
             (stage) => stage.isCompleted
           );
@@ -266,6 +271,29 @@ const Stepone = () => {
     navigate(`complete`); // Example path
   };
 
+  const handleMessageToUser = async () => {
+    try {
+      const response = await axios.post(
+        `${electricaURL}/api/adminauth/message-client`,
+        { projectId, stageName, message },
+        { withCredentials: true }
+      );
+      if (response.status === 200) {
+        setAlert({ type: response.data.type, message: response.data.message });
+        setMessage("");
+        fetchProject();
+        fetchUsers();
+      } else {
+        setAlert({ type: response.data.type, message: response.data.message });
+      }
+    } catch (error) {
+      setAlert({
+        type: error.response?.data?.type,
+        message: error.response?.data?.message,
+      });
+    }
+  };
+
   // /* Display when all stages are completed */
 
   return isProjectCompleted ? (
@@ -280,7 +308,7 @@ const Stepone = () => {
       </button>
     </div>
   ) : (
-    <div className="relative text-gray-200 p-4 lg:p-1">
+    <div className="relative text-gray-200 p-1 sm:p-4">
       {/* Back Button */}
       <button
         className="p-2 text-white hover:text-blue-400 transition-colors duration-200 flex gap-2 items-center select-none"
@@ -332,7 +360,7 @@ const Stepone = () => {
 
       {/* Stage Details */}
       {stageShow && (
-        <div className="mt-10 w-full p-4">
+        <div className="mt-10 w-full p-2">
           <StageDetails
             electricaURL={electricaURL}
             projectId={projectId}
@@ -340,6 +368,14 @@ const Stepone = () => {
           />
         </div>
       )}
+
+      <MessagesSendingRecieving
+        messageUser={messageUser}
+        messageAdmin={messageAdmin}
+        setMessage={setMessage}
+        message={message}
+        sendMessageToAdmin={handleMessageToUser}
+      />
     </div>
   );
 };

@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect } from "react";
 import { motion } from "framer-motion";
 import { FaLightbulb, FaUsers, FaCogs, FaRocket } from "react-icons/fa";
 import { Link } from "react-router-dom";
@@ -6,6 +6,10 @@ import HeaderMain from "./HeaderMain";
 import AboutImage from "../../assets/cartoon-electrician-working-meter-box-young-man-wearing-hard-hat-goggles-electrical-wiring-339592162.webp";
 
 const About = () => {
+  useEffect(() => {
+    window.scroll(0, 0);
+  }, []);
+
   const containerVariants = {
     hidden: { opacity: 0 },
     visible: {
@@ -148,33 +152,6 @@ const About = () => {
                 sustainable practices
               </li>
             </ul>
-          </motion.div>
-
-          {/* Team Section */}
-          <motion.div
-            className="mt-16 p-6 bg-black bg-opacity-50 rounded-3xl"
-            variants={itemVariants}
-          >
-            <h2 className="text-3xl font-semibold mb-4">
-              Meet Our Expert Team
-            </h2>
-            <p className="text-lg leading-relaxed mb-4">
-              Our success is driven by our team of highly skilled professionals
-              who bring years of experience and expertise to every project.
-            </p>
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-8 mt-8">
-              {[
-                { name: "John Doe", role: "Chief Electrical Engineer" },
-                { name: "Jane Smith", role: "Renewable Energy Specialist" },
-                { name: "Mike Johnson", role: "Smart Home Systems Expert" },
-              ].map((member, index) => (
-                <div key={index} className="text-center">
-                  <div className="w-32 h-32 mx-auto bg-gray-300 rounded-full mb-4"></div>
-                  <h3 className="text-xl font-semibold">{member.name}</h3>
-                  <p>{member.role}</p>
-                </div>
-              ))}
-            </div>
           </motion.div>
         </motion.div>
 

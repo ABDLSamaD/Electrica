@@ -7,11 +7,13 @@ import {
   FiSend,
   FiX,
 } from "react-icons/fi";
+import Chat from "./Chat";
 
 const MessagesSendingRecieving = ({
-  messages,
+  messageUser,
   message,
   setMessage,
+  messageAdmin,
   sendMessageToAdmin,
 }) => {
   const [chatVisible, setChatVisible] = useState(false);
@@ -52,41 +54,7 @@ const MessagesSendingRecieving = ({
             </button>
           </div>
 
-          {/* Messages Area */}
-          <div className="p-4 h-[50vh] md:h-96 overflow-y-auto scrollbar-thin scrollbar-thumb-white/20 scrollbar-track-transparent">
-            {messages.length === 0 ? (
-              <div className="flex flex-col items-center justify-center h-full text-gray-400">
-                <FiInbox className="w-12 h-12 mb-3" />
-                <p>No messages yet</p>
-              </div>
-            ) : (
-              messages.map((msg, index) => (
-                <motion.div
-                  key={index}
-                  initial={{ opacity: 0, x: msg.sender === "Admin" ? -20 : 20 }}
-                  animate={{ opacity: 1, x: 0 }}
-                  className={`mb-4 p-3 rounded-lg ${
-                    msg.sender === "Admin"
-                      ? "bg-gray-700/50 backdrop-blur mr-8"
-                      : "ml-8 bg-gradient-to-r from-cyan-500/40 to-blue-600/40"
-                  }`}
-                >
-                  <div className="flex justify-between items-start gap-2">
-                    <span className="text-sm font-medium text-cyan-300">
-                      {msg.sender}
-                    </span>
-                    <span className="text-xs text-gray-400">
-                      {new Date(msg.sentAt).toLocaleTimeString([], {
-                        hour: "2-digit",
-                        minute: "2-digit",
-                      })}
-                    </span>
-                  </div>
-                  <p className="mt-1 text-gray-100">{msg.message}</p>
-                </motion.div>
-              ))
-            )}
-          </div>
+          <Chat messageUser={messageUser} messageAdmin={messageAdmin} />
 
           {/* Input Area */}
           <div className="p-4 bg-white/5 border-t border-white/10">

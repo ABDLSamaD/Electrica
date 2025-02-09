@@ -38,7 +38,8 @@ const StageManagement = () => {
   const [message, setMessage] = useState("");
   const [alert, setAlert] = useState(null);
   const [activeStage, setActiveStage] = useState(null);
-  const [messages, setMessages] = useState([]);
+  const [messageUser, setMessageUser] = useState([]);
+  const [messageAdmin, setMessageAdmin] = useState([]);
 
   useEffect(() => {
     const fetchData = () => {
@@ -64,7 +65,8 @@ const StageManagement = () => {
       }
 
       setProject(selectedProject);
-      setMessages(selectedProject.clientMessages);
+      setMessageUser(selectedProject.clientMessages);
+      setMessageAdmin(selectedProject.adminMessages);
       setActiveStage(selectedProject.stages?.[0]?._id || null);
       setError("");
       setLoading(false);
@@ -184,7 +186,7 @@ const StageManagement = () => {
   }
 
   return (
-    <div className="bg-gradient-to-b from-gray-900 to-gray-800 text-white md:p-6 p-4 min-h-screen">
+    <div className="relative text-white md:p-6 p-4 min-h-screen">
       {/* Back Button */}
       <button
         className="text-white hover:scale-110 transition mb-4 p-3 rounded-full bg-gray-700 hover:bg-gray-600 flex items-center justify-center"
@@ -201,11 +203,12 @@ const StageManagement = () => {
         />
       )}
 
-      <div className="md:container mx-auto max-w-5xl bg-gray-900 md:p-8 p-4 rounded-3xl shadow-lg shadow-cyan-800 relative">
+      <div className="md:container mx-auto w-full md:p-8 p-4 relative">
         <MessagesSendingRecieving
-          messages={messages}
+          messageUser={messageUser}
           setMessage={setMessage}
           message={message}
+          messageAdmin={messageAdmin}
           sendMessageToAdmin={handleMessageToAdmin}
         />
         {isCompleted && (
@@ -326,7 +329,7 @@ const StageManagement = () => {
           activeStage === stage._id ? (
             <div
               key={stage._id}
-              className="bg-gray-900 rounded-3xl shadow-lg md:p-6 p-4"
+              className="bg-gray-900/10 rounded-3xl shadow-lg md:p-6 p-4"
             >
               <motion.div
                 initial={{ opacity: 0 }}

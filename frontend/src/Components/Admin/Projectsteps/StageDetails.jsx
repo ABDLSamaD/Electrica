@@ -11,6 +11,7 @@ import {
   FaImages,
   FaChevronDown,
 } from "react-icons/fa";
+import { Satellite, UserCheck2 } from "lucide-react";
 
 function StageDetails({ electricaURL, projectId, stageName }) {
   const [stageData, setStageData] = useState([]);
@@ -64,12 +65,12 @@ function StageDetails({ electricaURL, projectId, stageName }) {
   }
 
   return (
-    <div className="stage-container max-w-4xl mx-auto lg:p-5 p-1">
+    <div className="stage-container lg:max-w-6xl w-full mx-auto lg:p-5 p-1">
       <motion.div
         initial={{ opacity: 0, y: 50 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.8 }}
-        className="bg-gradient-to-br from-gray-900 to-gray-800 rounded-lg shadow-2xl overflow-hidden"
+        className="border border-solid border-gray-200/5 shadow-2xl overflow-hidden"
       >
         <div className="lg:p-6 p-2 space-y-6">
           <h2 className="text-3xl font-bold text-white mb-4 border-b border-gray-700 pb-2">
@@ -77,10 +78,13 @@ function StageDetails({ electricaURL, projectId, stageName }) {
           </h2>
 
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-            <div className="bg-gray-800 p-4 rounded-lg shadow-inner">
-              <h3 className="text-xl font-semibold text-gray-200 mb-2">
-                Status
-              </h3>
+            <div className="bg-gray-500/50 backdrop-blur p-4 rounded-lg shadow-inner">
+              <div className="flex gap-1">
+                <Satellite />
+                <h3 className="text-xl font-semibold text-gray-200 mb-2">
+                  Status
+                </h3>
+              </div>
               <p className="flex items-center space-x-2">
                 {stageData?.isCompleted ? (
                   <>
@@ -97,9 +101,12 @@ function StageDetails({ electricaURL, projectId, stageName }) {
             </div>
 
             <div className="bg-gray-800 p-4 rounded-lg shadow-inner">
-              <h3 className="text-xl font-semibold text-gray-200 mb-2">
-                Client Confirmation
-              </h3>
+              <div className="flex item-center gap-2">
+                <UserCheck2 />
+                <h3 className="text-xl font-semibold text-gray-200 mb-2">
+                  Client Confirmation
+                </h3>
+              </div>
               <p className="flex items-center space-x-2">
                 {stageData?.clientConfirmation?.isConfirmed ? (
                   <>

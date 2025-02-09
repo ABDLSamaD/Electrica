@@ -13,6 +13,10 @@ const ProjectDetails = () => {
   const { scrollY } = useScroll();
 
   useEffect(() => {
+    window.scroll(0, 0);
+  }, []);
+
+  useEffect(() => {
     const handleScroll = () => {
       const pageHeight =
         document.documentElement.scrollHeight - window.innerHeight;
@@ -46,7 +50,7 @@ const ProjectDetails = () => {
   }, [scrollY]);
 
   return (
-    <div className="bg-gray-900/10">
+    <>
       <HeaderMain />
       <ProgressIndicator stages={stages.length} activeStage={activeStage} />
       <div className="container mx-auto py-56">
@@ -120,7 +124,7 @@ const ProjectDetails = () => {
         </motion.div>
       </div>
       <Footer />
-    </div>
+    </>
   );
 };
 

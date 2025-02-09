@@ -39,7 +39,7 @@ const MaterialForm = ({
   };
 
   return (
-    <div className="min-h-screen p-4 lg:p-8">
+    <div className="min-h-screen p-2 lg:p-8">
       <div className="max-w-7xl mx-auto">
         {/* Header Section */}
         <div className="text-center mb-12">
@@ -52,7 +52,7 @@ const MaterialForm = ({
           </div>
         </div>
 
-        <div className="backdrop-blur-xl bg-white/10 rounded-2xl border border-white/20 shadow-2xl p-6 lg:p-8">
+        <div className="border border-white/20 shadow-2xl p-4 lg:p-8">
           <form onSubmit={handleSubmit} className="space-y-10">
             {/* Work Details Section */}
             <div className="space-y-4">

@@ -1,9 +1,13 @@
-import React from "react";
+import React, { useEffect } from "react";
 import { motion } from "framer-motion";
 import HeaderMain from "./HeaderMain";
 import AnimatedFooter from "./Footer";
 
 const ElectricalServicePage = () => {
+  useEffect(() => {
+    window.scroll(0, 0);
+  }, []);
+
   // Animation Variants
   const containerVariants = {
     hidden: { opacity: 0, y: 50 },
