@@ -23,6 +23,7 @@ const Stepone = () => {
 
   const [project, setProject] = useState(null); // Set initial state as null
   const [loading, setLoading] = useState(true); // Set to true initially
+  const [formLoader, setFormLoader] = useState(false); // for form submission of daily updates
   const [stageName, setStageName] = useState("");
 
   const [updates, setUpdates] = useState([
@@ -91,7 +92,7 @@ const Stepone = () => {
       }
     };
 
-    setTimeout(fetchDetails, 1100);
+    setTimeout(fetchDetails, 1400);
 
     // /for display stage details with timing
     setTimeout(() => setStageShow(true), 6000);
@@ -109,6 +110,7 @@ const Stepone = () => {
   // for submit form daily basis
   const handleSubmit = async (e) => {
     e.preventDefault();
+    setFormLoader(true);
 
     if (!updates[0]?.materialsUsed) {
       setAlert({
@@ -126,6 +128,7 @@ const Stepone = () => {
         type: "error",
         message: "All materials must have a valid name and quantity.",
       });
+      setFormLoader(false);
       return;
     }
     const isValid = updates[0]?.materialsUsed.every((material, index) => {
@@ -141,11 +144,13 @@ const Stepone = () => {
 
     if (isValid) {
       setAlert(null); // Clear any existing alert
+      setFormLoader(false);
     } else {
       setAlert({
         type: "error",
         message: "All materials must have a valid name and quantity.",
       });
+      setFormLoader(false);
     }
 
     setLoading(true);
@@ -174,14 +179,17 @@ const Stepone = () => {
           },
         ]);
         fetchProject();
+        setFormLoader(false);
       } else {
         setAlert({ type: response.data.type, message: response.data.message });
+        setFormLoader(false);
       }
     } catch (error) {
       setAlert({
         type: error.response?.data?.type,
         message: error.response?.data?.message,
       });
+      setFormLoader(false);
     } finally {
       setLoading(false);
     }
@@ -356,6 +364,7 @@ const Stepone = () => {
         handleAddWorker={handleAddWorker}
         handleRemoveWorker={handleRemoveWorker}
         handleSubmit={handleSubmit}
+        formLoader={formLoader}
       />
 
       {/* Stage Details */}

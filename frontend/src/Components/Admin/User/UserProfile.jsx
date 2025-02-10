@@ -82,7 +82,7 @@ const UserProfile = () => {
   }
 
   return (
-    <div className="min-h-screen bg-[#0d1117] bg-[radial-gradient(ellipse_80%_80%_at_50%_-20%,rgba(120,119,198,0.3),rgba(255,255,255,0))]">
+    <div className="min-h-screen relative">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         {alert && (
           <Alert
@@ -96,12 +96,12 @@ const UserProfile = () => {
         <div className="flex items-center justify-between flex-col lg:space-y-0 space-y-3 lg:flex-row mb-8">
           <button
             onClick={() => window.history.back()}
-            className="flex items-center space-x-2 text-gray-400 hover:text-white transition-colors bg-white/5 px-4 py-2 rounded-lg backdrop-blur-lg border border-white/10"
+            className="flex items-center space-x-2 text-gray-400 hover:text-white transition-colors bg-white/25 px-4 py-2 rounded-lg backdrop-blur-lg border border-white/10"
           >
             <ChevronLeft className="w-5 h-5" />
-            <span>Back</span>
+            <span className="text-blue-400 font-bold">Back</span>
           </button>
-          <h1 className="text-3xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-purple-400 to-indigo-400">
+          <h1 className="text-3xl font-bold bg-clip-text text-blue-600">
             User Profiles
           </h1>
         </div>
