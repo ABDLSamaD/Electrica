@@ -1,72 +1,103 @@
 import React, { useEffect, useState } from "react";
 import "../../index.css";
-import {
-  FaCheckCircle,
-  FaExclamationCircle,
-  FaInfoCircle,
-  FaTimesCircle,
-} from "react-icons/fa"; // Import icons from react-icons
-import { motion } from "framer-motion";
+import { AlertCircle, CheckCircle, Info, XCircle, X } from "lucide-react";
+import { motion, AnimatePresence } from "framer-motion";
 
 const Alert = ({ type = "info", message, duration = 5000, onClose }) => {
-  const [visible, setVisible] = useState(true);
+  const [isVisible, setIsVisible] = useState(true);
 
   useEffect(() => {
+    if (duration === 0) return;
+
     const timer = setTimeout(() => {
-      setVisible(false);
-      onClose && onClose();
+      setIsVisible(false);
+      setTimeout(() => {
+        onClose?.();
+      }, 300); // Wait for exit animation
     }, duration);
 
     return () => clearTimeout(timer);
   }, [duration, onClose]);
 
-  if (!visible) return null;
+  if (!isVisible) return null;
+
+  const handleClose = () => {
+    setIsVisible(false);
+    setTimeout(() => {
+      onClose?.();
+    }, 300);
+  };
 
   const typeConfig = {
     success: {
-      bg: "bg-[rgb(8 235 85 / 33%)] border-green-700 text-green-700",
-      icon: (
-        <FaCheckCircle className="text-green-500 text-2xl drop-shadow-md" />
-      ),
+      icon: CheckCircle,
+      styles: "bg-emerald-50 border-emerald-200 text-emerald-800",
+      iconColor: "text-emerald-500",
+      progressBar: "bg-emerald-500",
     },
     error: {
-      bg: "bg-red-100 border-red-400 text-red-700",
-      icon: <FaTimesCircle className="text-red-500 text-2xl drop-shadow-md" />,
+      icon: XCircle,
+      styles: "bg-rose-50 border-rose-200 text-rose-800",
+      iconColor: "text-rose-500",
+      progressBar: "bg-rose-500",
     },
     info: {
-      bg: "bg-blue-100 border-blue-400 text-blue-700",
-      icon: <FaInfoCircle className="text-blue-500 text-2xl drop-shadow-md" />,
+      icon: Info,
+      styles: "bg-sky-50 border-sky-200 text-sky-800",
+      iconColor: "text-sky-500",
+      progressBar: "bg-sky-500",
     },
     warning: {
-      bg: "bg-yellow-100 border-yellow-400 text-yellow-700",
-      icon: (
-        <FaExclamationCircle className="text-yellow-500 text-2xl drop-shadow-md" />
-      ),
+      icon: AlertCircle,
+      styles: "bg-amber-50 border-amber-200 text-amber-800",
+      iconColor: "text-amber-500",
+      progressBar: "bg-amber-500",
     },
   };
 
-  const { bg, icon } = typeConfig[type] || typeConfig.info;
+  const config = typeConfig[type];
+  const Icon = config.icon;
 
   return (
-    <motion.div
-      className={`fixed top-4 right-4 z-50 px-5 py-2 flex justify-between items-center w-96 h-auto rounded-md border ${bg} backdrop-blur-sm`}
-      role="alert"
-      initial={{ x: -300, opacity: 0 }}
-      animate={{ x: 0, opacity: 1 }}
-      exit={{ x: 300, opacity: 0 }}
-      transition={{ duration: 0.5, ease: "easeInOut" }}
-      style={{
-        borderWidth: "2px",
-        borderStyle: "solid",
-      }}
-    >
-      <div className="flex items-center gap-4">
-        <div className="icon-container">{icon}</div>
-        <p className="text-base capitalize tracking-wide">{message}</p>
-      </div>
-      {/* Optional glow effect */}
-      <div className="absolute -inset-1.5 bg-gradient-to-r from-transparent via-white/20 to-transparent rounded-xl blur-3xl animate-pulse" />
-    </motion.div>
+    <AnimatePresence>
+      {isVisible && (
+        <div className="fixed top-0 left-0 right-0 flex justify-center z-50 p-4">
+          <motion.div
+            initial={{ y: -100, opacity: 0 }}
+            animate={{ y: 0, opacity: 1 }}
+            exit={{ y: -100, opacity: 0 }}
+            transition={{ type: "spring", stiffness: 500, damping: 30 }}
+            className={`relative flex items-center w-full max-w-md px-4 py-3 rounded-lg border shadow-lg backdrop-blur-sm ${config.styles}`}
+          >
+            {/* Progress bar */}
+            {duration > 0 && (
+              <motion.div
+                initial={{ width: "100%" }}
+                animate={{ width: "0%" }}
+                transition={{ duration: duration / 1000, ease: "linear" }}
+                className={`absolute bottom-0 left-0 h-1 ${config.progressBar}`}
+                style={{ transformOrigin: "left" }}
+              />
+            )}
+
+            <Icon className={`w-5 h-5 ${config.iconColor} shrink-0`} />
+
+            <p className="mx-3 font-medium text-sm flex-1">{message}</p>
+
+            <button
+              onClick={handleClose}
+              className={`shrink-0 ${config.iconColor} hover:opacity-70 transition-opacity`}
+              aria-label="Close alert"
+            >
+              <X className="w-5 h-5" />
+            </button>
+
+            {/* Subtle glow effect */}
+            <div className="absolute inset-0 -z-10 bg-gradient-to-r from-transparent via-white/30 to-transparent rounded-lg animate-pulse" />
+          </motion.div>
+        </div>
+      )}
+    </AnimatePresence>
   );
 };
 
