@@ -106,7 +106,7 @@ const loginMail = async (userDetails) => {
                 userDetails?.loginAttempt.at(-1)?.location.latitude || "Unknown"
               }</p>
             </div>
-            <p>If this was you, you can safely ignore this email. If you didn’t log in, please <a href="https://electrica.example.com/reset-password" target="_blank">reset your password</a> immediately.</p>
+            <p>If this was you, you can safely ignore this email. If you didn’t log in, please <a href="https://electrica-theta.vercel.app/forgot_password" target="_blank">reset your password</a> immediately.</p>
           </div>
           <div class="footer">
             <p>If you have any questions or concerns, feel free to contact us at <a href="mailto:absamadkhan878@gmail.com">support@electrica.com</a>.</p>

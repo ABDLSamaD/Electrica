@@ -79,7 +79,7 @@ const AnimatedFooter = () => {
               About Us
             </Link>
             <Link
-              to="/services"
+              to="/service"
               className="hover:text-white transition hover:underline"
             >
               Services
