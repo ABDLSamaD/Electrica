@@ -355,6 +355,7 @@ exports.addStageMaterials = async (req, res) => {
     res.status(500).json({ type: "error", message: "Internal server error" });
   }
 };
+
 // Controller_1_Project_5: remove stage materials
 exports.removeStageMaterial = async (req, res) => {
   try {
@@ -438,7 +439,7 @@ exports.addDailyUpdate = async (req, res) => {
       });
     }
 
-    // Validate approved materials
+    // Validation unApproved materials
     const unapprovedMaterials = stage.materials.filter(
       (material) => !material.isApproved
     );
@@ -477,14 +478,14 @@ exports.addDailyUpdate = async (req, res) => {
       }
 
       // Calculate daily labor cost
-      // Calculate daily labor cost
-      const laborCost = workers.reduce((sum, worker) => {
-        if (!worker.dailyWage) {
-          throw new Error(`Worker ${worker.name} is missing a daily wage.`);
-        }
-        return sum + worker.dailyWage;
+      let laborCost = workers.reduce((sum, worker) => {
+        const wage = Number(worker.dailyWage) || 0; // Convert to number
+        return sum + wage;
       }, 0);
-      totalDailyCost += laborCost;
+      totalDailyCost += Number(laborCost) || 0;
+
+      // ✅ Update `stage.stageLabourCost`
+      stage.stageLabourCost = (Number(stage.stageLabourCost) || 0) + laborCost;
 
       // Update stage materials
       validMaterialsUsed.forEach((used) => {

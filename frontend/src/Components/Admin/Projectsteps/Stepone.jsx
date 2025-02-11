@@ -153,7 +153,6 @@ const Stepone = () => {
       setFormLoader(false);
     }
 
-    setLoading(true);
     try {
       const response = await axios.post(
         `${electricaURL}/api/adminauth/projectdaily-update`,
@@ -190,8 +189,6 @@ const Stepone = () => {
         message: error.response?.data?.message,
       });
       setFormLoader(false);
-    } finally {
-      setLoading(false);
     }
   };
 

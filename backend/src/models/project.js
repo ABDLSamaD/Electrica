@@ -75,7 +75,6 @@ const projectSchema = new mongoose.Schema({
         emergencyMessage: String,
         date: { type: Date }, // Client's preferred start date
       },
-      stageCost: { type: Number, default: 0 },
       stageLabourCost: { type: Number, default: 0 },
     },
   ],

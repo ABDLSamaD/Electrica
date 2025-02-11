@@ -153,6 +153,9 @@ exports.login = async (req, res) => {
 
     const users = await User.findOne({ email });
 
+    if (!users.isVerified) {
+      return res.status(404).json({ type: "error", message: "Verified first" });
+    }
     if (!users) {
       return res
         .status(404)
