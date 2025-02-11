@@ -19,7 +19,6 @@ const SignIn = () => {
     password: "",
     rememberMe: false,
   });
-  const [loader, setLoader] = useState(false); // Full page loader
   const [miniLoader, setMiniLoader] = useState(false); // Mini loader for button
 
   const onChange = (e) => {
@@ -32,7 +31,6 @@ const SignIn = () => {
 
   const handleSignin = async (e) => {
     e.preventDefault();
-    setAlert(null);
     setMiniLoader(true); // Start mini loader
 
     const { email, password, rememberMe } = credentials;
@@ -58,7 +56,6 @@ const SignIn = () => {
 
       if (response.status === 200) {
         setMiniLoader(false); // Stop mini loader
-        setLoader(true); // Start full page loader
         setAlert({ type: data.type, message: data.message });
 
         setTimeout(() => {
@@ -69,7 +66,6 @@ const SignIn = () => {
         setAlert({ type: data.type, message: data.message });
       }
     } catch (err) {
-      setLoader(false);
       setMiniLoader(false); // Stop mini loader
       setAlert({
         type: err.response?.data?.type || "error",
@@ -80,7 +76,6 @@ const SignIn = () => {
 
   return (
     <>
-      {loader && <Loader />} {/* Full loader */}
       <div
         id="signin"
         className="flex flex-col items-center justify-center min-h-screen p-4 sm:p-8"

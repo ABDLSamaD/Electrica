@@ -25,7 +25,7 @@ const InputForm = ({
   return (
     <form className="flex flex-col gap-4" onSubmit={hanldeLogin}>
       <div className="text-center">
-        <h1 className="text-2xl sm:text-3xl font-bold text-gray-950">
+        <h1 className="text-2xl sm:text-3xl font-bold text-gray-300">
           Login to your account
         </h1>
         <p className="text-xs sm:text-sm text-gray-500 max-w-xs mx-auto mt-2">

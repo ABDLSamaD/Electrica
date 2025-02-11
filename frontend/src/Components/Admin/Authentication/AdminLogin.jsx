@@ -5,7 +5,6 @@ import { Link, useNavigate } from "react-router-dom";
 import Alert from "../../OtherComponents/Alert";
 import axios from "axios";
 import InputForm from "../../OtherComponents/InputForm";
-import Loader from "../../OtherComponents/Loader";
 
 const AdminLogin = () => {
   const navigate = useNavigate();
@@ -16,7 +15,6 @@ const AdminLogin = () => {
     password: "",
   });
   const [alert, setAlert] = useState(null);
-  const [loader, setLoader] = useState(false);
   const [miniLoader, setMiniLoader] = useState(false);
   //   State End
 
@@ -42,7 +40,6 @@ const AdminLogin = () => {
 
       if (response.status === 200) {
         setMiniLoader(false);
-        setLoader(true);
         localStorage.setItem("dshbrd_admn_tkn", response.data.token);
         setAlert({ type: response.data.type, message: response.data.message });
         setTimeout(() => {
@@ -53,7 +50,6 @@ const AdminLogin = () => {
         setAlert({ type: response.data.type, message: response.data.message });
       }
     } catch (err) {
-      setLoader(false);
       setMiniLoader(false);
       setAlert({
         type: err.response?.data?.type,
@@ -64,7 +60,6 @@ const AdminLogin = () => {
 
   return (
     <>
-      {loader && <Loader />}
       <div
         id="signin"
         className="flex flex-col items-center justify-center min-h-screen p-4 sm:p-8"
