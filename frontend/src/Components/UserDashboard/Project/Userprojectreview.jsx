@@ -27,12 +27,12 @@ const StageManagement = () => {
   const [loadingapprovematerial, setLoadingApproveMaterial] = useState({});
   const [isCompleted, setIsCompleted] = useState(false);
   const [error, setError] = useState("");
-  const [successMessage, setSuccessMessage] = useState("");
   const [message, setMessage] = useState("");
   const [alert, setAlert] = useState(null);
   const [activeStage, setActiveStage] = useState(null);
   const [messageUser, setMessageUser] = useState([]);
   const [messageAdmin, setMessageAdmin] = useState([]);
+  const [messageLoader, setMessageLoader] = useState(false);
 
   useEffect(() => {
     const fetchData = () => {
@@ -105,6 +105,7 @@ const StageManagement = () => {
   };
 
   const handleMessageToAdmin = async () => {
+    setMessageLoader(true);
     try {
       const response = await axios.post(
         `${electricaURL}/api/auth/messageAdmin`,
@@ -113,18 +114,14 @@ const StageManagement = () => {
       );
 
       if (response.status === 200) {
-        setAlert({ type: response.data.type, message: response.data.message });
+        setMessageLoader(false);
         setMessage("");
         fetchProject();
       } else {
-        setAlert({ type: response.data.type, message: response.data.message });
+        setMessageLoader(false);
       }
     } catch (err) {
-      setError("Failed to send message. Please try again.");
-      setAlert({
-        type: err.response?.data?.type,
-        message: err.response?.data?.message,
-      });
+      setMessageLoader(false);
     }
   };
 
@@ -204,6 +201,7 @@ const StageManagement = () => {
           message={message}
           messageAdmin={messageAdmin}
           sendMessageToAdmin={handleMessageToAdmin}
+          messageLoader={messageLoader}
         />
         {isCompleted && (
           <div
@@ -359,11 +357,6 @@ const StageManagement = () => {
             </div>
           ) : null
         )}
-
-        {successMessage && (
-          <p className="text-green-500 text-center mt-4">{successMessage}</p>
-        )}
-        {error && <p className="text-red-500 text-center mt-4">{error}</p>}
       </div>
     </div>
   );

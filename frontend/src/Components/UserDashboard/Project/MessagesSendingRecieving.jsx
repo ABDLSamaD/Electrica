@@ -1,12 +1,7 @@
 import React, { useState } from "react";
 import { motion } from "framer-motion";
-import {
-  FiInbox,
-  FiMessageCircle,
-  FiMessageSquare,
-  FiSend,
-  FiX,
-} from "react-icons/fi";
+import Miniloader from "../../OtherComponents/Miniloader";
+import { FiMessageCircle, FiMessageSquare, FiSend, FiX } from "react-icons/fi";
 import Chat from "./Chat";
 
 const MessagesSendingRecieving = ({
@@ -15,6 +10,7 @@ const MessagesSendingRecieving = ({
   setMessage,
   messageAdmin,
   sendMessageToAdmin,
+  messageLoader,
 }) => {
   const [chatVisible, setChatVisible] = useState(false);
 
@@ -70,10 +66,14 @@ const MessagesSendingRecieving = ({
                 whileHover={{ scale: 1.05 }}
                 whileTap={{ scale: 0.95 }}
                 onClick={sendMessageToAdmin}
-                disabled={!message.trim()}
+                disabled={messageLoader}
                 className="absolute bottom-3 right-3 p-2 bg-cyan-500/80 backdrop-blur rounded-lg hover:bg-cyan-400 transition-colors"
               >
-                <FiSend className="w-5 h-5 text-white" />
+                {!messageLoader ? (
+                  <FiSend className="w-5 h-5 text-white" />
+                ) : (
+                  <Miniloader />
+                )}
               </motion.button>
             </div>
           </div>

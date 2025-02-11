@@ -13,6 +13,7 @@ import DropdownMenu from "./DropdownMenu";
 import Material_worker from "./Material_worker";
 import { ArrowLeft } from "lucide-react";
 import MessagesSendingRecieving from "../../UserDashboard/Project/MessagesSendingRecieving";
+import { faTruckPlane } from "@fortawesome/free-solid-svg-icons";
 
 const Stepone = () => {
   const navigate = useNavigate();
@@ -40,6 +41,7 @@ const Stepone = () => {
   const [isProjectCompleted, setIsProjectCompleted] = useState(false);
   const [messageUser, setMessageUser] = useState([]);
   const [messageAdmin, setMessageAdmin] = useState([]);
+  const [messageLoader, setMessageLoader] = useState(false);
   const [message, setMessage] = useState("");
   // states end
 
@@ -277,6 +279,7 @@ const Stepone = () => {
   };
 
   const handleMessageToUser = async () => {
+    setMessageLoader(true);
     try {
       const response = await axios.post(
         `${electricaURL}/api/adminauth/message-client`,
@@ -284,18 +287,16 @@ const Stepone = () => {
         { withCredentials: true }
       );
       if (response.status === 200) {
-        setAlert({ type: response.data.type, message: response.data.message });
         setMessage("");
         fetchProject();
+        setMessageLoader(false);
         fetchUsers();
       } else {
-        setAlert({ type: response.data.type, message: response.data.message });
+        // setAlert({ type: response.data.type, message: response.data.message });
+        setMessageLoader(false);
       }
     } catch (error) {
-      setAlert({
-        type: error.response?.data?.type,
-        message: error.response?.data?.message,
-      });
+      setMessageLoader(false);
     }
   };
 
@@ -381,6 +382,7 @@ const Stepone = () => {
         setMessage={setMessage}
         message={message}
         sendMessageToAdmin={handleMessageToUser}
+        messageLoader={messageLoader}
       />
     </div>
   );
