@@ -61,13 +61,15 @@ const Alert = ({ type = "info", message, duration = 5000, onClose }) => {
   return (
     <AnimatePresence>
       {isVisible && (
-        <div className="fixed top-0 left-0 right-0 flex justify-center z-50 p-4">
-          <motion.div
-            initial={{ y: -100, opacity: 0 }}
-            animate={{ y: 0, opacity: 1 }}
-            exit={{ y: -100, opacity: 0 }}
-            transition={{ type: "spring", stiffness: 500, damping: 30 }}
-            className={`relative flex items-center w-full max-w-md px-4 py-3 rounded-lg border shadow-lg backdrop-blur-sm ${config.styles}`}
+        <motion.div
+          initial={{ opacity: 0, x: -100 }}
+          animate={{ opacity: 1, x: 0 }}
+          exit={{ opacity: 0, x: -100 }}
+          transition={{ type: "spring", stiffness: 500, damping: 30 }}
+          className="fixed bottom-4 left-4 z-50"
+        >
+          <div
+            className={`relative flex items-center w-auto max-w-md px-4 py-3 rounded-lg border shadow-lg backdrop-blur-sm ${config.styles}`}
           >
             {/* Progress bar */}
             {duration > 0 && (
@@ -94,8 +96,8 @@ const Alert = ({ type = "info", message, duration = 5000, onClose }) => {
 
             {/* Subtle glow effect */}
             <div className="absolute inset-0 -z-10 bg-gradient-to-r from-transparent via-white/30 to-transparent rounded-lg animate-pulse" />
-          </motion.div>
-        </div>
+          </div>
+        </motion.div>
       )}
     </AnimatePresence>
   );
