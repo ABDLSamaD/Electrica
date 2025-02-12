@@ -36,6 +36,9 @@ import Setting from "./UserDashboard/Setting/Setting";
 const StageManagement = React.lazy(() =>
   import("./UserDashboard/Project/Userprojectreview")
 );
+const NextProcess = React.lazy(() =>
+  import("./UserDashboard/Project/CompletionProject/NextProcess")
+);
 // User Dashboard End
 
 // Private Routes Start
@@ -48,7 +51,6 @@ import UserPublicRoute from "./Private/UserPublicRoute";
 // Admin Dashboard Start
 
 const Admin = React.lazy(() => import("./Admin/Admin"));
-
 import AddProjectForm from "./UserDashboard/Project/AddProjectForm";
 import CheckProjects from "./UserDashboard/Project/CheckProjects";
 import ProjectDoc from "./UserDashboard/Project/ProjectDocumentation/ProjectDoc";
@@ -177,6 +179,10 @@ const Main = () => {
                 <Route
                   path="checkstatus/projectreview-1-9&/:projectId"
                   element={<StageManagement />}
+                />
+                <Route
+                  path="checkstatus/complete/prj/:projectId"
+                  element={<NextProcess />}
                 />
                 <Route path="project/prjfrom" element={<AddProjectForm />} />
                 <Route path="db-au-profile" element={<Profile />} />

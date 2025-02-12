@@ -3,7 +3,6 @@ import React, { useState } from "react";
 import Alert from "../../OtherComponents/Alert";
 import { motion } from "framer-motion";
 import {
-  FiAlertCircle,
   FiAlertTriangle,
   FiBell,
   FiKey,
@@ -164,14 +163,14 @@ const Setting = () => {
           exit={{ y: -20, opacity: 0 }}
           className="fixed top-4 left-1/2 -translate-x-1/2 z-50"
         >
-          <Alert type={type} message={message} onClose={() => setAlert(null)} />
+          <Alert type={type} message={message} onClose={() => setALert(null)} />
         </motion.div>
       )}
 
       <motion.div
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
-        className="max-w-4xl mx-auto p-6 space-y-8"
+        className="max-w-4xl mx-auto p-6 space-y-8 relative top-8 min-h-screen mb-16"
       >
         {/* Header */}
         <motion.div

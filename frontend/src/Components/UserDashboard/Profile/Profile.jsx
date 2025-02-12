@@ -6,7 +6,6 @@ import { FaUserAlt, FaPhoneAlt, FaMapMarkerAlt, FaCity } from "react-icons/fa";
 import { AiOutlineMail } from "react-icons/ai";
 import { faArrowLeft } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { Import } from "lucide-react";
 
 const Profile = () => {
   const navigate = useNavigate();
@@ -145,7 +144,7 @@ const Profile = () => {
   }
 
   return (
-    <div className="relative top-2 h-auto flex flex-wrap items-center bg-opacity-50 rounded-xl shadow-md backdrop-blur-md">
+    <div className="relative top-12 min-h-screen flex flex-wrap items-center">
       <button
         onClick={() => navigate(-1)}
         className="text-gray-300 hover:scale-110 transition px-5 my-7"

@@ -7,6 +7,7 @@ import {
   faChevronDown,
   faBolt,
   faBars,
+  faTimes,
 } from "@fortawesome/free-solid-svg-icons";
 import { Link, NavLink, useNavigate } from "react-router-dom";
 import Alert from "../../OtherComponents/Alert";
@@ -29,11 +30,6 @@ const Topbar = ({ user, electricaURL }) => {
 
   const dropdownRef = useRef(null);
 
-  const navVariants = {
-    hidden: { opacity: 0, y: -20 },
-    visible: { opacity: 1, y: 0, transition: { duration: 0.3 } },
-    exit: { opacity: 0, y: -20, transition: { duration: 0.3 } },
-  };
   const toggleMobileNav = () => {
     setShowMobileNav((prev) => !prev);
   };
@@ -62,7 +58,7 @@ const Topbar = ({ user, electricaURL }) => {
 
   const hanldeLogout = async () => {
     try {
-      setLogout(false);
+      setLogout(true);
       const response = await axios.post(
         `${electricaURL}/api/auth/logout`,
         {},
@@ -91,11 +87,11 @@ const Topbar = ({ user, electricaURL }) => {
   return (
     <header className="relative">
       <div
-        className="backdrop-blur-3xl shadow rounded-lg"
-        style={{ background: "hsl(242deg 88.4% 66.3% / 12%)" }}
+        className="bg-white/5 backdrop-blur-xl rounded-lg fixed top-0 left-0 right-0 z-50"
+        // style={{ background: "hsl(242deg 88.4% 66.3% / 12%)" }}
       >
         {logout && <LoaderAll />}
-        <div className="h-16 flex items-center justify-between px-2 relative text-white">
+        <div className="h-16 flex items-center justify-between px-4 md:px-6 relative text-white">
           <div className="flex items-center space-x-3">
             <Link to="/db-au-user" className="w-auto block">
               <div className="py-4 px-2 md:px-4 font-bold text-centerborder-b border-gray-700 flex items-center justify-center">
@@ -110,7 +106,7 @@ const Topbar = ({ user, electricaURL }) => {
               className="md:hidden text-white text-2xl"
               onClick={toggleMobileNav}
             >
-              <FontAwesomeIcon icon={faBars} />
+              <FontAwesomeIcon icon={showMobileNav ? faTimes : faBars} />
             </button>
             <div className="hidden md:flex space-x-4">
               <SidebarLink to="/db-au-user" label="Home" end />
@@ -128,29 +124,12 @@ const Topbar = ({ user, electricaURL }) => {
                   animate={{ opacity: 1, y: 0 }}
                   exit={{ opacity: 0, y: -20 }}
                   transition={{ duration: 0.3, ease: "easeInOut" }}
-                  className="absolute top-0 -left-3 right-20 w-full bg-gradient-to-r from-gray-900/80 to-blue-950 backdrop-blur-3xl shadow-lg text-white flex flex-col py-4 px-6 space-y-4 z-50"
+                  className="absolute top-16 left-0 right-0 w-full bg-gradient-to-r from-gray-900/80 to-blue-950 backdrop-blur-3xl shadow-lg text-white flex flex-col py-4 px-6 space-y-4 z-50"
                 >
-                  <div className="flex justify-between items-center mb-4">
-                    <h1 className="text-lg font-semibold tracking-wide">
-                      Menu
-                    </h1>
-                    <button
-                      onClick={toggleMobileNav}
-                      className="text-white p-2 rounded-full hover:bg-indigo-700 transition"
-                    >
-                      ✕
-                    </button>
-                  </div>
                   <SidebarLink
                     to="/db-au-user"
                     label="Home"
                     end
-                    onClick={toggleMobileNav}
-                    className="hover:bg-indigo-700 px-4 py-2 rounded-lg transition text-sm"
-                  />
-                  <SidebarLink
-                    to="/db-au-pages"
-                    label="Pages"
                     onClick={toggleMobileNav}
                     className="hover:bg-indigo-700 px-4 py-2 rounded-lg transition text-sm"
                   />
@@ -183,7 +162,7 @@ const Topbar = ({ user, electricaURL }) => {
             </AnimatePresence>
           </div>
 
-          {/* image down ref */}
+          {/* Profile Dropdown */}
           <div className="relative" ref={dropdownRef}>
             <div
               className="cursor-pointer flex items-center gap-3 p-2 rounded-full bg-white/20 hover:bg-white/30"
@@ -214,9 +193,10 @@ const Topbar = ({ user, electricaURL }) => {
                   className="absolute right-0 top-14 bg-gradient-to-br from-gray-900/90 to-gray-950/60 backdrop-blur-2xl shadow-lg rounded-2xl z-50 w-72 border border-white/20"
                 >
                   <div className="flex flex-col items-center text-center p-6">
-                    <img
+                    <LazyLoadImage
                       src={user.profileImg}
                       alt="Profile"
+                      effect="blur"
                       className="w-20 h-20 rounded-full shadow-md border-4 border-white/50"
                     />
                     <h2 className="mt-3 text-lg font-semibold text-white">
@@ -250,11 +230,7 @@ const Topbar = ({ user, electricaURL }) => {
                     </Link>
                     <button
                       className="flex items-center gap-3 px-6 py-3 hover:bg-red-800/50 transition-all rounded-xl"
-                      onClick={() => {
-                        setTimeout(() => {
-                          setModal(true);
-                        }, 350);
-                      }}
+                      onClick={() => setModal(true)}
                     >
                       <FontAwesomeIcon
                         icon={faRightFromBracket}
@@ -269,31 +245,32 @@ const Topbar = ({ user, electricaURL }) => {
           </div>
         </div>
       </div>
-      {/* modal for logout */}
+
+      {/* Logout Modal */}
       {modal && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-[rgba(255,255,255,0.1)] backdrop-blur-xl min-h-full">
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-[rgba(0,0,0,0.5)] backdrop-blur-sm min-h-full">
           <motion.div
             initial={{ scale: 0.9, opacity: 0 }}
             animate={{ scale: 1, opacity: 1 }}
             exit={{ scale: 0.9, opacity: 0 }}
-            className="relative w-96 bg-white p-6 rounded-lg shadow-xl"
+            className="relative w-96 bg-gradient-to-br from-gray-900 to-gray-800 p-6 rounded-lg shadow-xl border border-white/10"
           >
-            <h2 className="text-2xl font-semibold text-gray-800 text-center">
+            <h2 className="text-2xl font-semibold text-white text-center">
               Are you sure you want to logout?
             </h2>
-            <p className="text-gray-500 text-center mt-2">
+            <p className="text-gray-300 text-center mt-2">
               You will be redirected to the sign-in page.
             </p>
-            <div className="flex justify-center gap-4 mt-4">
+            <div className="flex justify-center gap-4 mt-6">
               <button
                 onClick={hanldeLogout}
-                className="px-4 py-2 bg-red-500 text-white rounded-lg hover:bg-red-600"
+                className="px-6 py-2 bg-red-500 text-white rounded-lg hover:bg-red-600 transition-all"
               >
                 Yes, Logout
               </button>
               <button
                 onClick={() => setModal(false)}
-                className="px-4 py-2 bg-gray-500 text-white rounded-lg hover:bg-gray-600"
+                className="px-6 py-2 bg-gray-500 text-white rounded-lg hover:bg-gray-600 transition-all"
               >
                 No, Stay
               </button>
@@ -305,17 +282,19 @@ const Topbar = ({ user, electricaURL }) => {
   );
 };
 
-const SidebarLink = ({ to, label, end = false }) => (
+const SidebarLink = ({ to, label, end = false, onClick, className }) => (
   <NavLink
     to={to}
     end={end}
     className={({ isActive }) =>
       `flex items-center text-sm rounded-full md:px-5 md:py-2 px-3 py-2 hover:text-cyan-700 transition-all ${
         isActive ? "text-cyan-500 text-md tracking-wider " : ""
-      }`
+      } ${className}`
     }
+    onClick={onClick}
   >
     {label}
   </NavLink>
 );
+
 export default Topbar;

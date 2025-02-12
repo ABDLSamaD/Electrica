@@ -165,7 +165,7 @@ const AddProjectForm = () => {
   };
 
   return (
-    <div className="p-4 mt-2 animate-fade-in">
+    <div className="p-4 min-h-screen relative top-10 mb-16 animate-fade-in">
       {alert && (
         <Alert
           type={alert.type}

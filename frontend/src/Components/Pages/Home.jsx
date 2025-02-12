@@ -127,7 +127,7 @@ const Home = () => {
 
 const FeatureCard = ({ icon, title, subtitle }) => (
   <motion.div
-    className="flex flex-col items-center p-6 bg-gray-800/50 rounded-xl backdrop-blur-sm"
+    className="flex flex-col items-center p-8 bg-gray-800/50 rounded-xl backdrop-blur-sm md:p-6"
     whileHover={{ scale: 1.05 }}
     transition={{ type: "spring", stiffness: 300 }}
   >

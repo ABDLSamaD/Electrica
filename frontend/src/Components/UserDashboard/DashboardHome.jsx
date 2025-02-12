@@ -157,7 +157,7 @@ const DashboardHome = () => {
           </div>
 
           {/* Electrica Details Section */}
-          <div className="mt-10 bg-gray-800 p-6 rounded-md shadow-md">
+          <div className="mt-10 bg-gray-800/20 backdrop-blur p-6 rounded-md shadow-md mb-10">
             <h2 className="text-xl font-semibold text-blue-600">
               About Electrica
             </h2>

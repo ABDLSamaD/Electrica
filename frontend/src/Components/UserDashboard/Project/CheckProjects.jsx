@@ -1,17 +1,19 @@
 import React, { useEffect, useState } from "react";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+// import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import {
-  faTrash,
-  faArrowLeft,
-  faCheckCircle,
-  faSpinner,
-  faTasks,
-  faUser,
-  faCity,
-  faDollarSign,
-  faPlus,
-  faSearch,
-} from "@fortawesome/free-solid-svg-icons";
+  ArrowLeft,
+  PlusCircle,
+  Search,
+  CheckCircle2,
+  ClipboardList,
+  User,
+  Building2,
+  DollarSign,
+  Loader2,
+  Trash2,
+  Eye,
+  CheckSquare,
+} from "lucide-react";
 import { useNavigate, useOutletContext } from "react-router-dom";
 import axios from "axios";
 import { motion } from "framer-motion";
@@ -46,7 +48,7 @@ const CheckProjects = () => {
       setLoading(true);
       const timer = setTimeout(() => {
         setLoading(false);
-      }, 4000);
+      }, 2000);
       return () => clearTimeout(timer);
     }
   }, [projects]);
@@ -99,162 +101,183 @@ const CheckProjects = () => {
   );
 
   return (
-    <div className="p-6 text-white min-h-screen">
-      <div className="mb-8 flex justify-between items-center">
+    <div className="p-6 text-white min-h-screen relative top-8 mb-12">
+      {/* Header Section */}
+      <div className="mb-8 flex flex-col sm:flex-row justify-between items-center gap-4">
         <motion.button
           onClick={goBack}
-          className="flex items-center text-gray-400 hover:text-gray-300 transition"
-          whileHover={{ scale: 1.05 }}
-          whileTap={{ scale: 0.95 }}
+          className="group flex items-center space-x-2 text-gray-400 hover:text-white transition-all px-4 py-2 rounded-lg hover:bg-white/5"
+          whileHover={{ scale: 1.02 }}
+          whileTap={{ scale: 0.98 }}
         >
-          <FontAwesomeIcon icon={faArrowLeft} size="lg" className="mr-2" /> Go
-          Back
+          <ArrowLeft className="w-5 h-5 transition-transform group-hover:-translate-x-1" />
+          <span className="text-white">Back</span>
         </motion.button>
         <motion.button
-          className="flex items-center bg-indigo-600 text-white px-6 py-3 rounded-lg hover:bg-indigo-700 transition"
+          className="flex items-center space-x-2 bg-indigo-600/90 hover:bg-indigo-500 text-white px-6 py-3 rounded-xl transition-all shadow-lg shadow-indigo-500/20 hover:shadow-indigo-500/30"
           onClick={projectAdd}
-          whileHover={{ scale: 1.05 }}
-          whileTap={{ scale: 0.95 }}
+          whileHover={{ scale: 1.02 }}
+          whileTap={{ scale: 0.98 }}
         >
-          <FontAwesomeIcon icon={faPlus} className="mr-3" /> Add Project
+          <PlusCircle className="w-5 h-5" />
+          <span>New Project</span>
         </motion.button>
       </div>
 
+      {/* Loading State */}
       {loading ? (
-        <div className="absolute inset-0 flex justify-center items-center bg-black bg-opacity-50">
-          <FontAwesomeIcon
-            icon={faSpinner}
-            spin
-            size="3x"
-            className="text-white animate-spin"
-          />
+        <div className="fixed inset-0 flex justify-center items-center bg-black/50 backdrop-blur-sm z-50">
+          <Loader2 className="w-12 h-12 text-indigo-500 animate-spin" />
         </div>
       ) : (
-        <div className="space-y-6">
-          <div className="flex justify-between items-center lg:flex-row flex-col lg:gap-0 gap-4">
-            <h1 className="text-3xl font-bold text-white">Your Projects</h1>
+        <div className="space-y-8">
+          {/* Search and Title Section */}
+          <div className="flex flex-col lg:flex-row justify-between items-start lg:items-center gap-6">
+            <h1 className="text-4xl font-bold bg-gradient-to-r from-white to-indigo-200 bg-clip-text text-transparent">
+              Your Projects
+            </h1>
             <motion.div
-              className="flex items-center bg-gray-700 text-white lg:px-4 px-4 lg:py-2 py-2 rounded-lg"
-              whileHover={{ scale: 1.02 }}
+              className="relative w-full lg:w-auto"
+              whileHover={{ scale: 1.01 }}
             >
-              <FontAwesomeIcon icon={faSearch} className="mr-2" />
+              <div className="absolute inset-y-0 left-3 flex items-center pointer-events-none">
+                <Search className="w-5 h-5 text-gray-400" />
+              </div>
               <input
                 type="text"
-                placeholder="Search by name, client, or city..."
-                className="bg-transparent text-white placeholder-gray-300 outline-none"
+                placeholder="Search projects..."
+                className="w-full lg:w-80 bg-white/5 text-white pl-12 pr-4 py-3 rounded-xl backdrop-blur-lg outline-none border border-white/10 focus:border-indigo-500/50 transition-all"
                 value={searchQuery}
                 onChange={handleSearchChange}
               />
             </motion.div>
           </div>
 
+          {/* Projects Grid */}
           {filteredProjects.length > 0 ? (
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+            <div className="grid grid-cols-1 lg:grid-cols-2 xl:grid-cols-3 gap-6">
               {filteredProjects
                 .filter((project) => project.user === user._id)
                 .map((project, index) => (
                   <motion.div
                     key={project._id}
-                    className="p-6 rounded-lg shadow-lg bg-gray-200/10 backdrop-blur-md relative overflow-hidden transition-transform transform hover:scale-105 hover:shadow-xl"
+                    className="group relative p-6 rounded-2xl bg-white/5 backdrop-blur-lg border border-white/10 hover:border-indigo-500/30 transition-all overflow-hidden"
                     initial={{ opacity: 0, y: 20 }}
                     animate={{ opacity: 1, y: 0 }}
                     transition={{ duration: 0.3, delay: index * 0.1 }}
                   >
-                    {/* Header Section */}
-                    <div className="flex justify-between items-center mb-4">
-                      <h2 className="text-2xl font-semibold text-white truncate">
-                        {project.stages.every((stage) => stage.isCompleted) && (
-                          <span className="bg-green-600 text-white text-sm px-2 py-1 rounded-full mr-2">
-                            Project Complete
-                          </span>
-                        )}
-                        {highlightText(project.projectName, searchQuery)}
-                      </h2>
+                    {/* Project Header */}
+                    <div className="flex justify-between items-start mb-6">
+                      <div>
+                        <h2 className="text-2xl font-bold mb-2">
+                          {project.stages.every(
+                            (stage) => stage.isCompleted
+                          ) && (
+                            <span className="inline-flex items-center gap-1 bg-green-500/20 text-green-300 text-sm px-3 py-1 rounded-full mb-2">
+                              <CheckSquare className="w-4 h-4" />
+                              Completed
+                            </span>
+                          )}
+                          {highlightText(project.projectName, searchQuery)}
+                        </h2>
+                        <p className="text-sm text-gray-400 flex items-center gap-2">
+                          <ClipboardList className="w-4 h-4" />
+                          Created:{" "}
+                          {new Date(project.createdAt).toLocaleDateString()}
+                        </p>
+                      </div>
                       {project.status === "Accepted" && (
-                        <FontAwesomeIcon
-                          icon={faCheckCircle}
-                          className="text-green-400 text-3xl"
-                        />
+                        <CheckCircle2 className="w-6 h-6 text-green-400" />
                       )}
                     </div>
 
                     {/* Project Details */}
-                    <p className="text-sm text-gray-400 mb-4 flex items-center">
-                      <FontAwesomeIcon icon={faTasks} className="mr-2" />
-                      Created:{" "}
-                      {new Date(project.createdAt).toLocaleDateString()}
-                    </p>
-                    <p className="text-gray-400 mb-6">
-                      {highlightText(project.projectDescription, searchQuery)}
-                    </p>
+                    <div className="space-y-4 mb-6">
+                      <p className="text-gray-300 line-clamp-2">
+                        {highlightText(project.projectDescription, searchQuery)}
+                      </p>
 
-                    {/* Status Badge */}
-                    <div
-                      className={`py-2 px-4 rounded-full font-medium text-sm text-center inline-block mb-6`}
-                      style={{
-                        backgroundColor:
-                          project.status === "approved"
-                            ? "rgba(221,221,221,0.1)"
-                            : project.status === "pending"
-                            ? "#fde36e"
-                            : "#fcd6d6",
-                        color:
-                          project.status === "approved"
-                            ? "#ddf"
-                            : project.status === "pending"
-                            ? "#e0a800"
-                            : "#d63b3b",
-                      }}
-                    >
-                      Status: {project.status}
-                    </div>
+                      <div className="flex flex-wrap gap-4">
+                        <div className="flex items-center gap-2 text-sm">
+                          <User className="w-4 h-4 text-indigo-400" />
+                          <span className="text-gray-400">
+                            {highlightText(project.clientName, searchQuery)}
+                          </span>
+                        </div>
+                        <div className="flex items-center gap-2 text-sm">
+                          <Building2 className="w-4 h-4 text-indigo-400" />
+                          <span className="text-gray-400">
+                            {highlightText(project.projectCity, searchQuery)}
+                          </span>
+                        </div>
+                        <div className="flex items-center gap-2 text-sm">
+                          <DollarSign className="w-4 h-4 text-indigo-400" />
+                          <span className="text-gray-400">
+                            Rs-{project.totalCost}
+                          </span>
+                        </div>
+                      </div>
 
-                    {/* Client and Project Info */}
-                    <div className="space-y-3 mb-6">
-                      <p className="flex items-center text-sm text-gray-400">
-                        <FontAwesomeIcon icon={faUser} className="mr-2" />
-                        <span className="font-medium text-gray-100 mr-1">
-                          Client:
-                        </span>{" "}
-                        {highlightText(project.clientName, searchQuery)}
-                      </p>
-                      <p className="flex items-center text-sm text-gray-400">
-                        <FontAwesomeIcon icon={faCity} className="mr-2" />
-                        <span className="font-medium text-gray-100 mr-1">
-                          City:
-                        </span>{" "}
-                        {highlightText(project.projectCity, searchQuery)}
-                      </p>
-                      <p className="flex items-center text-sm text-gray-400">
-                        <FontAwesomeIcon icon={faDollarSign} className="mr-2" />
-                        <span className="font-medium text-gray-100 mr-1">
-                          Total Cost:
-                        </span>{" "}
-                        ${project.totalCost}
-                      </p>
+                      {/* Status Badge */}
+                      <div
+                        className={`inline-flex items-center px-4 py-2 rounded-lg text-sm font-medium ${
+                          project.status === "approved"
+                            ? "bg-green-500/20 text-green-300"
+                            : project.status === "pending"
+                            ? "bg-yellow-500/20 text-yellow-300"
+                            : "bg-red-500/20 text-red-300"
+                        }`}
+                      >
+                        <div
+                          className={`w-2 h-2 rounded-full mr-2 ${
+                            project.status === "approved"
+                              ? "bg-green-400"
+                              : project.status === "pending"
+                              ? "bg-yellow-400"
+                              : "bg-red-400"
+                          }`}
+                        />
+                        {project.status}
+                      </div>
                     </div>
 
                     {/* Action Buttons */}
-                    <div className="flex flex-col sm:flex-row gap-3">
+                    <div className="flex flex-wrap gap-3">
                       <motion.button
                         onClick={() =>
                           navigate(
                             `/db-au-user/checkstatus/projectreview-1-9&/${project._id}`
                           )
                         }
-                        className="flex-1 bg-blue-600 text-white py-3 rounded-lg hover:bg-blue-700 transition flex items-center justify-center"
-                        whileHover={{ scale: 1.05 }}
-                        whileTap={{ scale: 0.95 }}
+                        className="flex-1 min-w-[120px] flex items-center justify-center gap-2 bg-indigo-600/80 hover:bg-indigo-500 px-4 py-2.5 rounded-lg transition-all"
+                        whileHover={{ scale: 1.02 }}
+                        whileTap={{ scale: 0.98 }}
                       >
-                        Check Project
+                        <Eye className="w-4 h-4" />
+                        View Details
                       </motion.button>
+                      {project.stages.every((stage) => stage.isCompleted) && (
+                        <motion.button
+                          onClick={() =>
+                            navigate(
+                              `/db-au-user/checkstatus/complete/prj/${project._id}`
+                            )
+                          }
+                          className="flex-1 min-w-[120px] flex items-center justify-center gap-2 bg-gray-600/80 hover:bg-gray-500 px-4 py-2.5 rounded-lg transition-all"
+                          whileHover={{ scale: 1.02 }}
+                          whileTap={{ scale: 0.98 }}
+                        >
+                          <CheckSquare className="w-4 h-4" />
+                          Complete
+                        </motion.button>
+                      )}
                       <motion.button
                         onClick={() => removeProject(project._id)}
-                        className="flex-1 bg-red-600 text-white py-3 rounded-lg hover:bg-red-700 transition flex items-center justify-center"
-                        whileHover={{ scale: 1.05 }}
-                        whileTap={{ scale: 0.95 }}
+                        className="flex-1 min-w-[120px] flex items-center justify-center gap-2 bg-red-600/80 hover:bg-red-500 px-4 py-2.5 rounded-lg transition-all"
+                        whileHover={{ scale: 1.02 }}
+                        whileTap={{ scale: 0.98 }}
                       >
-                        <FontAwesomeIcon icon={faTrash} className="mr-2" />{" "}
+                        <Trash2 className="w-4 h-4" />
                         Remove
                       </motion.button>
                     </div>
@@ -262,9 +285,11 @@ const CheckProjects = () => {
                 ))}
             </div>
           ) : (
-            <p className="text-center text-gray-400">
-              No projects match your search criteria or no projects available.
-            </p>
+            <div className="text-center py-12">
+              <p className="text-gray-400 text-lg">
+                No projects match your search criteria.
+              </p>
+            </div>
           )}
         </div>
       )}
