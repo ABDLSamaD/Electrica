@@ -77,6 +77,10 @@ const DashboardHome = () => {
     ],
   };
 
+  const userProjects =
+    projects?.filter((project) => project.user === user._id) || [];
+  const projectCount = userProjects.length;
+
   return (
     <div className="relative top-10 p-6 text-gray-200 min-h-screen">
       {loader ? (
@@ -103,7 +107,7 @@ const DashboardHome = () => {
               <ul className="mt-3 text-gray-300 text-base">
                 <li>
                   <strong>Active Projects:</strong>
-                  {projects ? projects.length : 0}
+                  {projectCount}
                 </li>
                 <li>
                   <strong>Tasks Completed:</strong> 45
@@ -157,7 +161,7 @@ const DashboardHome = () => {
           </div>
 
           {/* Electrica Details Section */}
-          <div className="mt-10 bg-gray-800/20 backdrop-blur p-6 rounded-md shadow-md mb-10">
+          <div className="mt-10 bg-gray-800/20 backdrop-blur-md p-6 rounded-md shadow-md mb-10">
             <h2 className="text-xl font-semibold text-blue-600">
               About Electrica
             </h2>
