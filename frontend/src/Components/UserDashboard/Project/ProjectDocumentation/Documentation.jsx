@@ -10,7 +10,7 @@ import { Link } from "react-router-dom";
 
 const Documentation = () => {
   return (
-    <div className="min-h-screen p-2">
+    <div className="min-h-screen p-2 relative top-8 mb-8">
       <div className="max-w-7xl mx-auto">
         <h1 className="text-4xl font-bold text-blue-400 mb-8 text-center">
           Electrician Project Documentation

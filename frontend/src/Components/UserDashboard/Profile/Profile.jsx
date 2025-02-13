@@ -6,6 +6,7 @@ import { FaUserAlt, FaPhoneAlt, FaMapMarkerAlt, FaCity } from "react-icons/fa";
 import { AiOutlineMail } from "react-icons/ai";
 import { faArrowLeft } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import Miniloader from "../../OtherComponents/Miniloader";
 
 const Profile = () => {
   const navigate = useNavigate();
@@ -19,6 +20,7 @@ const Profile = () => {
   const [isEditable, setIsEditable] = useState(false); // Control input fields
   const [isImageSaved, setIsImageSaved] = useState(true); // Control image save button
   const [loading, setLoading] = useState(false); // Loading state
+  const [miniLoader, setMiniLoader] = useState(false); // Loading state
   const [type, setType] = useState("");
   const [message, setMessage] = useState("");
   const [alert, setALert] = useState(null);
@@ -42,7 +44,7 @@ const Profile = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    setLoading(true);
+    setMiniLoader(true);
     try {
       const { fullName, address, phone, city } = credentials;
       const response = await axios.post(
@@ -63,17 +65,18 @@ const Profile = () => {
         setALert(response.data.type, response.data.message);
         setIsEditable(false);
         fetchUser();
+        setMiniLoader(false);
       } else {
         setType(response.data.type);
         setMessage(response.data.message);
         setALert(response.data.type, response.data.message);
+        setMiniLoader(false);
       }
     } catch (err) {
       setType(err.response?.data?.type);
       setMessage(err.response?.data?.message);
       setALert(err.response?.data?.type, err.response?.data?.message);
-    } finally {
-      setLoading(false);
+      setMiniLoader(false);
     }
   };
 
@@ -307,7 +310,7 @@ const Profile = () => {
                     name="address"
                     onChange={onChange}
                     placeholder="Enter address"
-                    className="flex-grow bg-transparent text-gray-200 outline-none focus:ring-0"
+                    className="flex-grow bg-transparent text-gray-200 outline-none focus:ring-0 overflow-hidden"
                     defaultValue={user.address}
                     disabled={!isEditable}
                   />
@@ -327,9 +330,10 @@ const Profile = () => {
                 ) : (
                   <button
                     type="submit"
+                    disabled={miniLoader}
                     className="px-6 py-2 bg-green-600 text-white rounded-md shadow-md hover:bg-green-500"
                   >
-                    Save Details
+                    {miniLoader ? <Miniloader /> : "Save Details"}
                   </button>
                 )}
               </div>
