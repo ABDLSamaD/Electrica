@@ -162,7 +162,7 @@ const StageManagement = () => {
 
   if (loading) {
     return (
-      <div className="flex items-center justify-center min-h-screen bg-gray-800">
+      <div className="flex items-center justify-center min-h-screen">
         <LoaderAll />
       </div>
     );

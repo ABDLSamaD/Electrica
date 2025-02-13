@@ -13,6 +13,7 @@ import {
   Trash2,
   Eye,
   CheckSquare,
+  BookUserIcon,
 } from "lucide-react";
 import { useNavigate, useOutletContext } from "react-router-dom";
 import axios from "axios";
@@ -103,7 +104,7 @@ const CheckProjects = () => {
   return (
     <div className="p-6 text-white min-h-screen relative top-8 mb-12">
       {/* Header Section */}
-      <div className="mb-8 flex flex-col sm:flex-row justify-between items-center gap-4">
+      <div className="mb-8 flex flex-col sm:flex-row justify-between flex-wrap gap-4">
         <motion.button
           onClick={goBack}
           className="group flex items-center space-x-2 text-gray-400 hover:text-white transition-all px-4 py-2 rounded-lg hover:bg-white/5"
@@ -114,7 +115,7 @@ const CheckProjects = () => {
           <span className="text-white">Back</span>
         </motion.button>
         <motion.button
-          className="flex items-center space-x-2 bg-indigo-600/90 hover:bg-indigo-500 text-white px-6 py-3 rounded-xl transition-all shadow-lg shadow-indigo-500/20 hover:shadow-indigo-500/30"
+          className="flex items-center md:w-auto w-max space-x-2 bg-indigo-600/90 hover:bg-indigo-500 text-white px-6 py-3 rounded-xl transition-all shadow-lg shadow-indigo-500/20 hover:shadow-indigo-500/30"
           onClick={projectAdd}
           whileHover={{ scale: 1.02 }}
           whileTap={{ scale: 0.98 }}
@@ -133,8 +134,9 @@ const CheckProjects = () => {
         <div className="space-y-8">
           {/* Search and Title Section */}
           <div className="flex flex-col lg:flex-row justify-between items-start lg:items-center gap-6">
-            <h1 className="text-4xl font-bold bg-gradient-to-r from-white to-indigo-200 bg-clip-text text-transparent">
-              Your Projects
+            <h1 className="text-2xl font-bold bg-gradient-to-r from-white to-indigo-200 bg-clip-text text-transparent">
+              <span className="text-blue-600 text-2xl">{user.name}</span>{" "}
+              projects
             </h1>
             <motion.div
               className="relative w-full lg:w-auto"
@@ -183,7 +185,8 @@ const CheckProjects = () => {
                         <p className="text-sm text-gray-400 flex items-center gap-2">
                           <ClipboardList className="w-4 h-4" />
                           Created:{" "}
-                          {new Date(project.createdAt).toLocaleDateString()}
+                          {new Date(project.createdAt).toLocaleDateString()} -
+                          {new Date(project.createdAt).toLocaleTimeString()}
                         </p>
                       </div>
                       {project.status === "Accepted" && (
@@ -193,7 +196,8 @@ const CheckProjects = () => {
 
                     {/* Project Details */}
                     <div className="space-y-4 mb-6">
-                      <p className="text-gray-300 line-clamp-2">
+                      <p className="text-gray-300 line-clamp-2 flex items-center gap-1">
+                        <BookUserIcon />
                         {highlightText(project.projectDescription, searchQuery)}
                       </p>
 
@@ -242,7 +246,7 @@ const CheckProjects = () => {
                     </div>
 
                     {/* Action Buttons */}
-                    <div className="flex flex-wrap gap-3">
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
                       <motion.button
                         onClick={() =>
                           navigate(

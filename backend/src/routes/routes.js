@@ -13,7 +13,6 @@ const {
   resetPassword,
   getUserDetails,
   checkAuth,
-  resendForgotOtp,
   deleteAccount,
 } = require("../controllers/userController");
 const {
@@ -26,7 +25,7 @@ const {
   // registerPasswordValidation,
 } = require("../validators/userValidators");
 const validateRequest = require("../middleware/validationMiddleware");
-const fetchUser = require("../middleware/authMiddleware");
+// const fetchUser = require("../middleware/authMiddleware");
 const sessionAuth = require("../middleware/sessionAuth");
 const { rateLimit } = require("express-rate-limit");
 const {
@@ -47,8 +46,8 @@ const {
   specifyStartDate,
   markMessageAsShown,
   getUnreadMessages,
+  setPaymentMethod,
 } = require("../controllers/userProject");
-// const { requestUser } = require("../controllers/userRequest");
 const decodedToken = require("../middleware/decodedToken");
 
 const loginRateLimiter = rateLimit({
@@ -88,7 +87,6 @@ routes.get("/protected-endpoint", sessionAuth, someProtectedController);
 routes.post("/logout", sessionAuth, logout);
 routes.post("/set-logout-time", sessionAuth, setLogoutTime);
 routes.post("/forgot-password", forgotPassword);
-routes.post("/resend-forgot-otp", resendForgotOtp);
 routes.post("/verify-forgototp", verifyForgotOtp);
 routes.post("/reset-password", resetPassword);
 routes.post("/delete-account", deleteAccount);
@@ -111,6 +109,7 @@ routes.post("/unread", decodedToken, markMessageAsShown); // markAsShown message
 routes.post("/mark-shown", decodedToken, getUnreadMessages); // un read messages
 routes.post("/approve-material", decodedToken, approveMaterials); // client approved materials bill
 routes.post("/specifydate-material", decodedToken, specifyStartDate); // specify date  approved materials
+routes.post("/select-paymentmethod", decodedToken, setPaymentMethod); // specify date  approved materials
 routes.post("/user_activity", decodedToken, activityLog);
 // routes.post("/user_request", sessionAuth, requestUser);
 

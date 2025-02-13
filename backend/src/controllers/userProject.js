@@ -2,7 +2,6 @@ const User = require("../models/user");
 const { sendEmail } = require("../utils/mail");
 const Admin = require("../models/admin");
 const Project = require("../models/project");
-const admin = require("../models/admin");
 
 // create user project controller
 exports.project = async (req, res) => {
@@ -415,7 +414,7 @@ exports.approveMaterials = async (req, res) => {
       await sendEmail(
         admin.email,
         "Client approved stage material bill",
-        `${user.name} approved materials bills and coming tomorrow for stage: ${stageName}`
+        `${user.name} approved materials list. now you come from tomorrow for work: ${stageName}`
       );
     } catch (error) {
       return res
@@ -428,7 +427,6 @@ exports.approveMaterials = async (req, res) => {
       message: "Materials approved successfully",
     });
   } catch (error) {
-    console.log(error.message);
     res.status(500).json({ type: "error", message: "Internal server error" });
   }
 };
@@ -460,6 +458,52 @@ exports.specifyStartDate = async (req, res) => {
     });
   } catch (error) {
     res.status(500).json({ type: "error", message: "Internal server error" });
+  }
+};
+
+// payment controller
+exports.setPaymentMethod = async (req, res) => {
+  try {
+    const { projectId, method, payDate } = req.body;
+
+    if (!method || !["cash_on_hand", "online_payment"].includes(method)) {
+      return res.status(400).json({ message: "Invalid payment method" });
+    }
+
+    const userId = req.user.id;
+    const { user, project, error } = await getProjectAndStage(
+      userId,
+      projectId
+    );
+    if (error) {
+      return res.status(400).json({ type: "error", message: error });
+    }
+
+    project.payment.method = method;
+
+    if (method === "cash_on_hand") {
+      if (!payDate)
+        return res
+          .status(400)
+          .json({ message: "Payment date is required for cash on hand" });
+      project.payment.cashOnHandDetails.payDate = payDate;
+    }
+
+    const admin = await Admin.findOne();
+    sendEmail(
+      admin.email,
+      "Payment method",
+      `${user.name} update (cash_on_hand) payment method. and paying amount will be on ${payDate}`
+    );
+
+    await project.save();
+    res.status(200).json({
+      type: "success",
+      message: "Payment method updated successfully",
+      project,
+    });
+  } catch (error) {
+    res.status(500).json({ type: "error", message: error.message });
   }
 };
 

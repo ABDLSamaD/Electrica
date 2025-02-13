@@ -1003,69 +1003,146 @@ exports.calculateFinalBill = async (req, res) => {
 // Controller_1_Project_15: all stage is complete
 exports.projectComplete = async (req, res) => {
   try {
-    const { projectId, stageId, completeProject } = req.body;
-
+    const { projectId, completeProject } = req.body;
     const adminId = req.admin.id;
 
+    // Fetch project and user details
     const { user, project, error } = await getProjectAndStage(
       adminId,
       projectId
     );
     if (error) {
-      return res.status(400).json({ type: "error", message: error }); // Handle error if returned from helper
+      return res.status(400).json({ type: "error", message: error });
     }
-    const stageIndex = project.stages.findIndex(
-      (index) => index._id.toString() === stageId
-    );
-    if (stageIndex === -1) {
-      return res
-        .status(401)
-        .json({ type: "error", message: "Stage not found." });
+
+    // Find the first incomplete stage
+    const incompleteStage = project.stages.find((stage) => !stage.isCompleted);
+
+    if (!incompleteStage) {
+      return res.status(400).json({
+        type: "error",
+        message: "All stages are already marked as complete.",
+      });
     }
-    // Update the stage's isComplete to true
-    const selectedStage = project.stages[stageIndex];
-    if (!selectedStage.isCompleted) {
-      selectedStage.isCompleted = true;
-    } else {
-      return res
-        .status(400)
-        .json({ message: "Stage is already marked as complete." });
-    }
+
+    // Mark the first incomplete stage as completed
+    incompleteStage.isCompleted = true;
+
+    // Check if all stages are now completed
     const allStagesCompleted = project.stages.every(
       (stage) => stage.isCompleted
     );
+
     if (!completeProject) {
       return res
         .status(402)
-        .json({ type: "error", message: "user project is not completed yet" });
+        .json({ type: "error", message: "User project is not completed yet." });
     }
 
     if (allStagesCompleted) {
       project.completeProject = true; // Mark the project as complete
       await project.save();
 
-      let obj = {
-        total: project.totalCost, // Include bill details if needed
-        breakdown: project.stages.map((stage) => ({
-          stageName: stage.name,
-          amount: project.totalCost || 0, // Assume `amount` exists in stage
-        })),
-      };
+      sendEmail(
+        user.email,
+        "Project Complete",
+        `${user.name}, your project is completed.`
+      );
 
-      sendEmail(user.email, "Project Complete", obj);
       return res.status(200).json({
         type: "success",
         message: "All stages are complete. Project marked as complete.",
         project,
       });
     } else {
+      await project.save(); // Save progress
+
       return res.status(200).json({
-        type: "success",
-        message: `Stage ${selectedStage.name} marked as complete. Remaining stages are incomplete.`,
+        type: "warning",
+        message: `Stage "${incompleteStage.name}" marked as complete. Remaining stages are incomplete.`,
+        project,
       });
     }
   } catch (error) {
+    console.error(error);
     res.status(500).json({ message: "Internal server error." });
+  }
+};
+
+// Controller_1_Project_16: Mark Cash on Hand Payment as Paid
+exports.confirmCashOnHandPayment = async (req, res) => {
+  try {
+    const { projectId } = req.body;
+
+    const adminId = req.admin.id;
+    const { project, error } = await getProjectAndStage(adminId, projectId);
+    if (error) {
+      return res.status(400).json({ type: "error", message: error }); // Handle error if returned from helper
+    }
+
+    if (project.payment.method !== "cash_on_hand") {
+      return res.status(400).json({
+        type: "error",
+        message: "Invalid payment method for cash on hand confirmation",
+      });
+    }
+
+    project.payment.cashOnHandDetails.isPaid = true;
+    await project.save();
+
+    res.status(200).json({
+      type: "success",
+      message: "Cash on hand payment confirmed. Project is completed",
+    });
+  } catch (error) {
+    res
+      .status(500)
+      .json({ type: "error", message: "Internal Server error", error });
+  }
+};
+
+// Handle Online Payment Success
+exports.confirmOnlinePayment = async (req, res) => {
+  try {
+    const { projectId } = req.params;
+    const { transactionId, status } = req.body;
+
+    const project = await Project.findById(projectId);
+    if (!project) return res.status(404).json({ message: "Project not found" });
+
+    if (project.payment.method !== "online_payment") {
+      return res.status(400).json({
+        type: "error",
+        message: "Invalid payment method for online payment confirmation",
+      });
+    }
+
+    if (!transactionId || !["successful", "failed"].includes(status)) {
+      return res
+        .status(400)
+        .json({ type: "error", message: "Invalid transaction details" });
+    }
+
+    project.payment.onlinePaymentDetails.transactionId = transactionId;
+    project.payment.onlinePaymentDetails.paymentStatus = status;
+    project.payment.onlinePaymentDetails.paidAt =
+      status === "successful" ? new Date() : null;
+
+    if (status === "successful") {
+      project.completeProject = true; // Mark project as completed
+    }
+
+    await project.save();
+
+    res.status(200).json({
+      type: "success",
+      message:
+        status === "successful"
+          ? "Online payment successful. Project is completed"
+          : "Online payment failed",
+    });
+  } catch (error) {
+    res.status(500).json({ type: "error", message: "Server error", error });
   }
 };
 

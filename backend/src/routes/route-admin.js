@@ -41,6 +41,8 @@ const {
   removeStageMaterial,
   sendMessageUser,
   getProjectDetails,
+  confirmCashOnHandPayment,
+  confirmOnlinePayment,
 } = require("../controllers/stageControllers");
 const sessionAdminAuth = require("../middleware/sessionAdminAuth");
 
@@ -74,6 +76,8 @@ router.post("/remove-stage", adminAuth, clearStage); // add daily project detail
 router.post("/calculate-stagecost", adminAuth, calculateStageCost); // calculate each stage cost
 router.post("/add-contractorbill", adminAuth, addContractorBill); // add contractor bill with dicount in 24 hour
 router.post("/complete-project", adminAuth, projectComplete); // complete project
+router.post("/payment-cash", adminAuth, confirmCashOnHandPayment); // complete project
+router.post("/payment-online", adminAuth, confirmOnlinePayment); // complete project
 router.patch("/:id/ban", blockUser);
 router.patch("/:id/unban", unbanUser);
 router.get("/ban-reasons", getBanReasons);

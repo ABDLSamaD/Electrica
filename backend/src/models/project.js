@@ -80,9 +80,34 @@ const projectSchema = new mongoose.Schema({
   ],
   totalCost: { type: Number, default: 0 }, // Running total of project costs
   contractorMessageOfBill: { type: String, default: "" },
+  isPaid: { type: Boolean, default: false },
   contractorBill: { type: Number, default: 0 }, // For customized billing at the end
   contractorBillDiscount: { type: Number, default: 0 }, // For customized billing at the end
   discountAppliedDate: { type: Date, default: null },
+
+  // Payment details
+  payment: {
+    method: {
+      type: String,
+      enum: ["cash_on_hand", "online_payment"],
+      required: true,
+    },
+    cashOnHandDetails: {
+      payDate: { type: Date }, // Required if method is "cash_on_hand"
+      isPaid: { type: Boolean, default: false },
+    },
+    onlinePaymentDetails: {
+      transactionId: { type: String },
+      paymentStatus: {
+        type: String,
+        enum: ["pending", "successful", "failed"],
+        default: "pending",
+      },
+      paidAt: { type: Date },
+    },
+  },
+
+  // client and admin messaging detailing
   clientMessages: [
     {
       message: { type: String }, // Client's message
