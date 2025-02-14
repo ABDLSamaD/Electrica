@@ -15,7 +15,7 @@ import {
   CheckSquare,
   BookUserIcon,
 } from "lucide-react";
-import { useNavigate, useOutletContext } from "react-router-dom";
+import { Link, useNavigate, useOutletContext } from "react-router-dom";
 import axios from "axios";
 import { motion } from "framer-motion";
 
@@ -35,22 +35,16 @@ const highlightText = (text, query) => {
 };
 
 const CheckProjects = () => {
-  const { user, fetchUser, projects, fetchProject, electricaURL } =
-    useOutletContext();
+  const { user, projects, fetchProject, electricaURL } = useOutletContext();
   const navigate = useNavigate();
-  const [loading, setLoading] = useState(false);
+  const [loading, setLoading] = useState(true);
   const [searchQuery, setSearchQuery] = useState("");
 
   useEffect(() => {
     if (projects && projects.length > 0) {
-      setLoading(false);
-      fetchUser();
-    } else {
-      setLoading(true);
-      const timer = setTimeout(() => {
+      setTimeout(() => {
         setLoading(false);
-      }, 2000);
-      return () => clearTimeout(timer);
+      }, 1500);
     }
   }, [projects]);
 
@@ -81,10 +75,6 @@ const CheckProjects = () => {
     }
   };
 
-  const goBack = () => {
-    navigate(-1);
-  };
-
   const projectAdd = () => {
     navigate("/db-au-user/project/prjfrom");
   };
@@ -105,15 +95,16 @@ const CheckProjects = () => {
     <div className="p-6 text-white min-h-screen relative top-8 mb-12">
       {/* Header Section */}
       <div className="mb-8 flex flex-col sm:flex-row justify-between flex-wrap gap-4">
-        <motion.button
-          onClick={goBack}
-          className="group flex items-center space-x-2 text-gray-400 hover:text-white transition-all px-4 py-2 rounded-lg hover:bg-white/5"
-          whileHover={{ scale: 1.02 }}
-          whileTap={{ scale: 0.98 }}
-        >
+        <motion.div className="group flex items-center">
           <ArrowLeft className="w-5 h-5 transition-transform group-hover:-translate-x-1" />
-          <span className="text-white">Back</span>
-        </motion.button>
+          <Link
+            className="text-white ml-2 text-sm hover:scale-105 mr-1"
+            to={-1}
+          >
+            home
+          </Link>{" "}
+          /<span className="text-gray-400 ml-1 text-sm">checkProject</span>
+        </motion.div>
         <motion.button
           className="flex items-center md:w-auto w-max space-x-2 bg-indigo-600/90 hover:bg-indigo-500 text-white px-6 py-3 rounded-xl transition-all shadow-lg shadow-indigo-500/20 hover:shadow-indigo-500/30"
           onClick={projectAdd}

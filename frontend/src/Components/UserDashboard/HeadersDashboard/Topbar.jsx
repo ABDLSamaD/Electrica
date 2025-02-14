@@ -91,8 +91,12 @@ const Topbar = ({ user, electricaURL }) => {
 
   return (
     <header className="relative">
-      <div className="bg-white/5 backdrop-blur-xl rounded-lg fixed top-0 left-0 right-0 z-50">
-        {logout && <LoaderAll />}
+      <div className="backdrop-blur-sm rounded-lg fixed top-0 left-0 right-0 z-50">
+        {logout && (
+          <div className="absolute top-1/2 left-1/2 right-0 min-h-screen">
+            <LoaderAll />
+          </div>
+        )}
         <div className="h-16 flex items-center justify-between px-4 md:px-6 relative text-white">
           <div className="flex items-center space-x-3">
             <Link to="/db-au-user" className="w-auto block">
@@ -142,7 +146,7 @@ const Topbar = ({ user, electricaURL }) => {
                   animate={{ opacity: 1, y: 0 }}
                   exit={{ opacity: 0, y: -20 }}
                   transition={{ duration: 0.3, ease: "easeInOut" }}
-                  className="fixed top-16 -left-4 right-0 w-full bg-gradientgray-950 backdrop-blur-3xl shadow-lg text-white flex flex-col py-4 px-6 space-y-4 z-50"
+                  className="fixed top-16 -left-4 right-0 w-full bg-gray-950/95 backdrop-blur-xl shadow-lg shadow-cyan-950/55 rounded-2xl text-white flex flex-col py-4 px-6 space-y-4 z-50"
                 >
                   <SidebarLink
                     to="/db-au-user"

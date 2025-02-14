@@ -1,5 +1,10 @@
 import React, { useEffect, useState } from "react";
-import { useNavigate, useOutletContext, useParams } from "react-router-dom";
+import {
+  Link,
+  useNavigate,
+  useOutletContext,
+  useParams,
+} from "react-router-dom";
 import axios from "axios";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { motion } from "framer-motion";
@@ -184,11 +189,16 @@ const StageManagement = () => {
     <div className="relative top-12 mb-8 text-white md:p-6 p-0 min-h-screen">
       {/* Back Button */}
       <button
-        className="text-white hover:scale-110 transition mb-4 p-3 rounded-full bg-gray-700 hover:bg-gray-600 flex items-center justify-center"
+        className="mb-4 p-3 flex items-center justify-center"
         title="Go back"
-        onClick={() => navigate(-1)}
       >
         <FontAwesomeIcon icon={faArrowLeft} size="lg" />
+        <>
+          <Link to={-1} className="text-gray-200 ml-2">
+            checkProject
+          </Link>{" "}
+          /<span className="text-gray-600">project</span>
+        </>
       </button>
       {alert && (
         <Alert
