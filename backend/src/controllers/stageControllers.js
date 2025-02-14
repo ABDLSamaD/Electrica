@@ -912,6 +912,7 @@ exports.addContractorBill = async (req, res) => {
         project.discountAppliedDate = currentDate; // Save discount application date
       } else {
         return res.status(400).json({
+          type: "warning",
           message: "Discount already applied within the last 24 hours.",
         });
       }
@@ -921,6 +922,7 @@ exports.addContractorBill = async (req, res) => {
 
     // Update contractor bill and message
     project.contractorBill = contractorBill - discount;
+    project.billRequired = true;
     project.contractorMessageOfBill =
       contractorMessage || "No message provided";
 
@@ -934,12 +936,10 @@ exports.addContractorBill = async (req, res) => {
 
     res.status(200).json({
       message: "Contractor bill added successfully",
-      contractorBill: project.contractorBill,
-      contractorMessageOfBill: project.contractorMessageOfBill,
-      discountApplied: discount,
+      type: "success",
     });
   } catch (error) {
-    res.status(500).json({ message: "Internal server error" });
+    res.status(500).json({ type: "error", message: "Internal server error" });
   }
 };
 
@@ -991,12 +991,10 @@ exports.calculateFinalBill = async (req, res) => {
 
     res.status(200).json({
       message: "Final bill calculated and sent successfully.",
-      totalMaterialCost,
-      totalLaborCost,
-      totalCost,
+      type: "success",
     });
   } catch (error) {
-    res.status(500).json({ message: "Internal server error." });
+    res.status(500).json({ type: "error", message: "Internal server error." });
   }
 };
 
@@ -1041,6 +1039,7 @@ exports.projectComplete = async (req, res) => {
 
     if (allStagesCompleted) {
       project.completeProject = true; // Mark the project as complete
+      project.billRequired = false; // Mark the project as complete
       await project.save();
 
       sendEmail(

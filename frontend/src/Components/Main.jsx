@@ -66,6 +66,7 @@ const AddMaterial = React.lazy(() =>
 import NotifyClientModal from "./Admin/Projectsteps/Notifycient";
 import LoaderAll from "./OtherComponents/LoaderAll";
 import AdminSettings from "./Admin/AdminSettings";
+import CreatingBill from "./Admin/Projectsteps/BillingSystem/CreatingBill";
 
 // Admin Dashboard End
 
@@ -200,6 +201,10 @@ const Main = () => {
                 <Route
                   path="projectusers/stageone/:projectId"
                   element={<Stepone />}
+                />
+                <Route
+                  path="projectusers/bill/:projectId"
+                  element={<CreatingBill />}
                 />
                 <Route
                   path="projectusers/stageone/:projectId/addmaterial/:stageName/notify-client"

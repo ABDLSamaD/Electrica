@@ -260,7 +260,7 @@ const CheckProjects = () => {
                         <Eye className="w-4 h-4" />
                         View Details
                       </motion.button>
-                      {project.stages.every((stage) => stage.isCompleted) && (
+                      {project.billRequired && (
                         <motion.button
                           onClick={() =>
                             navigate(

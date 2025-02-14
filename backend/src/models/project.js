@@ -82,6 +82,7 @@ const projectSchema = new mongoose.Schema({
   contractorMessageOfBill: { type: String, default: "" },
   isPaid: { type: Boolean, default: false },
   contractorBill: { type: Number, default: 0 }, // For customized billing at the end
+  billRequired: { type: Boolean, default: false },
   contractorBillDiscount: { type: Number, default: 0 }, // For customized billing at the end
   discountAppliedDate: { type: Date, default: null },
 

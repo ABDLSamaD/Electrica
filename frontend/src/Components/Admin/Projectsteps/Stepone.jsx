@@ -13,7 +13,6 @@ import DropdownMenu from "./DropdownMenu";
 import Material_worker from "./Material_worker";
 import { ArrowLeft } from "lucide-react";
 import MessagesSendingRecieving from "../../UserDashboard/Project/MessagesSendingRecieving";
-import { faTruckPlane } from "@fortawesome/free-solid-svg-icons";
 
 const Stepone = () => {
   const navigate = useNavigate();
@@ -41,7 +40,6 @@ const Stepone = () => {
   const [isProjectCompleted, setIsProjectCompleted] = useState(false);
   const [messageUser, setMessageUser] = useState([]);
   const [messageAdmin, setMessageAdmin] = useState([]);
-  const [messageLoader, setMessageLoader] = useState(false);
   const [message, setMessage] = useState("");
   // states end
 
@@ -273,13 +271,8 @@ const Stepone = () => {
       </div>
     );
   }
-  const handleNavigate = () => {
-    // Redirect to another page after the project is completed (change URL as needed)
-    navigate(`complete`); // Example path
-  };
 
   const handleMessageToUser = async () => {
-    setMessageLoader(true);
     try {
       const response = await axios.post(
         `${electricaURL}/api/adminauth/message-client`,
@@ -287,16 +280,18 @@ const Stepone = () => {
         { withCredentials: true }
       );
       if (response.status === 200) {
+        setAlert({ type: response.data.type, message: response.data.message });
         setMessage("");
         fetchProject();
-        setMessageLoader(false);
         fetchUsers();
       } else {
-        // setAlert({ type: response.data.type, message: response.data.message });
-        setMessageLoader(false);
+        setAlert({ type: response.data.type, message: response.data.message });
       }
     } catch (error) {
-      setMessageLoader(false);
+      setAlert({
+        type: error.response?.data?.type,
+        message: error.response?.data?.message,
+      });
     }
   };
 
@@ -304,14 +299,14 @@ const Stepone = () => {
 
   return isProjectCompleted ? (
     <div className="w-full min-h-screen flex flex-col justify-center items-center text-white p-8 lg:p-3">
-      <h2 className="text-3xl font-bold mb-4">Project Completed</h2>
+      <h2 className="text-3xl font-bold mb-4">Project Stages</h2>
       <p className="mb-6">All stages are successfully completed!</p>
-      <button
-        onClick={handleNavigate}
+      <Link
+        to={`/db_au_admn/projectusers/bill/${project._id}`}
         className="bg-blue-500 text-white px-6 py-3 rounded-xl hover:bg-blue-600 transition"
       >
         Proceed to Next Step
-      </button>
+      </Link>
     </div>
   ) : (
     <div className="relative text-gray-200 p-1 sm:p-4">
@@ -382,7 +377,6 @@ const Stepone = () => {
         setMessage={setMessage}
         message={message}
         sendMessageToAdmin={handleMessageToUser}
-        messageLoader={messageLoader}
       />
     </div>
   );

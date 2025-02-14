@@ -17,6 +17,7 @@ import ClientConfirmation from "./ClientConfirmation";
 import ProjectStageButton from "./ProjectStageButton";
 import MaterialApproves from "./MaterialApproves";
 import WorkerDailyDetails from "./WorkerDailyDetails";
+import { EllipsisVertical } from "lucide-react";
 
 const StageManagement = () => {
   const navigate = useNavigate();
@@ -27,12 +28,12 @@ const StageManagement = () => {
   const [loadingapprovematerial, setLoadingApproveMaterial] = useState({});
   const [isCompleted, setIsCompleted] = useState(false);
   const [error, setError] = useState("");
+  const [successMessage, setSuccessMessage] = useState("");
   const [message, setMessage] = useState("");
   const [alert, setAlert] = useState(null);
   const [activeStage, setActiveStage] = useState(null);
   const [messageUser, setMessageUser] = useState([]);
   const [messageAdmin, setMessageAdmin] = useState([]);
-  const [messageLoader, setMessageLoader] = useState(false);
 
   useEffect(() => {
     const fetchData = () => {
@@ -105,7 +106,6 @@ const StageManagement = () => {
   };
 
   const handleMessageToAdmin = async () => {
-    setMessageLoader(true);
     try {
       const response = await axios.post(
         `${electricaURL}/api/auth/messageAdmin`,
@@ -114,14 +114,18 @@ const StageManagement = () => {
       );
 
       if (response.status === 200) {
-        setMessageLoader(false);
+        setAlert({ type: response.data.type, message: response.data.message });
         setMessage("");
         fetchProject();
       } else {
-        setMessageLoader(false);
+        setAlert({ type: response.data.type, message: response.data.message });
       }
     } catch (err) {
-      setMessageLoader(false);
+      setError("Failed to send message. Please try again.");
+      setAlert({
+        type: err.response?.data?.type,
+        message: err.response?.data?.message,
+      });
     }
   };
 
@@ -177,7 +181,7 @@ const StageManagement = () => {
   }
 
   return (
-    <div className="relative text-white md:p-6 p-0 min-h-screen">
+    <div className="relative top-12 mb-8 text-white md:p-6 p-0 min-h-screen">
       {/* Back Button */}
       <button
         className="text-white hover:scale-110 transition mb-4 p-3 rounded-full bg-gray-700 hover:bg-gray-600 flex items-center justify-center"
@@ -201,7 +205,6 @@ const StageManagement = () => {
           message={message}
           messageAdmin={messageAdmin}
           sendMessageToAdmin={handleMessageToAdmin}
-          messageLoader={messageLoader}
         />
         {isCompleted && (
           <div
@@ -246,6 +249,12 @@ const StageManagement = () => {
                     <span className="font-medium text-cyan-300">
                       {stage.mainMaterial || "N/A"}
                     </span>
+                    {/*  */}
+                    {project.billRequired && (
+                      <span className="text-green-500 text-xl font-bold">
+                        Check your project bill was added by admin and review
+                      </span>
+                    )}
                   </p>
                 </div>
 
@@ -357,6 +366,11 @@ const StageManagement = () => {
             </div>
           ) : null
         )}
+
+        {successMessage && (
+          <p className="text-green-500 text-center mt-4">{successMessage}</p>
+        )}
+        {error && <p className="text-red-500 text-center mt-4">{error}</p>}
       </div>
     </div>
   );

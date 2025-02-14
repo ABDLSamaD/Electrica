@@ -8,6 +8,11 @@ import {
   faBolt,
   faBars,
   faTimes,
+  faHome,
+  faUserCircle,
+  faChartLine,
+  faProjectDiagram,
+  faCogs,
 } from "@fortawesome/free-solid-svg-icons";
 import { Link, NavLink, useNavigate } from "react-router-dom";
 import Alert from "../../OtherComponents/Alert";
@@ -86,10 +91,7 @@ const Topbar = ({ user, electricaURL }) => {
 
   return (
     <header className="relative">
-      <div
-        className="bg-white/5 backdrop-blur-xl rounded-lg fixed top-0 left-0 right-0 z-50"
-        // style={{ background: "hsl(242deg 88.4% 66.3% / 12%)" }}
-      >
+      <div className="bg-white/5 backdrop-blur-xl rounded-lg fixed top-0 left-0 right-0 z-50">
         {logout && <LoaderAll />}
         <div className="h-16 flex items-center justify-between px-4 md:px-6 relative text-white">
           <div className="flex items-center space-x-3">
@@ -109,11 +111,27 @@ const Topbar = ({ user, electricaURL }) => {
               <FontAwesomeIcon icon={showMobileNav ? faTimes : faBars} />
             </button>
             <div className="hidden md:flex space-x-4">
-              <SidebarLink to="/db-au-user" label="Home" end />
-              <SidebarLink to="/db-au-user/db-au-profile" label="Account" />
-              <SidebarLink to="/db-au-user/checkstatus" label="Status" />
-              <SidebarLink to="/db-au-user/project" label="Project" />
-              <SidebarLink to="/db-au-user/db-au-setting" label="Settings" />
+              <SidebarLink to="/db-au-user" label="Home" icon={faHome} end />
+              <SidebarLink
+                to="/db-au-user/db-au-profile"
+                label="Account"
+                icon={faUserCircle}
+              />
+              <SidebarLink
+                to="/db-au-user/checkstatus"
+                label="Status"
+                icon={faChartLine}
+              />
+              <SidebarLink
+                to="/db-au-user/project"
+                label="Project"
+                icon={faProjectDiagram}
+              />
+              <SidebarLink
+                to="/db-au-user/db-au-setting"
+                label="Settings"
+                icon={faCogs}
+              />
             </div>
 
             {/* Mobile Navigation */}
@@ -124,11 +142,12 @@ const Topbar = ({ user, electricaURL }) => {
                   animate={{ opacity: 1, y: 0 }}
                   exit={{ opacity: 0, y: -20 }}
                   transition={{ duration: 0.3, ease: "easeInOut" }}
-                  className="absolute top-16 left-0 right-0 w-full bg-gradient-to-r from-gray-900/80 to-blue-950 backdrop-blur-3xl shadow-lg text-white flex flex-col py-4 px-6 space-y-4 z-50"
+                  className="fixed top-16 -left-4 right-0 w-full bg-gradientgray-950 backdrop-blur-3xl shadow-lg text-white flex flex-col py-4 px-6 space-y-4 z-50"
                 >
                   <SidebarLink
                     to="/db-au-user"
                     label="Home"
+                    icon={faHome}
                     end
                     onClick={toggleMobileNav}
                     className="hover:bg-indigo-700 px-4 py-2 rounded-lg transition text-sm"
@@ -136,24 +155,28 @@ const Topbar = ({ user, electricaURL }) => {
                   <SidebarLink
                     to="/db-au-user/db-au-profile"
                     label="Account"
+                    icon={faUserCircle}
                     onClick={toggleMobileNav}
                     className="hover:bg-indigo-700 px-4 py-2 rounded-lg transition text-sm"
                   />
                   <SidebarLink
                     to="/db-au-user/checkstatus"
                     label="Status"
+                    icon={faChartLine}
                     onClick={toggleMobileNav}
                     className="hover:bg-indigo-700 px-4 py-2 rounded-lg transition text-sm"
                   />
                   <SidebarLink
                     to="/db-au-user/project"
                     label="Project"
+                    icon={faProjectDiagram}
                     onClick={toggleMobileNav}
                     className="hover:bg-indigo-700 px-4 py-2 rounded-lg transition text-sm"
                   />
                   <SidebarLink
                     to="/db-au-user/db-au-setting"
                     label="Settings"
+                    icon={faCogs}
                     onClick={toggleMobileNav}
                     className="hover:bg-indigo-700 px-4 py-2 rounded-lg transition text-sm"
                   />
@@ -190,7 +213,7 @@ const Topbar = ({ user, electricaURL }) => {
                   animate={{ opacity: 1, y: 0 }}
                   exit={{ opacity: 0, y: -10 }}
                   transition={{ duration: 0.3 }}
-                  className="absolute right-0 top-14 bg-gradient-to-br from-gray-900/90 to-gray-950/60 backdrop-blur-2xl shadow-lg rounded-2xl z-50 w-72 border border-white/20"
+                  className="absolute right-0 top-14 bg-gradient-to-br from-gray-900/95 to-gray-950 backdrop-blur-2xl shadow-lg rounded-2xl z-50 w-72 border border-solid border-white/20"
                 >
                   <div className="flex flex-col items-center text-center p-6">
                     <LazyLoadImage
@@ -282,7 +305,7 @@ const Topbar = ({ user, electricaURL }) => {
   );
 };
 
-const SidebarLink = ({ to, label, end = false, onClick, className }) => (
+const SidebarLink = ({ to, label, icon, end = false, onClick, className }) => (
   <NavLink
     to={to}
     end={end}
@@ -293,6 +316,7 @@ const SidebarLink = ({ to, label, end = false, onClick, className }) => (
     }
     onClick={onClick}
   >
+    <FontAwesomeIcon icon={icon} className="mr-2" />
     {label}
   </NavLink>
 );

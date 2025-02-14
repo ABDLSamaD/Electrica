@@ -98,18 +98,22 @@ const HeaderMain = () => {
           </nav>
         </div>
         <div className="md:hidden">
-          <button onClick={toggleNav} className="text-gray-900">
+          <button onClick={toggleNav} className="text-gray-200">
             <FontAwesomeIcon icon={faBars} className="text-2xl" />
           </button>
         </div>
-        {isAuthenticatedUser ? (
-          <button className="button-86 hidden md:block">
-            <Link to="/db-au-user">Dashboard</Link>
-          </button>
-        ) : (
-          <button className="button-86 hidden md:block">
-            <Link to="/signin">Sign In</Link>
-          </button>
+        {!isNavOpen && (
+          <div className="hidden md:block">
+            {isAuthenticatedUser ? (
+              <button className="button-86 hidden md:block">
+                <Link to="/db-au-user">Dashboard</Link>
+              </button>
+            ) : (
+              <button className="button-86 hidden md:block">
+                <Link to="/signin">Sign In</Link>
+              </button>
+            )}
+          </div>
         )}
       </div>
 
