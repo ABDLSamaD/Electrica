@@ -960,6 +960,7 @@ exports.addContractorBill = async (req, res) => {
     project.totalAmount = totalServiceCost;
     project.finalAmount = finalRate;
     project.contractorMessageOfBill = contractorMessage;
+    project.billRequired = true;
 
     // Assign individual costs to project schema
     project.mainLabourCost = mainLabourCost;
@@ -1002,60 +1003,60 @@ exports.addContractorBill = async (req, res) => {
   }
 };
 
-// Controller_1_Project_14: Admin calculates and sends final bill
-exports.calculateFinalBill = async (req, res) => {
-  try {
-    const { projectId } = req.body;
+// // Controller_1_Project_14: Admin calculates and sends final bill
+// exports.calculateFinalBill = async (req, res) => {
+//   try {
+//     const { projectId } = req.body;
 
-    const adminId = req.admin.id;
+//     const adminId = req.admin.id;
 
-    const { user, project, error } = await getProjectAndStage(
-      adminId,
-      projectId
-    );
-    if (error) {
-      return res.status(400).json({ type: "error", message: error }); // Handle error if returned from helper
-    }
+//     const { user, project, error } = await getProjectAndStage(
+//       adminId,
+//       projectId
+//     );
+//     if (error) {
+//       return res.status(400).json({ type: "error", message: error }); // Handle error if returned from helper
+//     }
 
-    // Calculate total material and labor costs
-    let totalMaterialCost = 0;
-    let totalLaborCost = 0;
+//     // Calculate total material and labor costs
+//     let totalMaterialCost = 0;
+//     let totalLaborCost = 0;
 
-    project.stages.forEach((stage) => {
-      stage.updates.forEach((update) => {
-        update.materials.forEach((material) => {
-          totalMaterialCost += material.cost * material.quantity;
-        });
-        update.workers.forEach((worker) => {
-          totalLaborCost += worker.dailyWage;
-        });
-      });
-    });
+//     project.stages.forEach((stage) => {
+//       stage.updates.forEach((update) => {
+//         update.materials.forEach((material) => {
+//           totalMaterialCost += material.cost * material.quantity;
+//         });
+//         update.workers.forEach((worker) => {
+//           totalLaborCost += worker.dailyWage;
+//         });
+//       });
+//     });
 
-    const totalCost = totalMaterialCost + totalLaborCost;
+//     const totalCost = totalMaterialCost + totalLaborCost;
 
-    // Send final bill to client
-    sendEmail(
-      user.email,
-      "Final Bill for Your Project",
-      `Dear ${user.name},\n\n` +
-        `Your project "${project.projectName}" has been completed.\n\n` +
-        `**Total Material Cost:** $${totalMaterialCost}\n` +
-        `**Total Labor Cost:** $${totalLaborCost}\n` +
-        `**Total Cost:** $${totalCost}\n\n` +
-        `Thank you for choosing our services!\n\n` +
-        `Best regards,\n` +
-        `Electrica`
-    );
+//     // Send final bill to client
+//     sendEmail(
+//       user.email,
+//       "Final Bill for Your Project",
+//       `Dear ${user.name},\n\n` +
+//         `Your project "${project.projectName}" has been completed.\n\n` +
+//         `**Total Material Cost:** $${totalMaterialCost}\n` +
+//         `**Total Labor Cost:** $${totalLaborCost}\n` +
+//         `**Total Cost:** $${totalCost}\n\n` +
+//         `Thank you for choosing our services!\n\n` +
+//         `Best regards,\n` +
+//         `Electrica`
+//     );
 
-    res.status(200).json({
-      message: "Final bill calculated and sent successfully.",
-      type: "success",
-    });
-  } catch (error) {
-    res.status(500).json({ type: "error", message: "Internal server error." });
-  }
-};
+//     res.status(200).json({
+//       message: "Final bill calculated and sent successfully.",
+//       type: "success",
+//     });
+//   } catch (error) {
+//     res.status(500).json({ type: "error", message: "Internal server error." });
+//   }
+// };
 
 // Controller_1_Project_15: all stage is complete
 exports.projectComplete = async (req, res) => {

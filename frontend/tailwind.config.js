@@ -47,5 +47,25 @@ export default {
       ],
     },
   },
-  plugins: [],
+  plugins: [
+    function ({ addComponents }) {
+      addComponents({
+        ".modern-input": {
+          width: "100%",
+          padding: "0.75rem 1rem",
+          backgroundColor: "rgba(255, 255, 255, 0.1)",
+          border: "1px solid rgba(255, 255, 255, 0.1)",
+          borderRadius: "0.5rem",
+          color: "white",
+          placeholderColor: "rgba(186, 104, 200, 0.6)",
+          outline: "none",
+          transition: "all 0.3s ease",
+          "&:focus": {
+            borderColor: "#6366F1", // Indigo-500
+            boxShadow: "0 0 8px rgba(99, 102, 241, 0.5)",
+          },
+        },
+      });
+    },
+  ],
 };

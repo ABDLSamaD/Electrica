@@ -237,7 +237,7 @@ const CheckProjects = () => {
                     </div>
 
                     {/* Action Buttons */}
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+                    <div className="grid grid-cols-1 gap-3">
                       <motion.button
                         onClick={() =>
                           navigate(
@@ -258,12 +258,12 @@ const CheckProjects = () => {
                               `/db-au-user/checkstatus/complete/prj/${project._id}`
                             )
                           }
-                          className="flex-1 min-w-[120px] flex items-center justify-center gap-2 bg-gray-600/80 hover:bg-gray-500 px-4 py-2.5 rounded-lg transition-all"
+                          className="flex-1 min-w-[120px] flex items-center justify-center gap-2 bg-gray-950/80 hover:bg-gray-900/90 px-4 py-2.5 rounded-lg transition-all"
                           whileHover={{ scale: 1.02 }}
                           whileTap={{ scale: 0.98 }}
                         >
                           <CheckSquare className="w-4 h-4" />
-                          Complete
+                          check bill&Pay
                         </motion.button>
                       )}
                       <motion.button
