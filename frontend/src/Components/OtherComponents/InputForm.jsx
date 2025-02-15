@@ -50,6 +50,7 @@ const InputForm = ({
           value={credential.email}
           autoComplete="off"
           required
+          disabled={miniLoader}
         />
         <FontAwesomeIcon
           icon={faEnvelope}
@@ -72,6 +73,7 @@ const InputForm = ({
           value={credential.password}
           autoComplete="off"
           required
+          disabled={miniLoader}
         />
         <FontAwesomeIcon
           icon={faLock}
@@ -94,12 +96,21 @@ const InputForm = ({
             name="rememberMe"
             onChange={onChange}
             checked={credential.rememberMe}
+            disabled={miniLoader}
           />
-          <span className="ml-2 text-gray-500">Remember Me</span>
+          <span
+            className={`ml-2 text-gray-500 ${
+              miniLoader ? "pointer-events-none opacity-60" : ""
+            }`}
+          >
+            Remember Me
+          </span>
         </label>
         <Link
           to={passLink}
-          className="text-cyan-600 hover:underline font-semibold"
+          className={`text-cyan-600 hover:underline font-semibold ${
+            miniLoader ? "pointer-events-none opacity-60" : ""
+          }`}
         >
           Forgot password?
         </Link>

@@ -881,8 +881,15 @@ exports.calculateStageCost = async (req, res) => {
 // Controller_1_Project_13: This controller allows the admin or contractor to add a custom bill at the project completion.
 exports.addContractorBill = async (req, res) => {
   try {
-    const { projectId, contractorBill, contractorMessage, discountRequest } =
+    const { projectId, contractorDetails, contractorMessage, discountRequest } =
       req.body;
+
+    // Validate input
+    if (!projectId || !contractorDetails || !Array.isArray(contractorDetails)) {
+      return res
+        .status(400)
+        .json({ type: "error", message: "Invalid data provided" });
+    }
 
     const adminId = req.admin.id;
 
@@ -890,56 +897,108 @@ exports.addContractorBill = async (req, res) => {
       adminId,
       projectId
     );
-
     if (error) {
       return res.status(400).json({ type: "error", message: error }); // Handle error if returned from helper
     }
 
-    let discount = 0;
-    const currentDate = new Date();
+    // Calculate costs dynamically
+    let totalServiceCost = 0;
+    // Initialize individual cost fields
+    let mainLabourCost = 0;
+    let acPoints = 0;
+    let currentPoints = 0;
+    let panelBoardType = "Single-Phase";
+    let lightningMeters = 0;
+    let fanInstallation = 0;
+    let earthingCost = 0;
+    // calculate billing
+    let updatedBilling = contractorDetails.map((item) => {
+      let cost = 0;
 
-    // Check if discount is requested
-    if (discountRequest) {
-      const lastDiscountDate = project.discountAppliedDate || null;
-
-      if (
-        !lastDiscountDate ||
-        currentDate - new Date(lastDiscountDate) >= ONE_DAY_MS
-      ) {
-        // Apply 8% discount if no discount applied in the last 24 hours
-        discount = contractorBill * 0.08; // 8% discount
-        project.contractorBillDiscount = discount;
-        project.discountAppliedDate = currentDate; // Save discount application date
-      } else {
-        return res.status(400).json({
-          type: "warning",
-          message: "Discount already applied within the last 24 hours.",
-        });
+      if (item.type === "Main labourcost") {
+        cost = (item.feet || 0) * 100;
+        mainLabourCost += cost; // Store in mainLabourCost
+      } else if (item.type === "AC Point") {
+        cost = (item.quantity || 0) * 2000;
+        acPoints += cost;
+      } else if (item.type === "Current Point") {
+        cost = (item.quantity || 0) * 350;
+        currentPoints += cost;
+      } else if (item.type === "Panel Board") {
+        cost = item.option === "Three-Phase" ? 9000 : 4000;
+        panelBoardType = item.option;
+      } else if (item.type === "Lightning") {
+        cost = (item.feet || 0) * 20;
+        lightningMeters += cost;
+      } else if (item.type === "Fan Installation") {
+        cost = (item.quantity || 0) * 400;
+        fanInstallation += cost;
+      } else if (item.type === "Earthing") {
+        cost = item.cost || 0;
+        earthingCost += cost;
       }
-    } else {
-      project.contractorBillDiscount = 0; // No discount
+
+      totalServiceCost += cost;
+      return { ...item, calculatedCost: cost };
+    });
+
+    let finalAmount = totalServiceCost;
+    const DISCOUNT_PERCENTAGE = 8;
+    // Apply discount if provided
+    if (discountRequest) {
+      let discountAmount = (totalServiceCost * DISCOUNT_PERCENTAGE) / 100;
+      finalAmount = totalServiceCost - discountAmount;
+
+      // Save discount details in the database
+      project.discountRate = `${discountAmount}%`;
+      project.discountApplied = true;
     }
 
-    // Update contractor bill and message
-    project.contractorBill = contractorBill - discount;
-    project.billRequired = true;
-    project.contractorMessageOfBill =
-      contractorMessage || "No message provided";
+    // Update project billing details
+    let finalRate = finalAmount - project.totalCost;
+    project.contractorBillDetails = updatedBilling;
+    project.totalAmount = totalServiceCost;
+    project.finalAmount = finalRate;
+    project.contractorMessageOfBill = contractorMessage;
 
-    sendEmail(
-      user.email,
-      "Contractor Bill",
-      `Dear ${user.name} the ${contractorMessage} and total bill is ${contractorBill}`
-    );
+    // Assign individual costs to project schema
+    project.mainLabourCost = mainLabourCost;
+    project.acPoints = acPoints;
+    project.currentPoints = currentPoints;
+    project.panelBoardType = panelBoardType;
+    project.lightningMeters = lightningMeters;
+    project.fanInstallation = fanInstallation;
+    project.earthingCost = earthingCost;
+
+    // Ensure Mongoose detects changes before saving
+    project.markModified("contractorBillDetails");
+    // Ensure Mongoose detects changes
+    project.markModified("discountRate");
+    project.markModified("discountApplied");
 
     await project.save();
 
+    sendEmail(
+      user.email,
+      "Final Bill",
+      `Contractor bill details: ${JSON.stringify(
+        project.contractorBillDetails,
+        null,
+        2
+      )} 
+        \nTotal Amount: ${project.totalAmount} 
+        \nDiscount: ${project.discountRate}% 
+        \FinalAmount: ${project.finalAmount}% 
+        \nFinal Amount with stage cost minus is: ${finalRate}`
+    );
+
     res.status(200).json({
-      message: "Contractor bill added successfully",
       type: "success",
+      message: "Contractor bill added successfull",
     });
   } catch (error) {
-    res.status(500).json({ type: "error", message: "Internal server error" });
+    console.error(error.message);
+    res.status(500).json({ type: "error", message: "Internal server error." });
   }
 };
 

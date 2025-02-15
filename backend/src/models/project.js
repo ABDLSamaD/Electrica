@@ -79,19 +79,33 @@ const projectSchema = new mongoose.Schema({
     },
   ],
   totalCost: { type: Number, default: 0 }, // Running total of project costs
-  contractorMessageOfBill: { type: String, default: "" },
+  // Billing Details
+  mainLabourCost: { type: Number, default: 0 }, // Main labour cost (each by meaurement of meter)
+  acPoints: { type: Number, default: 0 }, // AC Point (₹2000 each)
+  currentPoints: { type: Number, default: 0 }, // Current Point (₹350 each)
+  panelBoardType: {
+    type: String,
+    enum: ["Three-Phase", "Single-Phase"],
+    default: "Single-Phase",
+  },
+  lightningMeters: { type: Number, default: 0 }, // ₹10 per meter for lighting
+  fanInstallation: { type: Number, default: 0 }, // ₹400 per fan
+  earthingCost: { type: Number, default: 0 }, // Custom cost for earthing
+  // Auto-Generated Total
+  totalAmount: { type: Number, default: 0 },
+  discountApplied: { type: Boolean, default: false },
+  discountRate: { type: String, default: "" },
+  finalAmount: { type: Number, default: 0 },
+  contractorMessageOfBill: String,
   isPaid: { type: Boolean, default: false },
-  contractorBill: { type: Number, default: 0 }, // For customized billing at the end
   billRequired: { type: Boolean, default: false },
-  contractorBillDiscount: { type: Number, default: 0 }, // For customized billing at the end
-  discountAppliedDate: { type: Date, default: null },
 
   // Payment details
   payment: {
     method: {
       type: String,
       enum: ["cash_on_hand", "online_payment"],
-      required: true,
+      // required: true,
     },
     cashOnHandDetails: {
       payDate: { type: Date }, // Required if method is "cash_on_hand"

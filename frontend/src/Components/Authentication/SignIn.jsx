@@ -104,7 +104,9 @@ const SignIn = () => {
             Not a member?
             <Link
               to="/signup"
-              className="text-cyan-600 ml-1 font-bold text-sm hover:underline"
+              className={`text-cyan-600 ml-1 font-bold text-sm hover:underline ${
+                miniLoader ? "pointer-events-none opacity-60" : ""
+              }`}
             >
               Sign up
             </Link>
