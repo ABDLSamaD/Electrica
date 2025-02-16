@@ -1,12 +1,18 @@
 const bcrypt = require("bcryptjs");
 const User = require("../models/user");
 const jwt = require("jsonwebtoken");
-const Project = require("../models/project");
+const crypto = require("crypto");
 const { sendOtpEmail } = require("../utils/otpService");
 const { sendForgotOtpEmail } = require("../utils/OtpForgot");
 const { loginMail } = require("../utils/loginmail");
 const { sendEmail } = require("../utils/mail");
+const Project = require("../models/project");
 require("dotenv").config();
+
+const generateOTP = () => {
+  const otp = (crypto.randomBytes(3).readUIntBE(0, 3) % 900000) + 100000;
+  return otp.toString(); // Generates a 6-digit OTP
+};
 
 exports.signUp = async (req, res) => {
   try {
@@ -25,26 +31,36 @@ exports.signUp = async (req, res) => {
       name,
       email,
       password: hashedPassword,
+      isFirstTime: true,
     });
 
-    if (!user)
+    if (!user) {
       return res
         .status(404)
         .json({ type: "error", message: "Something Occured!" });
+    }
 
-    await sendOtpEmail(user);
+    const otp = generateOTP();
+    const otpExpires = Date.now() + 10 * 60 * 1000;
+    user.otp = otp;
+    user.otpExpires = otpExpires;
+    user.otpAttempts = 0;
+
+    sendEmail(
+      user.email,
+      "OTP VERIFICATION",
+      `${user.name} Your OTP code is (${otp}). It is valid for 10 minutes.`
+    );
 
     const data = { user: { email } };
-    const token = jwt.sign(data, process.env.JWT_SECRET, { expiresIn: "1d" });
+    const token = jwt.sign(data, process.env.JWT_SECRET, { expiresIn: "1h" });
     user.token = token;
 
     await user.save();
 
     res.status(200).json({
       type: "success",
-      token,
-      message:
-        "Account Created Successfully. Please verify with OTP sent to your email.",
+      message: "Please verify with OTP sent to your email.",
     });
   } catch (error) {
     res.status(500).json({ type: "error", messsage: "Internal server error" });
@@ -154,8 +170,9 @@ exports.login = async (req, res) => {
     const users = await User.findOne({ email });
 
     if (!users.isVerified) {
-      return res.status(404).json({ type: "error", message: "Verified first" });
+      return res.status(400).json({ type: "error", message: "Verify first" });
     }
+
     if (!users) {
       return res
         .status(404)
@@ -224,7 +241,7 @@ exports.login = async (req, res) => {
     res.cookie("auth_token", token, {
       httpOnly: true, // Prevent access from JavaScript
       secure: process.env.NODE_ENV === "production", // Use secure cookies in production
-      sameSite: "None",
+      sameSite: process.env.NODE_ENV === "production" ? "None" : "Strict",
       maxAge: sessionMaxAge,
     });
 
@@ -247,13 +264,25 @@ exports.login = async (req, res) => {
 };
 
 // check auth user
-exports.checkAuth = (req, res) => {
+exports.checkAuth = async (req, res) => {
   if (req.session.user) {
-    return res
-      .status(200)
-      .json({ isAuthenticated: true, user: req.session.user, role: "user" });
+    return res.status(200).json({
+      isAuthenticated: true,
+      user: req.session.user,
+      role: "user",
+    });
   } else {
     return res.status(401).json({ isAuthenticated: false });
+  }
+};
+
+exports.updateFirstTime = async (req, res) => {
+  try {
+    const userId = req.user.id;
+    await User.findByIdAndUpdate(userId, { isFirstTime: false });
+    res.json({ message: "User updated successfully" });
+  } catch (err) {
+    res.status(500).json({ message: err.message });
   }
 };
 
@@ -276,16 +305,8 @@ exports.logout = async (req, res) => {
       }
 
       // Optionally, clear the cookie
-      res.clearCookie("auth_token", {
-        httpOnly: true,
-        secure: process.env.NODE_ENV === "production",
-        sameSite: process.env.NODE_ENV === "production" ? "None" : "Strict",
-      }); // This is the default cookie name for express-session
-      res.clearCookie("electrica", {
-        httpOnly: true,
-        secure: process.env.NODE_ENV === "production",
-        sameSite: process.env.NODE_ENV === "production" ? "None" : "Strict",
-      }); // This is the default cookie name for express-session
+      res.clearCookie("auth_token"); // This is the default cookie name for express-session
+      res.clearCookie("electrica"); // This is the default cookie name for express-session
 
       // Return a success message
       res
@@ -325,42 +346,6 @@ exports.setLogoutTime = async (req, res) => {
 
 // forgot_Functionallity
 exports.forgotPassword = async (req, res) => {
-  const { email } = req.body;
-  try {
-    const user = await User.findOne({ email });
-    if (!user) {
-      return res.status(404).json({ type: "error", message: "User not found" });
-    }
-
-    const otp = Math.floor(100000 + Math.random() * 900000).toString();
-
-    const data = {
-      user: {
-        id: user.$isDeleted,
-      },
-    };
-    const resetToken = jwt.sign(data, process.env.JWT_SECRET, {
-      expiresIn: "10m",
-    });
-
-    user.otp = otp;
-    user.otpExpires = Date.now() + 10 * 60 * 1000; // 10 minutes validity
-    user.resetToken = resetToken;
-    user.resetTokenExpires = Date.now() + 10 * 60 * 1000;
-
-    await sendForgotOtpEmail(user.email, otp);
-    await user.save();
-
-    res.status(200).json({
-      type: "success",
-      message: "OTP has been sent to your email.",
-      resetToken,
-    });
-  } catch (error) {
-    res.status(500).json({ type: "error", message: "Internal server error" });
-  }
-};
-exports.resendForgotOtp = async (req, res) => {
   const { email } = req.body;
   try {
     const user = await User.findOne({ email });
@@ -501,18 +486,17 @@ exports.resetPassword = async (req, res) => {
 exports.getUserDetails = async (req, res) => {
   try {
     let userId = req.user.id;
-    const user = await User.findById(userId)
-      .select("-password")
-      .select("-resetToken")
-      .select("-resetTokenExpires")
-      .select("-otp")
-      .select("-otpAttempts")
-      .select("-otpExpires");
-    if (!user)
+    const user = await User.findById(userId).select(
+      "-password -resetToken -resetTokenExpires -otp -otpAttempts -otpExpires"
+    );
+
+    if (!user) {
       return res
         .status(401)
-        .json({ type: "error", message: "user not found!" });
-    res.json(user);
+        .json({ type: "error", message: "User not found!" });
+    }
+
+    res.json({ ...user.toObject(), isFirstTime: user.isFirstTime });
   } catch (error) {
     res.status(500).json({ type: "error", message: "Internal server error" });
   }

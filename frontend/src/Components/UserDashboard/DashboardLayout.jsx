@@ -4,18 +4,14 @@ import Topbar from "./HeadersDashboard/Topbar";
 // import { Outlet, useNavigate } from "react-router-dom";
 import { Outlet } from "react-router-dom";
 import axios from "axios";
+import FirstTimeInstruction from "../Pages/FirstTimeInstruction";
 
 const DashboardLayout = () => {
   const [user, setUser] = useState({});
   const [projects, setProjects] = useState([]);
   const [isSidebarOpen, setIsSidebarOpen] = useState(true);
+  const [iseFirstTimeUser, setIsFirstTimeUser] = useState(null);
   const electricaURL = import.meta.env.VITE_ELECTRICA_API_URL;
-
-  // setAlert({
-  //   type: err.response?.data?.type,
-  //   message: err.response?.data?.message,
-  // });
-  // setAlert({ type: response.data.type, message: response.data.message });
   const toggleSidebar = () => {
     setIsSidebarOpen(!isSidebarOpen);
   };
@@ -26,9 +22,9 @@ const DashboardLayout = () => {
       const response = await axios.get(`${electricaURL}/api/auth/user-info`, {
         withCredentials: true,
       });
-      const result = await response.data;
       if (response.status === 200) {
-        setUser(result);
+        setUser(response.data);
+        setIsFirstTimeUser(response.data.isFirstTime);
       } else {
         setUser({});
       }
@@ -53,41 +49,66 @@ const DashboardLayout = () => {
     }
   };
   useEffect(() => {
-    setTimeout(() => {
-      fetchUser();
-      fetchProject();
-    }, 2000);
+    fetchUser();
+    fetchProject();
   }, []);
 
+  // Function to update isFirstTime in backend and frontend state
+  const handleCompleteOnboarding = async () => {
+    try {
+      await axios.post(
+        `${electricaURL}/api/auth/updateFirstTime`,
+        {},
+        {
+          withCredentials: true,
+        }
+      );
+      setIsFirstTimeUser(false); // Hide onboarding after completion
+    } catch (error) {
+      console.error("Error updating first-time status:", error);
+    }
+  };
+
+  // **Prevent rendering until user info is loaded**
+  if (iseFirstTimeUser === null) {
+    return null; // Prevent any UI flickering until isFirstTimeUser is determined
+  }
   return (
     <div className="relative">
-      {/* topbar */}
-      <div className="sticky top-0 z-40">
-        <Topbar
-          toggleSidebar={toggleSidebar}
-          user={user}
-          electricaURL={electricaURL}
-        />
-      </div>
-      <motion.div
-        key="main-content"
-        initial={{ opacity: 0 }}
-        animate={{ opacity: 1 }}
-        exit={{ opacity: 0 }}
-        transition={{ duration: 0.3 }}
-      >
-        <div className="relative top-7">
-          <Outlet
-            context={{
-              user,
-              fetchUser,
-              projects,
-              fetchProject,
-              electricaURL,
-            }}
-          />
-        </div>
-      </motion.div>
+      {/* Show FirstTimeInstruction only if it's the user's first time */}
+      {iseFirstTimeUser ? (
+        <FirstTimeInstruction handleSkip={handleCompleteOnboarding} />
+      ) : (
+        <>
+          {/* Topbar */}
+          <div className="sticky top-0 z-40">
+            <Topbar
+              toggleSidebar={toggleSidebar}
+              user={user}
+              electricaURL={electricaURL}
+            />
+          </div>
+          <motion.div
+            key="main-content"
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            transition={{ duration: 0.3 }}
+          >
+            <div className="relative top-7">
+              <Outlet
+                context={{
+                  user,
+                  fetchUser,
+                  projects,
+                  fetchProject,
+                  electricaURL,
+                }}
+              />
+            </div>
+          </motion.div>
+        </>
+      )}
     </div>
   );
 };

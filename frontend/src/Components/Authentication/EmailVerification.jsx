@@ -48,7 +48,7 @@ const EmailVerification = () => {
           message: response.data.message,
         });
 
-        setTimeout(() => navigate("/signin"), 1200);
+        setTimeout(() => navigate("/db-au-user"), 1200);
       } else {
         setLoading(false);
         setAlert({

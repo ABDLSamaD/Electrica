@@ -36,9 +36,6 @@ import Setting from "./UserDashboard/Setting/Setting";
 const StageManagement = React.lazy(() =>
   import("./UserDashboard/Project/Userprojectreview")
 );
-const NextProcess = React.lazy(() =>
-  import("./UserDashboard/Project/CompletionProject/NextProcess")
-);
 // User Dashboard End
 
 // Private Routes Start
@@ -51,6 +48,7 @@ import UserPublicRoute from "./Private/UserPublicRoute";
 // Admin Dashboard Start
 
 const Admin = React.lazy(() => import("./Admin/Admin"));
+
 import AddProjectForm from "./UserDashboard/Project/AddProjectForm";
 import CheckProjects from "./UserDashboard/Project/CheckProjects";
 import ProjectDoc from "./UserDashboard/Project/ProjectDocumentation/ProjectDoc";
@@ -66,6 +64,7 @@ const AddMaterial = React.lazy(() =>
 import NotifyClientModal from "./Admin/Projectsteps/Notifycient";
 import LoaderAll from "./OtherComponents/LoaderAll";
 import AdminSettings from "./Admin/AdminSettings";
+import NextProcess from "./UserDashboard/Project/CompletionProject/NextProcess";
 import CreatingBill from "./Admin/Projectsteps/BillingSystem/CreatingBill";
 
 // Admin Dashboard End

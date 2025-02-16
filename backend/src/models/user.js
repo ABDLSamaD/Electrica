@@ -21,6 +21,7 @@ const userSchema = new mongoose.Schema(
       default: "user",
     },
     isActive: { type: Boolean, default: true },
+    isFirstTime: { type: Boolean, default: true },
     profileImg: {
       type: String,
       default:
