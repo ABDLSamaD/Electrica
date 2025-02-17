@@ -20,6 +20,7 @@ import {
   ArrowRight,
 } from "lucide-react";
 import LoaderAll from "../../../OtherComponents/LoaderAll";
+import BillBreakdown from "./BillBreakDown";
 
 const NextProcess = () => {
   const { projects } = useOutletContext();
@@ -126,118 +127,41 @@ const NextProcess = () => {
               <p className="text-base sm:text-lg font-medium text-gray-100 flex items-center justify-between sm:justify-start gap-2">
                 <span className="text-gray-200">Total Stage Cost:</span>
                 <span className="text-green-400 flex items-center">
-                  Rs- {project.totalCost.toLocaleString()}
+                  Rs: {project.totalCost.toLocaleString()}
                 </span>
               </p>
             </div>
           </div>
 
           {/* Bill Breakdown Table */}
-          <div className="mt-6 overflow-x-auto rounded-xl bg-gray-900/50">
-            <table className="w-full text-sm text-gray-300">
-              <thead>
-                <tr className="text-left border-b border-gray-700 bg-gray-800/80">
-                  <th className="py-4 px-4 font-semibold text-gray-200">
-                    Service
-                  </th>
-                  <th className="py-4 px-4 font-semibold text-gray-200 text-right">
-                    Quantity
-                  </th>
-                  <th className="py-4 px-4 font-semibold text-gray-200 text-right">
-                    Rate
-                  </th>
-                  <th className="py-4 px-4 font-semibold text-gray-200 text-right">
-                    Total
-                  </th>
-                </tr>
-              </thead>
-              <tbody className="divide-y divide-gray-800">
-                <TableRow
-                  icon={<Hammer className="w-4 h-4" />}
-                  service="Main Labour"
-                  quantity={`${project.mainLabourCost} meters`}
-                  rate="Rs- 100/meter"
-                  total={project.mainLabourCost * 100}
-                />
-                <TableRow
-                  icon={<Zap className="w-4 h-4" />}
-                  service="AC Points"
-                  quantity={project.acPoints}
-                  rate="Rs- 2,000/point"
-                  total={project.acPoints * 2000}
-                />
-                <TableRow
-                  icon={<Plug className="w-4 h-4" />}
-                  service="Current Points"
-                  quantity={project.currentPoints}
-                  rate="Rs- 350/point"
-                  total={project.currentPoints * 350}
-                />
-                <TableRow
-                  icon={<Box className="w-4 h-4" />}
-                  service="Panel Board"
-                  quantity={project.panelBoardType}
-                  rate={
-                    project.panelBoardType === "Three-Phase"
-                      ? "Rs- 9,000"
-                      : "Rs- 4,000"
-                  }
-                  total={project.panelBoardType === "Three-Phase" ? 9000 : 4000}
-                />
-                <TableRow
-                  icon={<Lightbulb className="w-4 h-4" />}
-                  service="Lightning Meters"
-                  quantity={`${project.lightningMeters} meters`}
-                  rate="Rs- 20/meter"
-                  total={project.lightningMeters * 20}
-                />
-                <TableRow
-                  icon={<Fan className="w-4 h-4" />}
-                  service="Fan Installation"
-                  quantity={project.fanInstallation}
-                  rate="Rs- 400/unit"
-                  total={project.fanInstallation * 400}
-                />
-                <tr className="bg-gray-800/40">
-                  <td className="px-4 py-4 font-semibold text-gray-200">
-                    Earthing Cost
-                  </td>
-                  <td className="px-4 py-4 text-right">-</td>
-                  <td className="px-4 py-4 text-right">-</td>
-                  <td className="px-4 py-4 text-right text-green-400 font-medium">
-                    Rs- {project.earthingCost.toLocaleString()}
-                  </td>
-                </tr>
-              </tbody>
-            </table>
-          </div>
+          <BillBreakdown project={project} />
 
           {/* Discount & Final Amount */}
           <div className="mt-8 grid grid-cols-1 sm:grid-cols-2 gap-4 bg-gray-800/60 p-4 sm:p-6 rounded-xl">
             <div className="space-y-2">
               <p className="text-gray-400">Stage Cost Subtotal</p>
               <p className="text-xl sm:text-2xl font-semibold text-gray-100">
-                Rs- {project.totalCost.toLocaleString()}
+                Rs: {project.totalCost.toLocaleString()}
               </p>
             </div>
             <div className="space-y-2">
               <p className="text-gray-400">Discount</p>
               <p className="text-lg sm:text-xl font-semibold text-red-400">
                 {project.discountApplied
-                  ? `Rs- ${project.discountRate.toLocaleString()}`
+                  ? `Rs: ${project.discountRate.toLocaleString()}`
                   : "-"}
               </p>
             </div>
             <div className="col-span-1 sm:col-span-2 pt-4 border-t border-gray-700">
               <p className="text-gray-400">Total Amount</p>
               <p className="text-2xl sm:text-3xl font-bold text-green-400">
-                Rs- {project.totalAmount.toLocaleString()}
+                Rs: {project.totalAmount.toLocaleString()}
               </p>
             </div>
             <div className="col-span-1 sm:col-span-2 pt-4 border-t border-gray-700">
               <p className="text-gray-400">Final Amount</p>
               <p className="text-2xl sm:text-3xl font-bold text-green-400">
-                Rs- {project.finalAmount.toLocaleString()}
+                Rs: {project.finalAmount.toLocaleString()}
               </p>
             </div>
           </div>
@@ -348,14 +272,14 @@ const NextProcess = () => {
               <div className="flex justify-between items-center">
                 <span className="text-gray-400">Subtotal:</span>
                 <span className="text-gray-200">
-                  Rs- {project.totalCost.toLocaleString()}
+                  Rs: {project.totalCost.toLocaleString()}
                 </span>
               </div>
               <div className="flex justify-between items-center">
                 <span className="text-gray-400">Discount:</span>
                 <span className="text-red-400">
                   {project.discountApplied
-                    ? `- Rs- ${project.discountRate.toLocaleString()}`
+                    ? `- Rs: ${project.discountRate.toLocaleString()}`
                     : "-"}
                 </span>
               </div>
@@ -364,7 +288,7 @@ const NextProcess = () => {
                   Total Payable:
                 </span>
                 <span className="text-xl font-bold text-green-400">
-                  Rs- {project.finalAmount.toLocaleString()}
+                  Rs: {project.finalAmount.toLocaleString()}
                 </span>
               </div>
             </div>
@@ -416,7 +340,7 @@ const TableRow = ({ icon, service, quantity, rate, total }) => (
     <td className="px-4 py-4 text-right text-gray-300">{quantity}</td>
     <td className="px-4 py-4 text-right text-gray-300">{rate}</td>
     <td className="px-4 py-4 text-right text-green-400 font-medium">
-      Rs- {total.toLocaleString()}
+      Rs: {total.toLocaleString()}
     </td>
   </tr>
 );
