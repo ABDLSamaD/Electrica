@@ -46,11 +46,11 @@ const UserProfile = () => {
         setAlert({ type: response.data.type, message: response.data.message });
       }
     } catch (error) {
+      console.error("Error removing user:", error);
       setAlert({
         type: error.response?.data?.type,
         message: error.response?.data?.message,
       });
-      console.error("Error removing user:", error);
     }
   };
 
