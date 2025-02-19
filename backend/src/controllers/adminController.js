@@ -429,7 +429,6 @@ exports.removeUser = async (req, res) => {
       res.status(200).json({ type: "info", message: "User not removed" });
     }
   } catch (error) {
-    console.log(error.message);
     res.status(500).json({ type: "error", message: error.message });
   }
 };

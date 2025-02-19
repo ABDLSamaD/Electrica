@@ -13,6 +13,13 @@ const adminSchema = new mongoose.Schema({
   resetToken: String,
   logoutTime: { type: Number, default: 86400000 },
   token: String,
+  removedUsers: [
+    {
+      name: { type: String },
+      email: { type: String },
+      removedAt: { type: Date, default: Date.now },
+    },
+  ],
   createdAt: { type: Date, default: Date.now },
 });
 
