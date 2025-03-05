@@ -1,10 +1,12 @@
 import React, { useState } from "react";
+import Cookies from "js-cookie";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
 import GlobalVerificationEmail from "../OtherComponents/GlobalVerificationEmail";
 
 const EmailVerification = () => {
   const navigate = useNavigate();
+  const cookieEmail = Cookies.get("signup_email");
 
   // State management
   const [otp, setOtp] = useState(["", "", "", "", "", ""]);
@@ -35,35 +37,75 @@ const EmailVerification = () => {
     const otpString = otp.join("");
 
     try {
-      const response = await axios.post(`${electricaURL}/api/auth/verify-otp`, {
-        otp: otpString,
-        email: localStorage.getItem("us-em-temporary"),
-      });
+      const response = await axios.post(
+        `${electricaURL}/api/auth/verify-otp`,
+        {
+          otp: otpString,
+          email: cookieEmail,
+        },
+        { withCredentials: true }
+      );
 
-      if (response.status === 200) {
-        localStorage.removeItem("us-em-temporary");
-        localStorage.removeItem("tkn-at-udb");
+      if (response.status === 201) {
+        Cookies.remove("signup_email");
         setAlert({
           type: response.data.type,
           message: response.data.message,
         });
 
-        setTimeout(() => navigate("/db-au-user"), 1200);
+        setTimeout(() => navigate(response.data.redirectUrl), 1300);
       } else {
-        setLoading(false);
         setAlert({
           type: response.data.type,
           message: response.data.message,
         });
       }
     } catch (err) {
-      setLoading(false);
       setAlert({
         type: err.response?.data?.type,
         message: err.response?.data?.message,
       });
+    } finally {
+      setLoading(false);
     }
   };
+  // const handleEmailChange = async (e) => {
+  //   e.preventDefault();
+  //   setLoading(true);
+
+  //   try {
+  //     const response = await axios.post(
+  //       `${electricaURL}/api/auth/change-email`,
+  //       {
+  //         email: localStorage.getItem("us-em-temporary"),
+  //         newEmail,
+  //       }
+  //     );
+
+  //     if (response.status === 201) {
+  //       localStorage.removeItem("us-em-temporary");
+  //       localStorage.removeItem("tkn-at-udb");
+  //       setAlert({
+  //         type: response.data.type,
+  //         message: response.data.message,
+  //       });
+
+  //       setTimeout(() => navigate(response.data.redirectUrl), 1300);
+  //     } else {
+  //       setAlert({
+  //         type: response.data.type,
+  //         message: response.data.message,
+  //       });
+  //     }
+  //   } catch (err) {
+  //     setAlert({
+  //       type: err.response?.data?.type,
+  //       message: err.response?.data?.message,
+  //     });
+  //   } finally {
+  //     setLoading(false);
+  //   }
+  // };
 
   const handleResendOtp = async () => {
     setLoading(true);
@@ -79,20 +121,19 @@ const EmailVerification = () => {
           type: response.data.type,
           message: response.data.message,
         });
-        setLoading(false);
       } else {
-        setLoading(false);
         setAlert({
           type: response.data.type,
           message: response.data.message,
         });
       }
     } catch (err) {
-      setLoading(false);
       setAlert({
         type: err.response?.data?.type,
         message: err.response?.data?.message,
       });
+    } finally {
+      setLoading(false);
     }
   };
 

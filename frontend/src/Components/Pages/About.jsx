@@ -1,6 +1,15 @@
 import React, { useEffect } from "react";
 import { motion } from "framer-motion";
-import { FaLightbulb, FaUsers, FaCogs, FaRocket } from "react-icons/fa";
+import {
+  FaLightbulb,
+  FaUsers,
+  FaCogs,
+  FaRocket,
+  FaLeaf,
+  FaSolarPanel,
+  FaChartLine,
+  FaHandshake,
+} from "react-icons/fa";
 import { Link } from "react-router-dom";
 import HeaderMain from "./HeaderMain";
 import AboutImage from "../../assets/cartoon-electrician-working-meter-box-young-man-wearing-hard-hat-goggles-electrical-wiring-339592162.webp";
@@ -16,17 +25,17 @@ const About = () => {
       opacity: 1,
       transition: {
         when: "beforeChildren",
-        staggerChildren: 0.2,
+        staggerChildren: 0.3,
       },
     },
   };
 
   const itemVariants = {
-    hidden: { x: "100%", opacity: 0 },
+    hidden: { y: 20, opacity: 0 },
     visible: {
-      x: 0,
+      y: 0,
       opacity: 1,
-      transition: { type: "spring", stiffness: 100 },
+      transition: { type: "spring", stiffness: 120, damping: 10 },
     },
   };
 
@@ -34,146 +43,180 @@ const About = () => {
     <>
       <HeaderMain />
       <motion.section
-        className="relative top-24 flex flex-col items-center justify-center text-white py-16 overflow-hidden"
+        className="relative top-24 flex flex-col items-center justify-center text-white py-20 overflow-hidden bg-gradient-to-br from-gray-900 via-gray-800 to-gray-900"
         initial="hidden"
         animate="visible"
         variants={containerVariants}
       >
-        <motion.h1
-          className="text-5xl md:text-6xl font-bold text-center mb-12"
+        {/* Hero Section */}
+        <motion.div
+          className="w-full max-w-7xl px-6 md:px-12 flex flex-col md:flex-row items-center justify-between gap-12 mb-20"
           variants={itemVariants}
         >
-          About <span className="text-yellow-200">Electrica</span>
-        </motion.h1>
+          {/* Text Content */}
+          <div className="w-full md:w-1/2 space-y-8">
+            <motion.h1
+              className="text-5xl md:text-6xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-yellow-400 to-cyan-400"
+              variants={itemVariants}
+            >
+              About <span className="text-white">Electrica</span>
+            </motion.h1>
+            <motion.p
+              className="text-lg md:text-xl text-gray-300 leading-relaxed"
+              variants={itemVariants}
+            >
+              At Electrica, we are dedicated to revolutionizing the electrical
+              industry by integrating cutting-edge technology, renewable energy,
+              and sustainable practices. Our mission is to provide innovative,
+              efficient, and safe electrical solutions for homes and businesses,
+              ensuring a brighter and greener future for all.
+            </motion.p>
+            <motion.div variants={itemVariants}>
+              <Link
+                className="inline-block px-8 py-3 bg-gradient-to-r from-yellow-400 to-cyan-400 rounded-full text-xl font-semibold hover:from-yellow-500 hover:to-cyan-500 transform transition-all hover:scale-105"
+                to="/signin"
+              >
+                Get Started Now
+              </Link>
+            </motion.div>
+          </div>
 
-        <motion.div className="w-full md:w-3/4 mb-16" variants={itemVariants}>
-          <img
-            src={AboutImage}
-            alt="Electrica's mission visualization"
-            className="w-full h-auto rounded-3xl shadow-lg"
-          />
+          {/* Image */}
+          <motion.div className="w-full md:w-1/2" variants={itemVariants}>
+            <img
+              src={AboutImage}
+              alt="Electrica's mission visualization"
+              className="w-full h-auto rounded-3xl shadow-2xl border-2 border-opacity-20 border-white"
+            />
+          </motion.div>
         </motion.div>
 
-        <motion.div className="container max-w-7xl px-6 md:px-12">
-          {/* Mission Section */}
-          <motion.div
-            className="flex flex-col md:flex-row justify-between items-center space-y-8 md:space-y-0 mb-16"
-            variants={itemVariants}
-          >
-            <div className="w-full p-6 bg-black bg-opacity-50 rounded-3xl transform transition-all hover:scale-105 hover:shadow-2xl">
-              <h2 className="text-3xl font-semibold mb-4">Our Mission</h2>
-              <p className="text-lg leading-relaxed">
-                At Electrica, we strive to deliver the most innovative,
-                efficient, and safe electrical solutions for homes and
-                businesses. Our team is dedicated to pushing the boundaries of
-                technology while ensuring the highest standards of service. We
-                aim to revolutionize the electrical industry by integrating
-                smart technologies, renewable energy sources, and sustainable
-                practices into every project we undertake.
-              </p>
-            </div>
-          </motion.div>
+        {/* Features Section */}
+        <motion.div
+          className="w-full max-w-7xl px-6 md:px-12 mb-20"
+          variants={itemVariants}
+        >
+          <h2 className="text-3xl md:text-4xl font-bold text-center mb-12 text-white">
+            Why Choose Electrica?
+          </h2>
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
+            {[
+              {
+                icon: <FaLightbulb className="text-6xl text-white mx-auto" />,
+                title: "Innovation",
+                description:
+                  "We leverage cutting-edge technology to deliver efficient and sustainable solutions.",
+              },
+              {
+                icon: <FaUsers className="text-6xl text-white mx-auto" />,
+                title: "Customer-Centric",
+                description:
+                  "Tailored solutions designed to meet your unique needs and preferences.",
+              },
+              {
+                icon: <FaCogs className="text-6xl text-white mx-auto" />,
+                title: "Advanced Systems",
+                description:
+                  "Robust, reliable, and scalable systems for modern living.",
+              },
+              {
+                icon: <FaRocket className="text-6xl text-white mx-auto" />,
+                title: "Future-Ready",
+                description:
+                  "Solutions designed to adapt to emerging technologies and trends.",
+              },
+            ].map((feature, index) => (
+              <motion.div
+                key={index}
+                className="p-8 bg-white bg-opacity-5 backdrop-blur-lg rounded-3xl shadow-2xl border border-opacity-20 border-white transform transition-all hover:scale-105 hover:shadow-3xl text-center space-y-6"
+                whileHover={{ y: -10 }}
+              >
+                {feature.icon}
+                <h3 className="text-2xl font-semibold">{feature.title}</h3>
+                <p className="text-gray-300">{feature.description}</p>
+              </motion.div>
+            ))}
+          </div>
+        </motion.div>
 
-          {/* Features Section */}
-          <motion.div
-            className="grid grid-cols-1 md:grid-cols-4 gap-8"
-            variants={itemVariants}
-          >
-            <div className="feature-card p-6 bg-black bg-opacity-40 rounded-xl transform transition-all hover:scale-110 hover:shadow-2xl text-center space-y-4">
-              <FaLightbulb className="text-6xl text-yellow-200 mx-auto" />
-              <h3 className="text-2xl font-semibold">Innovation</h3>
-              <p>
-                We prioritize cutting-edge technology to ensure efficiency and
-                sustainability in all our solutions. Our R&D team constantly
-                explores new technologies and methodologies to stay ahead in the
-                electrical industry.
-              </p>
-            </div>
-            <div className="feature-card p-6 bg-black bg-opacity-40 rounded-xl transform transition-all hover:scale-110 hover:shadow-2xl text-center space-y-4">
-              <FaUsers className="text-6xl text-yellow-200 mx-auto" />
-              <h3 className="text-2xl font-semibold">Customer-Centric</h3>
-              <p>
-                We are committed to providing exceptional service, tailored to
-                each client's unique needs and preferences. Our team of experts
-                works closely with clients to understand their requirements and
-                deliver personalized solutions.
-              </p>
-            </div>
-            <div className="feature-card p-6 bg-black bg-opacity-40 rounded-xl transform transition-all hover:scale-110 hover:shadow-2xl text-center space-y-4">
-              <FaCogs className="text-6xl text-yellow-200 mx-auto" />
-              <h3 className="text-2xl font-semibold">Advanced Systems</h3>
-              <p>
-                Our electrical systems are designed to be robust, reliable, and
-                scalable to meet the demands of modern living. We integrate
-                smart home technologies, energy management systems, and IoT
-                devices to create intelligent electrical ecosystems.
-              </p>
-            </div>
-            <div className="feature-card p-6 bg-black bg-opacity-40 rounded-xl transform transition-all hover:scale-110 hover:shadow-2xl text-center space-y-4">
-              <FaRocket className="text-6xl text-yellow-200 mx-auto" />
-              <h3 className="text-2xl font-semibold">Future-Ready</h3>
-              <p>
-                We are always ahead of the curve, offering solutions that are
-                ready for the future of technology and infrastructure. Our
-                systems are designed with adaptability in mind, ensuring they
-                can integrate with emerging technologies seamlessly.
-              </p>
-            </div>
-          </motion.div>
-
-          {/* Additional Details */}
-          <motion.div
-            className="mt-16 p-6 bg-black bg-opacity-50 rounded-3xl"
-            variants={itemVariants}
-          >
-            <h2 className="text-3xl font-semibold mb-4">
+        {/* Sustainability Section */}
+        <motion.div
+          className="w-full max-w-7xl px-6 md:px-12 mb-20"
+          variants={itemVariants}
+        >
+          <div className="p-8 md:p-12 bg-white bg-opacity-5 backdrop-blur-lg rounded-3xl shadow-2xl border border-opacity-20 border-white">
+            <h2 className="text-3xl md:text-4xl font-bold mb-6 text-white">
               Our Commitment to Sustainability
             </h2>
-            <p className="text-lg leading-relaxed mb-4">
-              At Electrica, we're not just about providing electrical solutions;
-              we're committed to creating a sustainable future. Our approach
-              integrates eco-friendly practices and renewable energy sources
-              into every project we undertake.
+            <p className="text-lg md:text-xl text-gray-300 leading-relaxed mb-8">
+              At Electrica, sustainability is at the core of everything we do.
+              We are committed to reducing our carbon footprint and promoting
+              eco-friendly practices through innovative electrical solutions.
             </p>
-            <ul className="list-disc list-inside space-y-2">
-              <li>
-                We prioritize the use of energy-efficient components and systems
-              </li>
-              <li>
-                Our solutions often incorporate solar panels and other renewable
-                energy sources
-              </li>
-              <li>
-                We offer smart energy management systems to optimize power
-                consumption
-              </li>
-              <li>
-                Our team is trained in the latest green technologies and
-                sustainable practices
-              </li>
-            </ul>
-          </motion.div>
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
+              {[
+                {
+                  icon: <FaLeaf className="text-6xl text-white mx-auto" />,
+                  title: "Eco-Friendly",
+                  description:
+                    "We prioritize energy-efficient components and systems.",
+                },
+                {
+                  icon: (
+                    <FaSolarPanel className="text-6xl text-white mx-auto" />
+                  ),
+                  title: "Renewable Energy",
+                  description:
+                    "Integration of solar panels and other renewable sources.",
+                },
+                {
+                  icon: <FaChartLine className="text-6xl text-white mx-auto" />,
+                  title: "Smart Energy",
+                  description:
+                    "Optimize power consumption with smart energy management.",
+                },
+                {
+                  icon: <FaHandshake className="text-6xl text-white mx-auto" />,
+                  title: "Green Partnerships",
+                  description:
+                    "Collaborating with eco-conscious brands and organizations.",
+                },
+              ].map((feature, index) => (
+                <motion.div
+                  key={index}
+                  className="p-6 bg-white bg-opacity-5 backdrop-blur-lg rounded-3xl shadow-2xl border border-opacity-20 border-white transform transition-all hover:scale-105 hover:shadow-3xl text-center space-y-6"
+                  whileHover={{ y: -10 }}
+                >
+                  {feature.icon}
+                  <h3 className="text-2xl font-semibold">{feature.title}</h3>
+                  <p className="text-gray-300">{feature.description}</p>
+                </motion.div>
+              ))}
+            </div>
+          </div>
         </motion.div>
 
         {/* Call to Action Section */}
         <motion.div
-          className="w-full bg-black bg-opacity-60 p-12 mt-20 rounded-3xl text-center"
+          className="w-full max-w-7xl px-6 md:px-12"
           variants={itemVariants}
         >
-          <h2 className="text-3xl md:text-4xl font-bold text-yellow-200 mb-6">
-            Join Us on Our Electrifying Journey
-          </h2>
-          <p className="text-lg mb-8">
-            Together, we can revolutionize the world with sustainable and
-            groundbreaking electrical solutions. Let's illuminate the future and
-            make a lasting impact!
-          </p>
-          <Link
-            className="inline-block px-8 py-3 bg-cyan-600 rounded-full text-xl font-semibold hover:bg-cyan-700 transform transition-all hover:scale-105"
-            to="/signin"
-          >
-            Get Started Now
-          </Link>
+          <div className="p-12 bg-white bg-opacity-5 backdrop-blur-lg rounded-3xl shadow-2xl border border-opacity-20 border-white text-center">
+            <h2 className="text-3xl md:text-4xl font-bold text-white mb-6">
+              Join Us on Our Electrifying Journey
+            </h2>
+            <p className="text-lg md:text-xl text-gray-300 mb-8">
+              Together, we can revolutionize the world with sustainable and
+              groundbreaking electrical solutions. Let's illuminate the future
+              and make a lasting impact!
+            </p>
+            <Link
+              className="inline-block px-8 py-3 bg-gradient-to-r from-yellow-400 to-cyan-400 rounded-full text-xl font-semibold hover:from-yellow-500 hover:to-cyan-500 transform transition-all hover:scale-105"
+              to="/signin"
+            >
+              Get Started Now
+            </Link>
+          </div>
         </motion.div>
       </motion.section>
     </>

@@ -4,6 +4,11 @@ const decodedToken = (req, res, next) => {
   try {
     const token = req.cookies.auth_token; // Access the token from the cookie
 
+    // If token is not in cookies, check session
+    if (!token && req.session.token) {
+      token = req.session.token;
+    }
+
     if (!token) {
       return res
         .status(401)
@@ -12,7 +17,6 @@ const decodedToken = (req, res, next) => {
 
     // Decode the token
     const decoded = jwt.verify(token, process.env.JWT_SECRET);
-
     // Attach user details to the request object
     req.user = decoded.user;
     next();

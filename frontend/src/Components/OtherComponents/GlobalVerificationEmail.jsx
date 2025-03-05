@@ -1,7 +1,14 @@
-import React from "react";
-import Alert from "./Alert";
+"use client";
+
+import { useEffect, useRef } from "react";
 import { Link } from "react-router-dom";
-import LoginLoader from "./LoginLoader";
+import {
+  FaEnvelope,
+  FaSpinner,
+  FaCheckCircle,
+  FaExclamationCircle,
+} from "react-icons/fa";
+import Alert from "./Alert";
 
 const GlobalVerificationEmail = ({
   alert,
@@ -10,13 +17,27 @@ const GlobalVerificationEmail = ({
   otp,
   handleChange,
   resendOtp,
-  resendForgotOtp,
   loading,
   onkeyDown,
 }) => {
+  // Create refs for each input
+  const inputRefs = useRef([]);
+
+  // Initialize refs array
+  useEffect(() => {
+    inputRefs.current = inputRefs.current.slice(0, otp.length);
+  }, [otp.length]);
+
+  // Auto-focus first input on mount
+  useEffect(() => {
+    if (inputRefs.current[0]) {
+      inputRefs.current[0].focus();
+    }
+  }, []);
+
   return (
-    <div className="min-h-screen bg-gradient-to-br from-gray-900 to-black flex items-center justify-center relative overflow-hidden">
-      <div className="absolute inset-0 bg-gradient-to-r from-transparent to-orange-500 opacity-30 blur-2xl"></div>
+    <div className="min-h-screen flex items-center justify-center relative overflow-hidden p-4">
+      {/* Alert notification */}
       {alert && (
         <Alert
           type={alert.type}
@@ -24,71 +45,108 @@ const GlobalVerificationEmail = ({
           onClose={() => setAlert(null)}
         />
       )}
-      <div className="relative bg-gray-800/90 text-white shadow-2xl rounded-lg p-8 w-full max-w-md backdrop-blur-md">
-        <div className="text-center">
-          <h1 className="text-3xl font-extrabold mb-3">OTP Verification</h1>
+
+      {/* Main card */}
+      <div className="relative border-solid text-white shadow-2xl rounded-xl p-8 w-full max-w-md backdrop-blur-md border border-gray-700/50 animate-fade-in">
+        {/* Header */}
+        <div className="text-center mb-8">
+          <div className="mx-auto w-16 h-16 bg-blue-600/20 rounded-full flex items-center justify-center mb-4">
+            <FaEnvelope className="text-blue-500 text-2xl" />
+          </div>
+          <h1 className="text-3xl font-extrabold mb-3 text-white">
+            Verify Your Email
+          </h1>
           <p className="text-gray-400 text-sm">
-            Enter the OTP we sent to your email. The OTP is valid for 10
-            minutes.
+            Enter the 6-digit code we sent to your email.
+            <br />
+            The code is valid for 10 minutes.
           </p>
         </div>
 
+        {/* OTP Form */}
         <form onSubmit={handleOtpForm} className="mt-6">
           <div className="flex justify-between gap-2">
             {otp.map((digit, index) => (
               <input
                 key={index}
+                ref={(el) => (inputRefs.current[index] = el)}
                 id={`otp-input-${index}`}
                 type="text"
+                inputMode="numeric"
+                pattern="[0-9]*"
                 maxLength="1"
                 required
                 value={digit}
                 onChange={(e) => handleChange(e, index)}
                 onKeyDown={(e) => onkeyDown(e, index)}
-                className="w-12 h-12 text-center text-xl bg-gray-700/70 text-white rounded-lg focus:outline-none focus:ring-2 focus:ring-orange-500 focus:bg-gray-800 placeholder-gray-400"
+                className="w-12 h-14 sm:w-14 sm:h-16 text-center text-xl bg-gray-700/70 text-white rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:bg-gray-800/90 placeholder-gray-400 border border-gray-600/50 transition-all"
+                aria-label={`Digit ${index + 1}`}
               />
             ))}
           </div>
+
           <button
             type="submit"
-            className="w-full mt-4 bg-orange-600 hover:bg-orange-700 text-white font-semibold p-3 rounded-lg transition-all transform hover:scale-105 focus:scale-105"
             disabled={loading}
+            className="w-full mt-6 bg-blue-600 hover:bg-blue-700 text-white font-semibold p-3 rounded-lg transition-all transform hover:scale-[1.02] focus:scale-[1.02] disabled:opacity-70 disabled:cursor-not-allowed disabled:hover:scale-100 flex items-center justify-center"
           >
-            {loading ? <LoginLoader /> : "Confirm OTP"}
+            {loading ? (
+              <>
+                <FaSpinner className="animate-spin mr-2" />
+                Verifying...
+              </>
+            ) : (
+              "Verify Email"
+            )}
           </button>
         </form>
 
-        <div className="mt-6 h-auto bg-gray-700/40 p-4 rounded-lg text-sm">
-          <p>
-            <span className="font-semibold text-orange-500">Note:</span> If you
-            did not receive the OTP, please check your spam folder or click the
-            button below to resend it.
-          </p>
-          <Link
-            to="https://mail.google.com/mail"
-            className="underline"
-            target="_blank"
-          >
-            Gmail
-          </Link>
-        </div>
-
-        <div className="mt-4">
+        {/* Resend button */}
+        <div className="mt-6 text-center">
           <button
-            onClick={resendOtp || resendForgotOtp}
-            className="button-86 active:scale-105"
+            onClick={resendOtp}
+            disabled={loading}
+            className="relative inline-flex items-center justify-center px-6 py-3 overflow-hidden font-medium text-blue-500 transition duration-300 ease-out border border-gray-500/30 rounded-lg shadow-md group"
           >
-            <span className="text-white">
-              {loading ? "Otp resend" : "Resend OTP"}
+            <span className="absolute inset-0 flex items-center justify-center w-full h-full text-white duration-300 -translate-x-full bg-blue-600 group-hover:translate-x-0 ease">
+              <FaEnvelope className="mr-2" />
             </span>
+            <span className="absolute flex items-center justify-center w-full h-full text-white transition-all duration-300 transform group-hover:translate-x-full ease">
+              {loading ? (
+                <>
+                  <FaSpinner className="animate-spin mr-2" />
+                  Sending...
+                </>
+              ) : (
+                "Resend Code"
+              )}
+            </span>
+            <span className="relative invisible">Resend Code</span>
           </button>
         </div>
       </div>
-
-      <div className="absolute bottom-0 left-0 w-72 h-72 bg-gradient-to-br from-orange-600 to-orange-500 rounded-full blur-3xl opacity-20"></div>
-      <div className="absolute top-0 right-0 w-96 h-96 bg-gradient-to-br from-orange-600 to-orange-500 rounded-full blur-3xl opacity-20"></div>
     </div>
   );
 };
+
+// Add keyframes for fade-in animation
+const style = document.createElement("style");
+style.textContent = `
+  @keyframes fade-in {
+    from { opacity: 0; transform: translateY(10px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+  .animate-fade-in {
+    animation: fade-in 0.3s ease-out forwards;
+  }
+  @keyframes pulse {
+    0%, 100% { opacity: 0.2; }
+    50% { opacity: 0.3; }
+  }
+  .animate-pulse {
+    animation: pulse 4s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+  }
+`;
+document.head.appendChild(style);
 
 export default GlobalVerificationEmail;
