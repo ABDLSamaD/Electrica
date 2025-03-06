@@ -60,7 +60,7 @@ const sessionConfig = {
   resave: false,
   saveUninitialized: true,
   secret: process.env.SESSION_SECRET, // A common session secret for both user and admin
-  // proxy: true,
+  proxy: true,
   cookie: {
     maxAge: 24 * 60 * 60 * 1000, // 1 day
     httpOnly: true,
@@ -75,7 +75,7 @@ const sessionConfig = {
 };
 app.use(session(sessionConfig));
 
-// app.set("trust proxy", 1); // Trust the first proxy (for Vercel, Cloudflare, etc.)
+app.set("trust proxy", 1); // Trust the first proxy (for Vercel, Cloudflare, etc.)
 
 io.on("connection", (socket) => {
   console.log("A user connected");
