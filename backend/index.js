@@ -7,7 +7,7 @@ const cookieParser = require("cookie-parser");
 const session = require("express-session");
 const MongoStore = require("connect-mongo");
 const http = require("http");
-// const socketIo = require("socket.io");
+const socketIo = require("socket.io");
 const { rateLimit } = require("express-rate-limit");
 const helmet = require("helmet");
 // const path = require("path");
@@ -39,14 +39,14 @@ const corsOptions = {
   origin: process.env.FRONTEND_URL, // Ensure this is set correctly
   credentials: true, // Allow cookies to be sent
   methods: ["GET", "POST", "PUT", "PATCH", "DELETE"],
+  allowedHeaders: ["Content-Type", "Authorization"],
 };
+app.use(cors(corsOptions));
 
 const server = http.createServer(app);
-// const io = socketIo(server, {
-//   cors: corsOptions,
-// });
-
-app.use(cors(corsOptions));
+const io = socketIo(server, {
+  cors: corsOptions,
+});
 
 app.use(cookieParser());
 app.use(bodyparser.json());
@@ -55,7 +55,6 @@ app.use(bodyparser.json());
 // app.use(express.static(path.join(_dirname, "/frontend/dist")));
 
 // express-session
-// const isProduction = process.env.NODE_ENV === "production";
 const sessionConfig = {
   name: "electrica",
   resave: false,
@@ -78,13 +77,13 @@ app.use(session(sessionConfig));
 
 // app.set("trust proxy", 1); // Trust the first proxy (for Vercel, Cloudflare, etc.)
 
-// io.on("connection", (socket) => {
-//   console.log("A user connected");
+io.on("connection", (socket) => {
+  console.log("A user connected");
 
-//   socket.on("disconnect", () => {
-//     console.log("A user disconnected");
-//   });
-// });
+  socket.on("disconnect", () => {
+    console.log("A user disconnected");
+  });
+});
 
 // routes call
 app.use("/api/auth", routes);
@@ -94,7 +93,7 @@ app.get("/", (req, res) => {
 });
 
 // Attach `io` to `app` for use in controllers
-// app.set("io", io);
+app.set("io", io);
 
 // app.get("*", (_, res) => {
 //   res.sendFile(path.resolve(_dirname, "frontend", "dist", "index.html"));
@@ -109,6 +108,22 @@ app.use((err, req, res, next) => {
 // Default catch-all route for Vercel
 app.all("*", (req, res) => {
   res.status(404).send("Not Found");
+});
+
+app.use((req, res, next) => {
+  res.setHeader("Access-Control-Allow-Origin", process.env.FRONTEND_URL);
+  res.setHeader(
+    "Access-Control-Allow-Methods",
+    "GET, POST, PUT, PATCH, DELETE"
+  );
+  res.setHeader("Access-Control-Allow-Headers", "Content-Type, Authorization");
+  res.setHeader("Access-Control-Allow-Credentials", "true");
+
+  if (req.method === "OPTIONS") {
+    return res.sendStatus(200);
+  }
+
+  next();
 });
 
 // port listen
