@@ -19,6 +19,7 @@ const GlobalVerificationEmail = ({
   resendOtp,
   loading,
   onkeyDown,
+  loadingResend,
 }) => {
   // Create refs for each input
   const inputRefs = useRef([]);
@@ -47,7 +48,7 @@ const GlobalVerificationEmail = ({
       )}
 
       {/* Main card */}
-      <div className="relative border-solid text-white shadow-2xl rounded-xl p-8 w-full max-w-md backdrop-blur-md border border-gray-700/50 animate-fade-in">
+      <div className="relative border-solid bg-gray-900/80 text-white shadow-2xl rounded-xl p-8 w-full max-w-md backdrop-blur-md border border-gray-700/50 animate-fade-in">
         {/* Header */}
         <div className="text-center mb-8">
           <div className="mx-auto w-16 h-16 bg-blue-600/20 rounded-full flex items-center justify-center mb-4">
@@ -104,15 +105,16 @@ const GlobalVerificationEmail = ({
         {/* Resend button */}
         <div className="mt-6 text-center">
           <button
+            id="resendOtpButton"
             onClick={resendOtp}
-            disabled={loading}
-            className="relative inline-flex items-center justify-center px-6 py-3 overflow-hidden font-medium text-blue-500 transition duration-300 ease-out border border-gray-500/30 rounded-lg shadow-md group"
+            disabled={loadingResend}
+            className="resend-otp-button relative inline-flex items-center justify-center px-6 py-3 overflow-hidden font-medium text-blue-500 transition duration-300 ease-out border border-gray-500/30 rounded-lg shadow-md group"
           >
             <span className="absolute inset-0 flex items-center justify-center w-full h-full text-white duration-300 -translate-x-full bg-blue-600 group-hover:translate-x-0 ease">
               <FaEnvelope className="mr-2" />
             </span>
             <span className="absolute flex items-center justify-center w-full h-full text-white transition-all duration-300 transform group-hover:translate-x-full ease">
-              {loading ? (
+              {loadingResend ? (
                 <>
                   <FaSpinner className="animate-spin mr-2" />
                   Sending...

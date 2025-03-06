@@ -46,7 +46,6 @@ import UserPublicRoute from "./Private/UserPublicRoute";
 // Private Routes End
 
 // Admin Dashboard Start
-
 const Admin = React.lazy(() => import("./Admin/Admin"));
 
 import AddProjectForm from "./UserDashboard/Project/AddProjectForm";
@@ -66,6 +65,8 @@ import LoaderAll from "./OtherComponents/LoaderAll";
 import AdminSettings from "./Admin/AdminSettings";
 import NextProcess from "./UserDashboard/Project/CompletionProject/NextProcess";
 import CreatingBill from "./Admin/Projectsteps/BillingSystem/CreatingBill";
+const Complain = React.lazy(() => import("./Pages/Complain/Complain"));
+import CheckSignupProgress from "./OtherComponents/CheckSignupProgress";
 
 // Admin Dashboard End
 
@@ -102,11 +103,13 @@ const Main = () => {
         }
       >
         <Background>
+          <CheckSignupProgress />
           <Routes>
             <Route path="/" element={<Home />} />
             <Route path="/about" element={<About />} />
             <Route path="/project-details" element={<ProjectDetails />} />
             <Route path="/service" element={<ElectricalServicePage />} />
+            <Route path="/complain" element={<Complain />} />
             <Route
               path="/signin"
               element={
@@ -120,7 +123,7 @@ const Main = () => {
             <Route path="/forgot_password" element={<Forgot />} />
             <Route path="*" element={<Errornotfound />} />
 
-            {/* Admin Authentication Routes */}
+            {/* Admin Authentication signin Routes */}
             <Route
               path="/admn-sign"
               element={

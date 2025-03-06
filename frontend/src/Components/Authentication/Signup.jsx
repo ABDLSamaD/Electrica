@@ -242,7 +242,7 @@ const Signup = () => {
             </p>
           </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4 p-4 bg-blue-900/20 rounded-lg border border-blue-500/20">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-2 p-4 bg-blue-900/20 rounded-lg border border-blue-500/20">
             <div className="flex items-center gap-3">
               <div className="bg-blue-500/20 p-2 rounded-full">
                 <FaCheckCircle className="h-5 w-5 text-blue-400" />

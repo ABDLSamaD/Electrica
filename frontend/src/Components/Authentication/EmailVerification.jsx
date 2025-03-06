@@ -12,6 +12,7 @@ const EmailVerification = () => {
   const [otp, setOtp] = useState(["", "", "", "", "", ""]);
   const [alert, setAlert] = useState(null);
   const [loading, setLoading] = useState(false);
+  const [loadingResend, setLoadingResend] = useState(false);
   const electricaURL = import.meta.env.VITE_ELECTRICA_API_URL;
 
   const handleChange = (e, index) => {
@@ -108,12 +109,11 @@ const EmailVerification = () => {
   // };
 
   const handleResendOtp = async () => {
-    setLoading(true);
+    setLoadingResend(true);
     try {
-      const authEmail = localStorage.getItem("us-em-temporary");
       const response = await axios.post(
         "http://localhost:5120/api/auth/resend-otp",
-        { email: authEmail }
+        { email: cookieEmail }
       );
 
       if (response.status === 200) {
@@ -121,6 +121,16 @@ const EmailVerification = () => {
           type: response.data.type,
           message: response.data.message,
         });
+        // ✅ Trigger animation when OTP is resent
+        document
+          .getElementById("resendOtpButton")
+          .classList.add("resend-animate");
+
+        setTimeout(() => {
+          document
+            .getElementById("resendOtpButton")
+            .classList.remove("resend-animate");
+        }, 1000);
       } else {
         setAlert({
           type: response.data.type,
@@ -133,7 +143,7 @@ const EmailVerification = () => {
         message: err.response?.data?.message,
       });
     } finally {
-      setLoading(false);
+      setLoadingResend(false);
     }
   };
 
@@ -148,6 +158,7 @@ const EmailVerification = () => {
         resendOtp={handleResendOtp}
         loading={loading}
         onkeyDown={handleKeyDown}
+        loadingResend={loadingResend}
       />
     </div>
   );

@@ -107,7 +107,7 @@ const SignIn = () => {
 
       {/* Main form container */}
       <div
-        className={`w-full max-w-md relative bg-gray-800/90 text-white shadow-2xl rounded-xl p-8 backdrop-blur-md border border-gray-700/50 ${
+        className={`w-full max-w-md relative bg-gray-900/80 border border-solid border-gray-300/20 text-white shadow-2xl rounded-xl p-8 backdrop-blur-md ${
           loginSuccess ? "opacity-50 pointer-events-none filter blur-sm" : ""
         }`}
       >
