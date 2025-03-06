@@ -36,19 +36,16 @@ app.use(limiter);
 app.use(helmet());
 
 // cors cnfiguration
-const server = http.createServer(app);
-const io = socketIo(server, {
-  cors: {
-    origin: process.env.FRONTEND_URL, // Allow frontend connection
-    credentials: true,
-    methods: ["GET", "POST", "PUT", "PATCH", "DELETE"],
-  },
-});
 const corsOptions = {
-  origin: process.env.FRONTEND_URL.trim(), // Ensure this is set correctly
+  origin: process.env.FRONTEND_URL, // Ensure this is set correctly
   credentials: true, // Allow cookies to be sent
   methods: ["GET", "POST", "PUT", "PATCH", "DELETE"],
 };
+
+const server = http.createServer(app);
+const io = socketIo(server, {
+  cors: corsOptions,
+});
 
 app.use(cors(corsOptions));
 
@@ -104,20 +101,20 @@ app.set("io", io);
 //   res.sendFile(path.resolve(_dirname, "frontend", "dist", "index.html"));
 // });
 
-// contact support
-app.post("/user/contact-support", async (req, res) => {
-  try {
-    const { email, message } = req.body;
-    let subject = "Request of User";
-    let text = message;
-    sendEmail(email, subject, text);
-    res.status(200).json({
-      message:
-        "Your request has been received. Support will contact you shortly.",
-    });
-  } catch (error) {
-    res.status(500).json({ message: "Error contacting support", error });
+app.use((req, res, next) => {
+  res.setHeader("Access-Control-Allow-Origin", FRONTEND_URL);
+  res.setHeader(
+    "Access-Control-Allow-Methods",
+    "GET, POST, PUT, PATCH, DELETE"
+  );
+  res.setHeader("Access-Control-Allow-Headers", "Content-Type, Authorization");
+  res.setHeader("Access-Control-Allow-Credentials", "true");
+
+  if (req.method === "OPTIONS") {
+    return res.sendStatus(200);
   }
+
+  next();
 });
 
 app.use((err, req, res, next) => {
