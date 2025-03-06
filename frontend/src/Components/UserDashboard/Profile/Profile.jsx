@@ -1,4 +1,6 @@
-import React, { useState } from "react";
+"use client";
+
+import { useState } from "react";
 import { useNavigate, useOutletContext } from "react-router-dom";
 import Alert from "../../OtherComponents/Alert";
 import axios from "axios";
@@ -6,21 +8,19 @@ import { FaUserAlt, FaPhoneAlt, FaMapMarkerAlt, FaCity } from "react-icons/fa";
 import { AiOutlineMail } from "react-icons/ai";
 import { faArrowLeft } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import Miniloader from "../../OtherComponents/Miniloader";
 
 const Profile = () => {
   const navigate = useNavigate();
-  // const auth = localStorage.getItem("dshbrd_usr_tkn"); // get token auth
-
   const { user, fetchUser, electricaURL } = useOutletContext();
-  // States Start
+
+  // States
   const [profileImg, setProfileImg] = useState(
     "https://upload.wikimedia.org/wikipedia/commons/thumb/b/b5/Windows_10_Default_Profile_Picture.svg/2048px-Windows_10_Default_Profile_Picture.svg.png"
   );
-  const [isEditable, setIsEditable] = useState(false); // Control input fields
-  const [isImageSaved, setIsImageSaved] = useState(true); // Control image save button
-  const [loading, setLoading] = useState(false); // Loading state
-  const [miniLoader, setMiniLoader] = useState(false); // Loading state
+  const [isEditable, setIsEditable] = useState(false);
+  const [isImageSaved, setIsImageSaved] = useState(true);
+  const [loading, setLoading] = useState(false);
+  const [imageLoading, setImageLoading] = useState(false);
   const [type, setType] = useState("");
   const [message, setMessage] = useState("");
   const [alert, setALert] = useState(null);
@@ -31,7 +31,6 @@ const Profile = () => {
     phone: user.phone || "",
     city: user.city || "",
   });
-  // States End
 
   const onChange = (e) => {
     setCredentials({ ...credentials, [e.target.name]: e.target.value });
@@ -44,7 +43,7 @@ const Profile = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    setMiniLoader(true);
+    setLoading(true);
     try {
       const { fullName, address, phone, city } = credentials;
       const response = await axios.post(
@@ -65,18 +64,17 @@ const Profile = () => {
         setALert(response.data.type, response.data.message);
         setIsEditable(false);
         fetchUser();
-        setMiniLoader(false);
       } else {
         setType(response.data.type);
         setMessage(response.data.message);
         setALert(response.data.type, response.data.message);
-        setMiniLoader(false);
       }
     } catch (err) {
       setType(err.response?.data?.type);
       setMessage(err.response?.data?.message);
       setALert(err.response?.data?.type, err.response?.data?.message);
-      setMiniLoader(false);
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -89,6 +87,7 @@ const Profile = () => {
       return setPicMessage("Please Select an Image");
     }
     setPicMessage(null);
+    setImageLoading(true);
 
     if (profileImg.type === "image/jpeg" || profileImg.type === "image/png") {
       const data = new FormData();
@@ -103,18 +102,21 @@ const Profile = () => {
         .then((data) => {
           setProfileImg(data.url.toString());
           setIsImageSaved(false);
+          setImageLoading(false);
         })
         .catch((err) => {
           setMessage(err.message);
+          setImageLoading(false);
         });
     } else {
+      setImageLoading(false);
       return setPicMessage("Please Select a Valid Image (JPEG/PNG)");
     }
   };
 
   const handleImage = async (e) => {
     e.preventDefault();
-    setLoading(true);
+    setImageLoading(true);
     try {
       const response = await axios.post(
         `${electricaURL}/api/auth/adduser-profileImg`,
@@ -134,72 +136,138 @@ const Profile = () => {
     } catch (err) {
       setMessage(err.response?.data?.message);
     } finally {
-      setLoading(false);
+      setImageLoading(false);
     }
   };
+
   if (alert) {
     return (
       <Alert type={type} message={message} onClose={() => setALert(null)} />
     );
   }
+
   if (loading) {
     return <div className="spinner-overlay">Loading...</div>;
   }
 
   return (
-    <div className="relative top-12 min-h-screen flex flex-wrap items-center">
+    <div className="relative top-12 mb-12 overflow-hidden min-h-screen flex flex-wrap items-start p-4 md:p-6">
       <button
         onClick={() => navigate(-1)}
-        className="text-gray-300 hover:scale-110 transition px-5 my-7"
+        className="text-gray-300 hover:scale-110 transition px-5 my-7 mx-2 absolute top-0 left-0"
         title="Go Back"
       >
         <FontAwesomeIcon icon={faArrowLeft} size="lg" />
       </button>
-      {message && <p> {message}</p>}
-      <div className="px-4 w-full">
-        <div className="flex flex-col w-full gap-6">
+
+      {message && (
+        <p className="w-full text-center text-gray-200 mb-4">{message}</p>
+      )}
+
+      <div className="w-full max-w-7xl mx-auto">
+        <div className="flex flex-col lg:flex-row w-full gap-6">
           {/* Left Side: Profile Card */}
-          <div className="space-y-3 bg-[rgba(1,1,1,0.2)] backdrop-blur-lg rounded-lg shadow-md p-8 w-full max-w-full">
-            <h1 className="text-gray-400">Upload an image</h1>
-            <img
-              src={user?.profileImg || profileImg}
-              alt="Profile"
-              className="w-32 h-32 rounded-full shadow-lg object-cover"
-            />
-            <h2 className="text-xl text-gray-300 font-semibold">
-              {user?.name}
-            </h2>
-            <p className="text-gray-50 flex items-center gap-2">
-              <FaCity /> {user?.city || "default city"}
-            </p>
-            <p className="text-gray-50">
-              Account created {new Date(user.Date).toLocaleDateString()}
-            </p>
-            <input
-              className="text-blue-500 hover:underline"
-              type="file"
-              name="profileImg"
-              onChange={(e) => postDetails(e.target.files[0])}
-            />
-            <button
-              type="submit"
-              className="px-6 py-2 bg-indigo-600 text-white rounded-md shadow-sm hover:bg-indigo-500"
-              onClick={handleImage}
-              id="imagesavebtn"
-              disabled={isImageSaved}
-            >
-              Save Image
-            </button>
+          <div className="bg-gradient-to-br from-gray-800/80 to-gray-900/80 rounded-xl shadow-xl p-8 w-full lg:w-1/3 transition-all duration-300 hover:shadow-2xl">
+            <div className="flex flex-col items-center space-y-6">
+              <h2 className="text-2xl font-bold text-gray-200 mb-4">
+                Profile Photo
+              </h2>
+
+              <div className="relative group">
+                <div className="absolute -inset-1 bg-gradient-to-r from-blue-600 to-blue-900 rounded-full opacity-75 group-hover:opacity-100 blur transition duration-300"></div>
+                <div className="relative">
+                  <img
+                    src={user?.profileImg || profileImg}
+                    alt="Profile"
+                    className="w-36 h-36 rounded-full object-cover border-4 border-gray-700"
+                  />
+                  {imageLoading && (
+                    <div className="absolute inset-0 flex items-center justify-center bg-black bg-opacity-50 rounded-full">
+                      <div className="w-10 h-10 border-4 border-t-indigo-500 border-r-transparent border-b-indigo-500 border-l-transparent rounded-full animate-spin"></div>
+                    </div>
+                  )}
+                </div>
+              </div>
+
+              <div className="text-center">
+                <h2 className="text-xl text-gray-200 font-semibold">
+                  {user?.name}
+                </h2>
+                <p className="text-gray-400 flex items-center justify-center gap-2 mt-2">
+                  <FaCity className="text-indigo-400" />{" "}
+                  {user?.city || "default city"}
+                </p>
+                <p className="text-gray-400 text-sm mt-2">
+                  Member since {new Date(user.createdAt).toLocaleDateString()}
+                </p>
+              </div>
+
+              <div className="w-full space-y-4 mt-4">
+                <div className="relative group w-full">
+                  <label
+                    htmlFor="profile-upload"
+                    className="w-full flex items-center justify-center px-4 py-2 bg-gray-700 hover:bg-gray-600 text-gray-200 rounded-lg cursor-pointer transition-all duration-300"
+                  >
+                    <span className="mr-2">Choose Image</span>
+                    <svg
+                      xmlns="http://www.w3.org/2000/svg"
+                      className="h-5 w-5"
+                      viewBox="0 0 20 20"
+                      fill="currentColor"
+                    >
+                      <path
+                        fillRule="evenodd"
+                        d="M4 5a2 2 0 00-2 2v8a2 2 0 002 2h12a2 2 0 002-2V7a2 2 0 00-2-2h-1.586a1 1 0 01-.707-.293l-1.121-1.121A2 2 0 0011.172 3H8.828a2 2 0 00-1.414.586L6.293 4.707A1 1 0 015.586 5H4zm6 9a3 3 0 100-6 3 3 0 000 6z"
+                        clipRule="evenodd"
+                      />
+                    </svg>
+                  </label>
+                  <input
+                    id="profile-upload"
+                    className="hidden"
+                    type="file"
+                    name="profileImg"
+                    onChange={(e) => postDetails(e.target.files[0])}
+                  />
+                </div>
+
+                {picMessage && (
+                  <p className="text-red-400 text-sm text-center">
+                    {picMessage}
+                  </p>
+                )}
+
+                <button
+                  type="submit"
+                  className={`w-full px-6 py-3 rounded-lg shadow-lg transition-all duration-300 flex items-center justify-center ${
+                    isImageSaved
+                      ? "bg-gray-600 text-gray-400 cursor-not-allowed"
+                      : "bg-gradient-to-r from-indigo-600 to-purple-600 text-white hover:from-indigo-500 hover:to-purple-500"
+                  }`}
+                  onClick={handleImage}
+                  id="imagesavebtn"
+                  disabled={isImageSaved || imageLoading}
+                >
+                  {imageLoading ? (
+                    <div className="w-6 h-6 border-2 border-t-white border-r-transparent border-b-white border-l-transparent rounded-full animate-spin mr-2"></div>
+                  ) : null}
+                  {imageLoading ? "Saving..." : "Save Image"}
+                </button>
+              </div>
+            </div>
           </div>
 
           {/* Right Side: Editable Profile Form */}
-          <div className="bg-[rgba(1,1,1,0.2)] backdrop-blur-lg rounded-lg shadow-md p-8 w-full max-w-full">
-            <h2 className="text-2xl font-semibold text-white mb-2">
-              Edit Profile
-            </h2>
-            <p className="text-sm text-gray-400 mb-6">
-              Update your personal information below.
-            </p>
+          <div className="bg-gradient-to-br from-gray-800 to-gray-900 rounded-xl shadow-xl p-8 w-full lg:w-2/3 transition-all duration-300 hover:shadow-2xl">
+            <div className="border-b border-gray-700 pb-4 mb-6">
+              <h2 className="text-2xl font-bold text-gray-200">
+                Personal Information
+              </h2>
+              <p className="text-sm text-gray-400 mt-2">
+                Update your profile details below
+              </p>
+            </div>
+
             <form
               className="grid grid-cols-1 md:grid-cols-2 gap-6"
               onSubmit={handleSubmit}
@@ -210,10 +278,14 @@ const Profile = () => {
                   htmlFor="fullname"
                   className="text-sm font-medium text-gray-400 block mb-2"
                 >
-                  Full Name *
+                  Full Name <span className="text-indigo-400">*</span>
                 </label>
-                <div className="flex items-center bg-gray-700 p-2 rounded-md shadow-sm focus-within:ring-2 focus-within:ring-indigo-500">
-                  <FaUserAlt className="text-gray-400 text-lg mx-2" />
+                <div
+                  className={`flex items-center bg-gray-700 p-3 rounded-lg shadow-sm transition-all duration-300 ${
+                    isEditable ? "ring-2 ring-indigo-500" : ""
+                  }`}
+                >
+                  <FaUserAlt className="text-indigo-400 text-lg mx-2" />
                   <input
                     type="text"
                     id="fullname"
@@ -233,10 +305,10 @@ const Profile = () => {
                   htmlFor="email"
                   className="text-sm font-medium text-gray-400 block mb-2"
                 >
-                  Email Address *
+                  Email Address <span className="text-indigo-400">*</span>
                 </label>
-                <div className="flex items-center bg-gray-700 p-2 rounded-md shadow-sm">
-                  <AiOutlineMail className="text-gray-400 text-lg mx-2" />
+                <div className="flex items-center bg-gray-700 p-3 rounded-lg shadow-sm">
+                  <AiOutlineMail className="text-indigo-400 text-lg mx-2" />
                   <input
                     type="email"
                     id="email"
@@ -256,8 +328,12 @@ const Profile = () => {
                 >
                   Phone Number
                 </label>
-                <div className="flex items-center bg-gray-700 p-2 rounded-md shadow-sm focus-within:ring-2 focus-within:ring-indigo-500">
-                  <FaPhoneAlt className="text-gray-400 text-lg mx-2" />
+                <div
+                  className={`flex items-center bg-gray-700 p-3 rounded-lg shadow-sm transition-all duration-300 ${
+                    isEditable ? "ring-2 ring-indigo-500" : ""
+                  }`}
+                >
+                  <FaPhoneAlt className="text-indigo-400 text-lg mx-2" />
                   <input
                     type="text"
                     id="phone"
@@ -279,8 +355,12 @@ const Profile = () => {
                 >
                   City
                 </label>
-                <div className="flex items-center bg-gray-700 p-2 rounded-md shadow-sm focus-within:ring-2 focus-within:ring-indigo-500">
-                  <FaCity className="text-gray-400 text-lg mx-2" />
+                <div
+                  className={`flex items-center bg-gray-700 p-3 rounded-lg shadow-sm transition-all duration-300 ${
+                    isEditable ? "ring-2 ring-indigo-500" : ""
+                  }`}
+                >
+                  <FaCity className="text-indigo-400 text-lg mx-2" />
                   <input
                     type="text"
                     id="city"
@@ -302,15 +382,19 @@ const Profile = () => {
                 >
                   Address
                 </label>
-                <div className="flex items-center bg-gray-700 p-2 rounded-md shadow-sm focus-within:ring-2 focus-within:ring-indigo-500">
-                  <FaMapMarkerAlt className="text-gray-400 text-lg mx-2" />
+                <div
+                  className={`flex items-center bg-gray-700 p-3 rounded-lg shadow-sm transition-all duration-300 ${
+                    isEditable ? "ring-2 ring-indigo-500" : ""
+                  }`}
+                >
+                  <FaMapMarkerAlt className="text-indigo-400 text-lg mx-2" />
                   <input
                     type="text"
                     id="address"
                     name="address"
                     onChange={onChange}
                     placeholder="Enter address"
-                    className="flex-grow bg-transparent text-gray-200 outline-none focus:ring-0 overflow-hidden"
+                    className="flex-grow bg-transparent text-gray-200 outline-none focus:ring-0"
                     defaultValue={user.address}
                     disabled={!isEditable}
                   />
@@ -318,22 +402,24 @@ const Profile = () => {
               </div>
 
               {/* Save Button */}
-              <div className="col-span-1 md:col-span-2 flex justify-end gap-4">
+              <div className="col-span-1 md:col-span-2 flex justify-end gap-4 mt-6">
                 {!isEditable ? (
                   <button
                     type="button"
                     onClick={handleUpdate}
-                    className="px-6 py-2 bg-blue-600 text-white rounded-md shadow-md hover:bg-blue-500"
+                    className="px-6 py-3 bg-gradient-to-r from-blue-600 to-blue-500 text-white rounded-lg shadow-lg hover:from-blue-500 hover:to-blue-400 transition-all duration-300"
                   >
-                    Update
+                    Update Profile
                   </button>
                 ) : (
                   <button
                     type="submit"
-                    disabled={miniLoader}
-                    className="px-6 py-2 bg-green-600 text-white rounded-md shadow-md hover:bg-green-500"
+                    className="px-6 py-3 bg-gradient-to-r from-green-600 to-green-500 text-white rounded-lg shadow-lg hover:from-green-500 hover:to-green-400 transition-all duration-300 flex items-center"
                   >
-                    {miniLoader ? <Miniloader /> : "Save Details"}
+                    {loading ? (
+                      <div className="w-5 h-5 border-2 border-t-white border-r-transparent border-b-white border-l-transparent rounded-full animate-spin mr-2"></div>
+                    ) : null}
+                    Save Details
                   </button>
                 )}
               </div>

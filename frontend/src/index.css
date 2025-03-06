@@ -14,14 +14,15 @@
 }
 
 ::-webkit-scrollbar-track {
-  background: transparent;
+  background: black;
 }
 
 ::-webkit-scrollbar-thumb {
   background: #2160c6;
-  border-top-left-radius: 15px;
-  border-bottom-left-radius: 15px;
+  border-top-left-radius: 45px;
+  border-bottom-right-radius: 100px;
   border-bottom-left-radius: 45px;
+  scroll-behavior: smooth;
 }
 
 html,
@@ -34,6 +35,8 @@ body {
   background: hsla(0, 0%, 13%, 1) url(./assets/background.png) no-repeat center
     center/cover;
 } */
+ 
+
 ::selection {
   background: #e8e4f72e;
   color: rgb(255, 255, 255);
@@ -705,4 +708,20 @@ span {
 .animate-gradient-x {
   background-size: 200% 200%;
   animation: gradient-x 6s ease infinite;
+}
+
+@keyframes shake {
+  0%, 100% { transform: translateX(0); }
+  20%, 60% { transform: translateX(-5px); }
+  40%, 80% { transform: translateX(5px); }
+}
+
+@keyframes pulse {
+  0% { transform: scale(1); }
+  50% { transform: scale(1.1); }
+  100% { transform: scale(1); }
+}
+
+.resend-animate {
+  animation: shake 0.5s ease, pulse 1.2s infinite ease-in-out;
 }
