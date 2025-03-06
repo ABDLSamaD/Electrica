@@ -2,6 +2,11 @@ const jwt = require("jsonwebtoken");
 
 const decodedToken = (req, res, next) => {
   try {
+    if (req.session && req.session.user) {
+      req.user = req.session.user; // ✅ Fallback: Use session user
+      return next();
+    }
+
     const token = req.cookies.auth_token; // Access the token from the cookie
 
     // If token is not in cookies, check session

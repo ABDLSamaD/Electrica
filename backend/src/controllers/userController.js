@@ -172,7 +172,7 @@ exports.verifyOtp = async (req, res) => {
     // ✅ Store in session
     req.session.token = token;
     req.session.user = {
-      id: user._id,
+      id: user.id,
       email: user.email,
       name: user.name,
       role: "user",
@@ -656,3 +656,19 @@ exports.deleteAccount = async (req, res) => {
     });
   }
 };
+
+// User signup not verified in 10h account will deleted auto
+const deleteUnverifiedUsers = async (req,res)=>{
+  try {
+    const deletedUser = await User.deleteMany({
+      isVerified: false,
+      createdAt: { $lte: new Date(Date.now() - 24 * 60 * 60 * 1000) }, // Older than 24 hours
+    })
+    console.log(`${deletedUser.deletedCount} unverified users deleted`);
+  } catch (error) {
+    res.status(500).json({type: "error", message: "Internal server error"})
+  }
+}
+
+// Run this job every 24 hours
+setInterval(deleteUnverifiedUsers, 24 * 60 * 60 * 1000);

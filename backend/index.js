@@ -6,6 +6,8 @@ const bodyparser = require("body-parser");
 const cookieParser = require("cookie-parser");
 const session = require("express-session");
 const MongoStore = require("connect-mongo");
+const http = require("http");
+const socketIo = require("socket.io");
 const { rateLimit } = require("express-rate-limit");
 const helmet = require("helmet");
 // const path = require("path");
@@ -34,12 +36,22 @@ app.use(limiter);
 app.use(helmet());
 
 // cors cnfiguration
-const corsConfig = {
-  origin: "https://electrica-theta.vercel.app",
-  credentials: true, // Allow sending credentials (cookies)
-  methods: ["GET", "POST", "PUT", "PATCH"],
+const server = http.createServer(app);
+const io = socketIo(server, {
+  cors: {
+    origin: process.env.FRONTEND_URL, // Allow frontend connection
+    credentials: true,
+    methods: ["GET", "POST", "PUT", "PATCH", "DELETE"],
+  },
+});
+const corsOptions = {
+  origin: process.env.FRONTEND_URL, // Ensure this is set correctly
+  credentials: true, // Allow cookies to be sent
+  methods: ["GET", "POST", "PUT", "PATCH", "DELETE"],
+  allowedHeaders: ["Content-Type", "Authorization"], // Ensure headers are allowed
 };
-app.use(cors(corsConfig));
+
+app.use(cors(corsOptions));
 
 app.use(cookieParser());
 app.use(bodyparser.json());
@@ -54,12 +66,12 @@ const sessionConfig = {
   resave: false,
   saveUninitialized: true,
   secret: process.env.SESSION_SECRET, // A common session secret for both user and admin
-  proxy: true,
+  // proxy: true,
   cookie: {
     maxAge: 24 * 60 * 60 * 1000, // 1 day
     httpOnly: true,
-    secure: true, // Set to true in production with HTTPS
-    sameSite: "None",
+    secure: process.env.NODE_ENV === "production", // Set to true in production with HTTPS
+    sameSite: process.env.NODE_ENV === "production" ? "None" : "Lax",
   },
   store: MongoStore.create({
     mongoUrl: process.env.MONGO_URL,
@@ -69,7 +81,15 @@ const sessionConfig = {
 };
 app.use(session(sessionConfig));
 
-app.set("trust proxy", 1); // Trust the first proxy (for Vercel, Cloudflare, etc.)
+// app.set("trust proxy", 1); // Trust the first proxy (for Vercel, Cloudflare, etc.)
+
+io.on("connection", (socket) => {
+  console.log("A user connected");
+
+  socket.on("disconnect", () => {
+    console.log("A user disconnected");
+  });
+});
 
 // routes call
 app.use("/api/auth", routes);
@@ -77,6 +97,10 @@ app.use("/api/adminauth", adminRoutes);
 app.get("/", (req, res) => {
   res.send("Server electrica");
 });
+
+// Attach `io` to `app` for use in controllers
+app.set("io", io);
+
 // app.get("*", (_, res) => {
 //   res.sendFile(path.resolve(_dirname, "frontend", "dist", "index.html"));
 // });
@@ -110,6 +134,6 @@ app.all("*", (req, res) => {
 
 // port listen
 const port = process.env.PORT || 5120;
-app.listen(port, () => {
+server.listen(port, () => {
   console.log(`Server Listenning at port ${port}`);
 });
