@@ -45,10 +45,9 @@ const io = socketIo(server, {
   },
 });
 const corsOptions = {
-  origin: process.env.FRONTEND_URL, // Ensure this is set correctly
+  origin: process.env.FRONTEND_URL.trim(), // Ensure this is set correctly
   credentials: true, // Allow cookies to be sent
   methods: ["GET", "POST", "PUT", "PATCH", "DELETE"],
-  allowedHeaders: ["Content-Type", "Authorization"], // Ensure headers are allowed
 };
 
 app.use(cors(corsOptions));
