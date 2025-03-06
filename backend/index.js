@@ -7,14 +7,13 @@ const cookieParser = require("cookie-parser");
 const session = require("express-session");
 const MongoStore = require("connect-mongo");
 const http = require("http");
-const socketIo = require("socket.io");
+// const socketIo = require("socket.io");
 const { rateLimit } = require("express-rate-limit");
 const helmet = require("helmet");
 // const path = require("path");
 const routes = require("./src/routes/routes");
 const adminRoutes = require("./src/routes/route-admin");
 const connectionDatabase = require("./src/models/connection");
-const { sendEmail } = require("./src/utils/mail");
 
 dotenv.config();
 
@@ -43,9 +42,9 @@ const corsOptions = {
 };
 
 const server = http.createServer(app);
-const io = socketIo(server, {
-  cors: corsOptions,
-});
+// const io = socketIo(server, {
+//   cors: corsOptions,
+// });
 
 app.use(cors(corsOptions));
 
@@ -79,13 +78,13 @@ app.use(session(sessionConfig));
 
 // app.set("trust proxy", 1); // Trust the first proxy (for Vercel, Cloudflare, etc.)
 
-io.on("connection", (socket) => {
-  console.log("A user connected");
+// io.on("connection", (socket) => {
+//   console.log("A user connected");
 
-  socket.on("disconnect", () => {
-    console.log("A user disconnected");
-  });
-});
+//   socket.on("disconnect", () => {
+//     console.log("A user disconnected");
+//   });
+// });
 
 // routes call
 app.use("/api/auth", routes);
@@ -95,27 +94,11 @@ app.get("/", (req, res) => {
 });
 
 // Attach `io` to `app` for use in controllers
-app.set("io", io);
+// app.set("io", io);
 
 // app.get("*", (_, res) => {
 //   res.sendFile(path.resolve(_dirname, "frontend", "dist", "index.html"));
 // });
-
-app.use((req, res, next) => {
-  res.setHeader("Access-Control-Allow-Origin", FRONTEND_URL);
-  res.setHeader(
-    "Access-Control-Allow-Methods",
-    "GET, POST, PUT, PATCH, DELETE"
-  );
-  res.setHeader("Access-Control-Allow-Headers", "Content-Type, Authorization");
-  res.setHeader("Access-Control-Allow-Credentials", "true");
-
-  if (req.method === "OPTIONS") {
-    return res.sendStatus(200);
-  }
-
-  next();
-});
 
 app.use((err, req, res, next) => {
   if (err instanceof SyntaxError && err.status === 400 && "body" in err) {
