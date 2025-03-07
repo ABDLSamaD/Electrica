@@ -43,7 +43,7 @@ const About = () => {
     <>
       <HeaderMain />
       <motion.section
-        className="relative top-24 flex flex-col items-center justify-center text-white py-20 overflow-hidden bg-gradient-to-br from-gray-900 via-gray-800 to-gray-900"
+        className="relative top-24 flex flex-col items-center justify-center text-white py-20 overflow-hidden"
         initial="hidden"
         animate="visible"
         variants={containerVariants}

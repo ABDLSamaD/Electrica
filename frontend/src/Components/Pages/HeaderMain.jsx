@@ -95,6 +95,16 @@ const HeaderMain = () => {
             >
               Services
             </NavLink>
+            <NavLink
+              to="/complain"
+              className={({ isActive }) =>
+                isActive
+                  ? "text-indigo-400"
+                  : "text-gray-300 hover:text-indigo-400"
+              }
+            >
+              Complain
+            </NavLink>
           </nav>
         </div>
         <div className="md:hidden">
@@ -194,6 +204,19 @@ const HeaderMain = () => {
               }
             >
               Services
+            </NavLink>
+          </li>
+          <li>
+            <NavLink
+              to="/complain"
+              onClick={toggleNav}
+              className={({ isActive }) =>
+                isActive
+                  ? "text-indigo-400"
+                  : "text-gray-300 hover:text-indigo-400"
+              }
+            >
+              Complain
             </NavLink>
           </li>
           {isAuthenticatedUser ? (

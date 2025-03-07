@@ -1,4 +1,5 @@
 const Complain = require("../models/complain");
+const Karigar = require("../models/karigar");
 const { v4: uuidv4 } = require("uuid");
 
 // Create a complaint (Logged-in or Guest)
@@ -163,3 +164,145 @@ exports.deleteComplaint = async (req, res) => {
       .json({ type: "error", success: false, message: error.message });
   }
 };
+
+// create an karigar through an admin
+exports.createKarigar = async (req, res) => {
+  try {
+    const {
+      name,
+      email,
+      phone,
+      image,
+      location,
+      isActive,
+      chargesPerHour,
+      education,
+      skills,
+      workingExperience,
+      feedback,
+      ratings,
+    } = req.body;
+
+    if (!req.admin.id) {
+      return res.status(403).json({
+        type: "error",
+        success: false,
+        message: "Unauthorized: Only admins can create Karigar profiles",
+      });
+    }
+
+    if (!name || !email || !phone) {
+      return res.status(400).json({
+        type: "error",
+        success: false,
+        message: "Name, email, and phone are required",
+      });
+    }
+
+    const existingKarigar = await Karigar.findOne({ email });
+    if (existingKarigar) {
+      return res.status(400).json({
+        type: "error",
+        success: false,
+        message: "Email already exists",
+      });
+    }
+
+    const newKarigar = new Karigar({
+      name,
+      email,
+      phone,
+      image: image || "",
+      location: location || "",
+      isActive: isActive || false,
+      chargesPerHour: chargesPerHour || 0,
+      education: education || "None",
+      skills: skills || "",
+      workingExperience: workingExperience || 0,
+      feedback: feedback || "",
+      ratings: ratings || 0,
+    });
+
+    await newKarigar.save();
+
+    res.status(201).json({
+      type: "success",
+      success: true,
+      message: "Karigar created successfully",
+      karigar: newKarigar,
+    });
+  } catch (error) {
+    console.log(error.message);
+    res.status(500).json({
+      type: "error",
+      success: false,
+      message: error.message,
+    });
+  }
+};
+
+// Karigar update isActive
+exports.isActiveKarigar = async (req, res) => {
+  try {
+    const { karigarId } = req.body;
+    const adminId = req.admin?.id;
+
+    // Check if request is from an admin
+    if (!adminId) {
+      return res.status(403).json({
+        type: "error",
+        success: false,
+        message: "Unauthorized: Only admins can update Karigar status.",
+      });
+    }
+
+    // Validate the ObjectId format
+    if (!isValidObjectId(karigarId)) {
+      return { error: "Invalid project ID" };
+    }
+
+    // Find Karigar by _id
+    const karigar = await Karigar.findById(karigarId);
+    if (!karigar) {
+      return res.status(404).json({
+        type: "error",
+        success: false,
+        message: "Karigar not found",
+      });
+    }
+
+    // Toggle isActive status
+    karigar.isActive = !karigar.isActive;
+
+    // Save the updated document
+    await karigar.save();
+
+    // Emit real-time update via Socket.io
+    const io = req.app.get("io");
+    io.emit("karigarStatusUpdated", {
+      karigarId: karigar._id,
+      isActive: karigar.isActive,
+    });
+
+    res.status(200).json({
+      type: "success",
+      success: true,
+      message: `Karigar status updated successfully to ${
+        karigar.isActive ? "Active" : "Inactive"
+      }.`,
+      karigar,
+    });
+  } catch (error) {
+    res.status(500).json({
+      type: "error",
+      success: false,
+      message: error.message,
+    });
+  }
+};
+
+// funcion for valid mongoid
+function isValidObjectId(id) {
+  const mongoose = require("mongoose");
+  return mongoose.Types.ObjectId.isValid(id);
+}

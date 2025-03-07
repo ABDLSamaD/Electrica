@@ -8,6 +8,7 @@ import { FaUserAlt, FaPhoneAlt, FaMapMarkerAlt, FaCity } from "react-icons/fa";
 import { AiOutlineMail } from "react-icons/ai";
 import { faArrowLeft } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import MiniLoader from "../../OtherComponents/Miniloader";
 
 const Profile = () => {
   const navigate = useNavigate();
@@ -59,20 +60,17 @@ const Profile = () => {
         }
       );
       if (response.status === 200) {
-        setType(response.data.type);
-        setMessage(response.data.message);
-        setALert(response.data.type, response.data.message);
+        setALert({ type: response.data.type, message: response.data.message });
         setIsEditable(false);
         fetchUser();
       } else {
-        setType(response.data.type);
-        setMessage(response.data.message);
-        setALert(response.data.type, response.data.message);
+        setALert({ type: response.data.type, message: response.data.message });
       }
     } catch (err) {
-      setType(err.response?.data?.type);
-      setMessage(err.response?.data?.message);
-      setALert(err.response?.data?.type, err.response?.data?.message);
+      setALert({
+        type: err.response?.data?.type,
+        message: err.response?.data?.message,
+      });
     } finally {
       setLoading(false);
     }
@@ -140,16 +138,6 @@ const Profile = () => {
     }
   };
 
-  if (alert) {
-    return (
-      <Alert type={type} message={message} onClose={() => setALert(null)} />
-    );
-  }
-
-  if (loading) {
-    return <div className="spinner-overlay">Loading...</div>;
-  }
-
   return (
     <div className="relative top-12 mb-12 overflow-hidden min-h-screen flex flex-wrap items-start p-4 md:p-6">
       <button
@@ -162,6 +150,13 @@ const Profile = () => {
 
       {message && (
         <p className="w-full text-center text-gray-200 mb-4">{message}</p>
+      )}
+      {alert && (
+        <Alert
+          type={alert.type}
+          message={alert.message}
+          onClose={() => setALert(null)}
+        />
       )}
 
       <div className="w-full max-w-7xl mx-auto">
@@ -201,7 +196,7 @@ const Profile = () => {
                   Member since {new Date(user.createdAt).toLocaleDateString()}
                 </p>
               </div>
-
+              {/* image input */}
               <div className="w-full space-y-4 mt-4">
                 <div className="relative group w-full">
                   <label
@@ -415,10 +410,9 @@ const Profile = () => {
                   <button
                     type="submit"
                     className="px-6 py-3 bg-gradient-to-r from-green-600 to-green-500 text-white rounded-lg shadow-lg hover:from-green-500 hover:to-green-400 transition-all duration-300 flex items-center"
+                    disabled={loading}
                   >
-                    {loading ? (
-                      <div className="w-5 h-5 border-2 border-t-white border-r-transparent border-b-white border-l-transparent rounded-full animate-spin mr-2"></div>
-                    ) : null}
+                    {loading ? <MiniLoader /> : null}
                     Save Details
                   </button>
                 )}
