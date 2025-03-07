@@ -48,7 +48,7 @@ const GlobalVerificationEmail = ({
       )}
 
       {/* Main card */}
-      <div className="relative border-solid bg-gray-900/80 text-white shadow-2xl rounded-xl p-8 w-full max-w-md backdrop-blur-md border border-gray-700/50 animate-fade-in">
+      <div className="relative border-solid bg-gray-900/80 text-white shadow-2xl rounded-xl p-6 sm:p-8 w-full max-w-md backdrop-blur-md border border-gray-700/50 animate-fade-in">
         {/* Header */}
         <div className="text-center mb-8">
           <div className="mx-auto w-16 h-16 bg-blue-600/20 rounded-full flex items-center justify-center mb-4">
@@ -80,7 +80,7 @@ const GlobalVerificationEmail = ({
                 value={digit}
                 onChange={(e) => handleChange(e, index)}
                 onKeyDown={(e) => onkeyDown(e, index)}
-                className="w-12 h-14 sm:w-14 sm:h-16 text-center text-xl bg-gray-700/70 text-white rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:bg-gray-800/90 placeholder-gray-400 border border-gray-600/50 transition-all"
+                className="w-10 h-12 sm:w-14 sm:h-16 text-center text-xl bg-gray-700/70 text-white rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:bg-gray-800/90 placeholder-gray-400 border border-gray-600/50 transition-all"
                 aria-label={`Digit ${index + 1}`}
               />
             ))}
