@@ -1,5 +1,7 @@
 import React, { useEffect, useState } from "react";
-// import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { Link, useNavigate, useOutletContext } from "react-router-dom";
+import { motion, AnimatePresence } from "framer-motion";
+import axios from "axios";
 import {
   ArrowLeft,
   PlusCircle,
@@ -14,10 +16,13 @@ import {
   Eye,
   CheckSquare,
   BookUserIcon,
+  Calendar,
+  BarChart,
+  Filter,
+  SortAsc,
+  Clock,
 } from "lucide-react";
-import { Link, useNavigate, useOutletContext } from "react-router-dom";
-import axios from "axios";
-import { motion } from "framer-motion";
+import ProjectsGrid from "./ProjectsGrid";
 
 // Helper function to highlight matching text
 const highlightText = (text, query) => {
@@ -39,6 +44,9 @@ const CheckProjects = () => {
   const navigate = useNavigate();
   const [loading, setLoading] = useState(true);
   const [searchQuery, setSearchQuery] = useState("");
+  const [sortBy, setSortBy] = useState("date");
+  const [filterStatus, setFilterStatus] = useState("all");
+  const [showFilters, setShowFilters] = useState(false);
 
   useEffect(() => {
     if (projects && projects.length > 0) {
@@ -75,27 +83,54 @@ const CheckProjects = () => {
     }
   };
 
-  const projectAdd = () => {
-    navigate("/db-au-user/project/prjfrom");
-  };
-
   const handleSearchChange = (e) => {
     setSearchQuery(e.target.value);
   };
 
-  // Filter projects based on search query
-  const filteredProjects = projects.filter(
-    (project) =>
-      project.projectName.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      project.clientName.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      project.projectCity.toLowerCase().includes(searchQuery.toLowerCase())
-  );
+  // Filter and sort projects
+  const processedProjects = projects
+    .filter((project) => {
+      const matchesSearch =
+        project.projectName.toLowerCase().includes(searchQuery.toLowerCase()) ||
+        project.clientName.toLowerCase().includes(searchQuery.toLowerCase()) ||
+        project.projectCity.toLowerCase().includes(searchQuery.toLowerCase());
+
+      const matchesFilter =
+        filterStatus === "all" || project.status === filterStatus;
+
+      return matchesSearch && matchesFilter;
+    })
+    .sort((a, b) => {
+      switch (sortBy) {
+        case "name":
+          return a.projectName.localeCompare(b.projectName);
+        case "cost":
+          return b.totalCost - a.totalCost;
+        case "date":
+        default:
+          return new Date(b.createdAt) - new Date(a.createdAt);
+      }
+    });
+
+  const projectStats = {
+    total: projects.filter((p) => p.user === user._id).length,
+    completed: projects.filter(
+      (p) => p.user === user._id && p.stages.every((s) => s.isCompleted)
+    ).length,
+    inProgress: projects.filter(
+      (p) => p.user === user._id && !p.stages.every((s) => s.isCompleted)
+    ).length,
+  };
 
   return (
     <div className="p-6 text-white min-h-screen relative top-8 mb-12">
       {/* Header Section */}
-      <div className="mb-8 flex flex-col sm:flex-row justify-between flex-wrap gap-4">
-        <motion.div className="group flex items-center">
+      <div className="mb-8">
+        <motion.div
+          className="group flex items-center mb-6"
+          initial={{ opacity: 0, x: -20 }}
+          animate={{ opacity: 1, x: 0 }}
+        >
           <ArrowLeft className="w-5 h-5 transition-transform group-hover:-translate-x-1" />
           <Link
             className="text-white ml-2 text-sm hover:scale-105 mr-1"
@@ -105,32 +140,67 @@ const CheckProjects = () => {
           </Link>{" "}
           /<span className="text-gray-400 ml-1 text-sm">checkProject</span>
         </motion.div>
-        <motion.button
-          className="flex items-center md:w-auto w-max space-x-2 bg-indigo-600/90 hover:bg-indigo-500 text-white px-6 py-3 rounded-xl transition-all shadow-lg shadow-indigo-500/20 hover:shadow-indigo-500/30"
-          onClick={projectAdd}
-          whileHover={{ scale: 1.02 }}
-          whileTap={{ scale: 0.98 }}
-        >
-          <PlusCircle className="w-5 h-5" />
-          <span>New Project</span>
-        </motion.button>
-      </div>
 
-      {/* Loading State */}
-      {loading ? (
-        <div className="fixed inset-0 flex justify-center items-center bg-black/50 backdrop-blur-sm z-50">
-          <Loader2 className="w-12 h-12 text-indigo-500 animate-spin" />
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
+          <motion.div
+            className="bg-gradient-to-br from-blue-500/20 to-purple-500/20 p-6 rounded-2xl border border-white/10"
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+          >
+            <div className="flex items-center gap-3 mb-2">
+              <BarChart className="w-5 h-5 text-blue-400" />
+              <h3 className="text-lg font-semibold">Total Projects</h3>
+            </div>
+            <p className="text-3xl font-bold text-blue-400">
+              {projectStats.total}
+            </p>
+          </motion.div>
+
+          <motion.div
+            className="bg-gradient-to-br from-green-500/20 to-emerald-500/20 p-6 rounded-2xl border border-white/10"
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.1 }}
+          >
+            <div className="flex items-center gap-3 mb-2">
+              <CheckSquare className="w-5 h-5 text-green-400" />
+              <h3 className="text-lg font-semibold">Completed</h3>
+            </div>
+            <p className="text-3xl font-bold text-green-400">
+              {projectStats.completed}
+            </p>
+          </motion.div>
+
+          <motion.div
+            className="bg-gradient-to-br from-yellow-500/20 to-orange-500/20 p-6 rounded-2xl border border-white/10"
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.2 }}
+          >
+            <div className="flex items-center gap-3 mb-2">
+              <Clock className="w-5 h-5 text-yellow-400" />
+              <h3 className="text-lg font-semibold">In Progress</h3>
+            </div>
+            <p className="text-3xl font-bold text-yellow-400">
+              {projectStats.inProgress}
+            </p>
+          </motion.div>
         </div>
-      ) : (
-        <div className="space-y-8">
-          {/* Search and Title Section */}
-          <div className="flex flex-col lg:flex-row justify-between items-start lg:items-center gap-6">
-            <h1 className="text-2xl font-bold bg-gradient-to-r from-white to-indigo-200 bg-clip-text text-transparent">
-              <span className="text-blue-600 text-2xl">{user.name}</span>{" "}
-              projects
-            </h1>
+
+        <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
+          <motion.button
+            className="flex items-center space-x-2 bg-indigo-600/90 hover:bg-indigo-500 text-white px-6 py-3 rounded-xl transition-all shadow-lg shadow-indigo-500/20 hover:shadow-indigo-500/30"
+            onClick={() => navigate("/db-au-user/project/prjfrom")}
+            whileHover={{ scale: 1.02 }}
+            whileTap={{ scale: 0.98 }}
+          >
+            <PlusCircle className="w-5 h-5" />
+            <span className="text-white">New Project</span>
+          </motion.button>
+
+          <div className="flex flex-col sm:flex-row gap-4 w-full md:w-auto">
             <motion.div
-              className="relative w-full lg:w-auto"
+              className="relative flex-1 md:flex-none"
               whileHover={{ scale: 1.01 }}
             >
               <div className="absolute inset-y-0 left-3 flex items-center pointer-events-none">
@@ -139,154 +209,81 @@ const CheckProjects = () => {
               <input
                 type="text"
                 placeholder="Search projects..."
-                className="w-full lg:w-80 bg-white/5 text-white pl-12 pr-4 py-3 rounded-xl backdrop-blur-lg outline-none border border-white/10 focus:border-indigo-500/50 transition-all"
+                className="w-full md:w-80 bg-white/5 text-white pl-12 pr-4 py-3 rounded-xl backdrop-blur-lg outline-none border border-white/10 focus:border-indigo-500/50 transition-all"
                 value={searchQuery}
                 onChange={handleSearchChange}
               />
             </motion.div>
+
+            <motion.button
+              className="flex items-center justify-center gap-2 px-4 py-3 bg-white/5 rounded-xl border border-white/10 hover:border-indigo-500/50 transition-all"
+              onClick={() => setShowFilters(!showFilters)}
+              whileHover={{ scale: 1.01 }}
+              whileTap={{ scale: 0.98 }}
+            >
+              <Filter className="w-5 h-5" />
+              <span className="text-white">Filters</span>
+            </motion.button>
           </div>
-
-          {/* Projects Grid */}
-          {filteredProjects.length > 0 ? (
-            <div className="grid grid-cols-1 lg:grid-cols-2 xl:grid-cols-3 gap-6">
-              {filteredProjects
-                .filter((project) => project.user === user._id)
-                .map((project, index) => (
-                  <motion.div
-                    key={project._id}
-                    className="group relative p-6 rounded-2xl bg-white/5 backdrop-blur-lg border border-white/10 hover:border-indigo-500/30 transition-all overflow-hidden"
-                    initial={{ opacity: 0, y: 20 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    transition={{ duration: 0.3, delay: index * 0.1 }}
-                  >
-                    {/* Project Header */}
-                    <div className="flex justify-between items-start mb-6">
-                      <div>
-                        <h2 className="text-2xl font-bold mb-2">
-                          {project.stages.every(
-                            (stage) => stage.isCompleted
-                          ) && (
-                            <span className="inline-flex items-center gap-1 bg-green-500/20 text-green-300 text-sm px-3 py-1 rounded-full mb-2">
-                              <CheckSquare className="w-4 h-4" />
-                              Completed
-                            </span>
-                          )}
-                          {highlightText(project.projectName, searchQuery)}
-                        </h2>
-                        <p className="text-sm text-gray-400 flex items-center gap-2">
-                          <ClipboardList className="w-4 h-4" />
-                          Created:{" "}
-                          {new Date(project.createdAt).toLocaleDateString()} -
-                          {new Date(project.createdAt).toLocaleTimeString()}
-                        </p>
-                      </div>
-                      {project.status === "Accepted" && (
-                        <CheckCircle2 className="w-6 h-6 text-green-400" />
-                      )}
-                    </div>
-
-                    {/* Project Details */}
-                    <div className="space-y-4 mb-6">
-                      <p className="text-gray-300 line-clamp-2 flex items-center gap-1">
-                        <BookUserIcon />
-                        {highlightText(project.projectDescription, searchQuery)}
-                      </p>
-
-                      <div className="flex flex-wrap gap-4">
-                        <div className="flex items-center gap-2 text-sm">
-                          <User className="w-4 h-4 text-indigo-400" />
-                          <span className="text-gray-400">
-                            {highlightText(project.clientName, searchQuery)}
-                          </span>
-                        </div>
-                        <div className="flex items-center gap-2 text-sm">
-                          <Building2 className="w-4 h-4 text-indigo-400" />
-                          <span className="text-gray-400">
-                            {highlightText(project.projectCity, searchQuery)}
-                          </span>
-                        </div>
-                        <div className="flex items-center gap-2 text-sm">
-                          <DollarSign className="w-4 h-4 text-indigo-400" />
-                          <span className="text-gray-400">
-                            Rs-{project.totalCost}
-                          </span>
-                        </div>
-                      </div>
-
-                      {/* Status Badge */}
-                      <div
-                        className={`inline-flex items-center px-4 py-2 rounded-lg text-sm font-medium ${
-                          project.status === "approved"
-                            ? "bg-green-500/20 text-green-300"
-                            : project.status === "pending"
-                            ? "bg-yellow-500/20 text-yellow-300"
-                            : "bg-red-500/20 text-red-300"
-                        }`}
-                      >
-                        <div
-                          className={`w-2 h-2 rounded-full mr-2 ${
-                            project.status === "approved"
-                              ? "bg-green-400"
-                              : project.status === "pending"
-                              ? "bg-yellow-400"
-                              : "bg-red-400"
-                          }`}
-                        />
-                        {project.status}
-                      </div>
-                    </div>
-
-                    {/* Action Buttons */}
-                    <div className="grid grid-cols-1 gap-3">
-                      <motion.button
-                        onClick={() =>
-                          navigate(
-                            `/db-au-user/checkstatus/projectreview-1-9&/${project._id}`
-                          )
-                        }
-                        className="flex-1 min-w-[120px] flex items-center justify-center gap-2 bg-indigo-600/80 hover:bg-indigo-500 px-4 py-2.5 rounded-lg transition-all"
-                        whileHover={{ scale: 1.02 }}
-                        whileTap={{ scale: 0.98 }}
-                      >
-                        <Eye className="w-4 h-4" />
-                        View Details
-                      </motion.button>
-                      {project.billRequired && (
-                        <motion.button
-                          onClick={() =>
-                            navigate(
-                              `/db-au-user/checkstatus/complete/prj/${project._id}`
-                            )
-                          }
-                          className="flex-1 min-w-[120px] flex items-center justify-center gap-2 bg-gray-950/80 hover:bg-gray-900/90 px-4 py-2.5 rounded-lg transition-all"
-                          whileHover={{ scale: 1.02 }}
-                          whileTap={{ scale: 0.98 }}
-                        >
-                          <CheckSquare className="w-4 h-4" />
-                          check bill&Pay
-                        </motion.button>
-                      )}
-                      <motion.button
-                        onClick={() => removeProject(project._id)}
-                        className="flex-1 min-w-[120px] flex items-center justify-center gap-2 bg-red-600/80 hover:bg-red-500 px-4 py-2.5 rounded-lg transition-all"
-                        whileHover={{ scale: 1.02 }}
-                        whileTap={{ scale: 0.98 }}
-                      >
-                        <Trash2 className="w-4 h-4" />
-                        Remove
-                      </motion.button>
-                    </div>
-                  </motion.div>
-                ))}
-            </div>
-          ) : (
-            <div className="text-center py-12">
-              <p className="text-gray-400 text-lg">
-                No projects match your search criteria.
-              </p>
-            </div>
-          )}
         </div>
+
+        {/* filter list */}
+        <AnimatePresence>
+          {showFilters && (
+            <motion.div
+              initial={{ opacity: 0, height: 0 }}
+              animate={{ opacity: 1, height: "auto" }}
+              exit={{ opacity: 0, height: 0 }}
+              className="mt-4 p-4 bg-black/5 rounded-xl border border-white/10"
+            >
+              <div className="flex flex-wrap gap-4">
+                <div className="space-y-2">
+                  <label className="text-sm text-gray-400">Sort by</label>
+                  <select
+                    value={sortBy}
+                    onChange={(e) => setSortBy(e.target.value)}
+                    className="bg-white/10 ml-1 text-black/80 px-4 py-2 rounded-lg border border-white/10 focus:border-indigo-500/50 outline-none"
+                  >
+                    <option value="date">Date</option>
+                    <option value="name">Name</option>
+                    <option value="cost">Cost</option>
+                  </select>
+                </div>
+
+                <div className="space-y-2">
+                  <label className="text-sm text-gray-400">Status</label>
+                  <select
+                    value={filterStatus}
+                    onChange={(e) => setFilterStatus(e.target.value)}
+                    className="bg-white/10 ml-1 text-black/80 px-4 py-2 rounded-lg border border-white/10 focus:border-indigo-500/50 outline-none"
+                  >
+                    <option value="all">All</option>
+                    <option value="approved">Approved</option>
+                    <option value="submitted">Submitted</option>
+                    <option value="pending">Pending</option>
+                    <option value="rejected">Rejected</option>
+                  </select>
+                </div>
+              </div>
+            </motion.div>
+          )}
+        </AnimatePresence>
+      </div>
+
+      {/* Loading State */}
+      {loading ? (
+        <div className="fixed inset-0 flex justify-center items-center bg-black/50 backdrop-blur-sm z-50">
+          <Loader2 className="w-12 h-12 text-indigo-500 animate-spin" />
+        </div>
+      ) : (
+        <ProjectsGrid
+          processedProjects={processedProjects}
+          searchQuery={searchQuery}
+          user={user}
+          navigate={navigate}
+          removeProject={removeProject}
+          highlightText={highlightText}
+        />
       )}
     </div>
   );
