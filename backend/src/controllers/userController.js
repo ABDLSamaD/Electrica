@@ -14,6 +14,28 @@ const generateOTP = () => {
   return otp.toString(); // Generates a 6-digit OTP
 };
 
+// function of delete user is  not verified
+const deleteUnverifiedUsers = async () => {
+  try {
+    const deletedUser = await User.deleteMany({
+      isVerified: false,
+      createdAt: { $lte: new Date(Date.now() - 24 * 60 * 60 * 1000) }, // Older than 24 hours
+    });
+
+    console.log(`${deletedUser.deletedCount} unverified users deleted`);
+  } catch (error) {
+    console.error("Error deleting unverified users:", error);
+  }
+};
+
+// Run once after 24 hours (First-time execution)
+setTimeout(deleteUnverifiedUsers, 24 * 60 * 60 * 1000);
+
+// Call this function every time a new user signs up
+const handleNewUserSignup = () => {
+  setTimeout(deleteUnverifiedUsers, 24 * 60 * 60 * 1000); // Runs after 24 hours when a new user is created
+};
+
 exports.signUp = async (req, res) => {
   try {
     const { name, email, password } = req.body;
@@ -55,6 +77,9 @@ exports.signUp = async (req, res) => {
     const data = { user: { email } };
     const token = jwt.sign(data, process.env.JWT_SECRET, { expiresIn: "1h" });
     user.token = token;
+
+    // ✅ Schedule deletion check after 1 minute
+    handleNewUserSignup();
 
     await user.save();
 
@@ -125,11 +150,15 @@ exports.verifyOtp = async (req, res) => {
     }
 
     if (user.isVerified) {
-      return res.status(400).json({ type: "error", message: "User is already verified" });
+      return res
+        .status(400)
+        .json({ type: "error", message: "User is already verified" });
     }
 
     if (!user.otp || user.otpExpires < Date.now()) {
-      return res.status(400).json({ type: "error", message: "OTP is invalid or expired" });
+      return res
+        .status(400)
+        .json({ type: "error", message: "OTP is invalid or expired" });
     }
 
     // Check if OTP matches
@@ -180,7 +209,9 @@ exports.verifyOtp = async (req, res) => {
 
     req.session.save((err) => {
       if (err) {
-        return res.status(500).json({ type: "error", message: "Session error" });
+        return res
+          .status(500)
+          .json({ type: "error", message: "Session error" });
       }
 
       // ✅ Set HTTP-only cookie
@@ -336,6 +367,7 @@ exports.login = async (req, res) => {
     await users.save();
     res.status(200).json({ type: "success", message: "Login successfully" });
   } catch (error) {
+    console.log(error.message);
     res.status(500).json({ type: "error", message: "Internal server error" });
   }
 };
@@ -351,6 +383,17 @@ exports.checkAuth = async (req, res) => {
   } else {
     return res.status(401).json({ isAuthenticated: false });
   }
+};
+exports.checkAuthIfLoggedIn = (req, res) => {
+  if (!req.session.user) {
+    return res.status(204).end(); // No response if the user is not logged in
+  }
+
+  return res.status(200).json({
+    isAuthenticated: true,
+    user: req.session.user,
+    role: "user",
+  });
 };
 
 exports.updateFirstTime = async (req, res) => {
@@ -656,19 +699,3 @@ exports.deleteAccount = async (req, res) => {
     });
   }
 };
-
-// User signup not verified in 10h account will deleted auto
-const deleteUnverifiedUsers = async (req,res)=>{
-  try {
-    const deletedUser = await User.deleteMany({
-      isVerified: false,
-      createdAt: { $lte: new Date(Date.now() - 24 * 60 * 60 * 1000) }, // Older than 24 hours
-    })
-    console.log(`${deletedUser.deletedCount} unverified users deleted`);
-  } catch (error) {
-    res.status(500).json({type: "error", message: "Internal server error"})
-  }
-}
-
-// Run this job every 24 hours
-setInterval(deleteUnverifiedUsers, 24 * 60 * 60 * 1000);

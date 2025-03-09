@@ -15,6 +15,7 @@ const {
   checkAuth,
   deleteAccount,
   updateFirstTime,
+  checkAuthIfLoggedIn,
 } = require("../controllers/userController");
 const {
   someProtectedController,
@@ -84,6 +85,7 @@ routes.post(
   login
 );
 routes.get("/check-auth", sessionAuth, checkAuth);
+routes.get("/check-userlogin", sessionAuth, checkAuthIfLoggedIn);
 routes.post("/updateFirstTime", decodedToken, updateFirstTime);
 routes.get("/protected-endpoint", sessionAuth, someProtectedController);
 routes.post("/logout", sessionAuth, logout);
