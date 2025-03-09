@@ -173,6 +173,11 @@ const Signup = () => {
           secure: true,
           sameSite: "Strict",
         });
+        Cookies.set("signup_time", Date.now().toString(), {
+          expires: 1,
+          secure: true,
+          sameSite: "Strict",
+        }); // store signup time
 
         // Update loading message and progress
         setLoadingMessage("Account Created Successfully!");

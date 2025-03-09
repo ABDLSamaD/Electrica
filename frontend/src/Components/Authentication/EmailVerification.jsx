@@ -49,6 +49,7 @@ const EmailVerification = () => {
 
       if (response.status === 201) {
         Cookies.remove("signup_email");
+        Cookies.remove("signup_time");
         setAlert({
           type: response.data.type,
           message: response.data.message,

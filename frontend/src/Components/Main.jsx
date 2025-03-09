@@ -119,9 +119,10 @@ const Main = () => {
               }
             />
             <Route path="/signup" element={<Signup />} />
+            <Route path="/otpverify" element={<EmailVerification />} />
+            <Route path="*" element={<Errornotfound />} />
             {/* User forgot password */}
             <Route path="/forgot_password" element={<Forgot />} />
-            <Route path="*" element={<Errornotfound />} />
 
             {/* Admin Authentication signin Routes */}
             <Route
@@ -170,7 +171,6 @@ const Main = () => {
                 </PrivateRouteResetPass>
               }
             />
-            <Route path="/otpverify" element={<EmailVerification />} />
 
             {/* User Dashboard Routes */}
             <Route element={<PrivateRoute />}>

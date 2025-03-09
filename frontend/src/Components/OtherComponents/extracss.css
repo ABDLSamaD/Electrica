@@ -68,7 +68,7 @@
   transition: background-color 0.4s linear;
 }
 
-.toggle-checkbox:checked+.toggle-container {
+.toggle-checkbox:checked + .toggle-container {
   background-color: #f3b519;
 }
 
@@ -89,7 +89,7 @@
   transition: left 0.4s;
 }
 
-.toggle-checkbox:checked+.toggle-container>.toggle-button {
+.toggle-checkbox:checked + .toggle-container > .toggle-button {
   left: 1.5625em;
 }
 
@@ -106,4 +106,58 @@
   width: 0.125em;
   height: 0.125em;
   background-image: radial-gradient(circle at 50% 0, #f5f5f5, #c4c4c4);
+}
+
+@keyframes shake {
+  0% {
+    transform: translateX(0);
+  }
+  10% {
+    transform: translateX(-5px);
+  }
+  20% {
+    transform: translateX(5px);
+  }
+  30% {
+    transform: translateX(-5px);
+  }
+  40% {
+    transform: translateX(5px);
+  }
+  50% {
+    transform: translateX(-5px);
+  }
+  60% {
+    transform: translateX(5px);
+  }
+  70% {
+    transform: translateX(-5px);
+  }
+  80% {
+    transform: translateX(5px);
+  }
+  90% {
+    transform: translateX(-5px);
+  }
+  100% {
+    transform: translateX(0);
+  }
+}
+
+.animate-shake {
+  animation: shake 0.8s cubic-bezier(0.36, 0.07, 0.19, 0.97) both;
+}
+
+@keyframes pulse {
+  0%,
+  100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.5;
+  }
+}
+
+.animate-pulse {
+  animation: pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
 }
