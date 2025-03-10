@@ -7,6 +7,7 @@ const { sendForgotOtpEmail } = require("../utils/OtpForgot");
 const { loginMail } = require("../utils/loginmail");
 const { sendEmail } = require("../utils/mail");
 const Project = require("../models/project");
+const mongoose = require("mongoose");
 require("dotenv").config();
 
 const generateOTP = () => {
