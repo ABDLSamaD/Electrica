@@ -14,6 +14,11 @@ exports.project = async (req, res) => {
       projectName,
       projectCity,
       projectPics,
+      category,
+      voltageType,
+      phases,
+      estimatedBudget,
+      advancePaid,
     } = req.body;
 
     if (
@@ -22,7 +27,12 @@ exports.project = async (req, res) => {
       !projectDescription ||
       !projectAddress ||
       !projectName ||
-      !projectCity
+      !projectCity ||
+      !category ||
+      !voltageType ||
+      !phases ||
+      !estimatedBudget ||
+      advancePaid === undefined
     ) {
       return res
         .status(400)
@@ -78,7 +88,12 @@ exports.project = async (req, res) => {
       projectAddress,
       projectName,
       projectCity,
-      projectPics: req.body.projectPics || [],
+      category,
+      voltageType,
+      phases,
+      estimatedBudget,
+      advancePaid,
+      projectPics: projectPics || [],
       status: "submitted", // Initially set the status to 'submitted'
       stages: initialStages,
       user: userId, // Reference to the user who created the project
@@ -96,7 +111,6 @@ exports.project = async (req, res) => {
       project: project,
     });
   } catch (error) {
-    console.log(error.message);
     res.status(500).json({ type: "error", message: "Internal server error" });
   }
 };
@@ -143,7 +157,6 @@ exports.removeProject = async (req, res) => {
       .status(200)
       .json({ type: "success", message: "Project removed successfully." });
   } catch (error) {
-    console.log(error.message);
     res.status(500).json({ type: "error", message: "Internal server error" });
   }
 };
@@ -159,7 +172,6 @@ exports.getProjectDetails = async (req, res) => {
     const project = await Project.find();
     res.status(200).json(project);
   } catch (error) {
-    console.log(error.message);
     res.status(500).json({ type: "error", message: "Internal server error" });
   }
 };
@@ -186,7 +198,6 @@ exports.sendMessageToAdmin = async (req, res) => {
       message: "Message sent to admin successfully.",
     });
   } catch (error) {
-    console.log(error.message);
     res.status(500).json({ type: "error", message: "Internal server error" });
   }
 };
@@ -229,7 +240,6 @@ exports.markMessageAsShown = async (req, res) => {
       message: "Message marked as shown successfully.",
     });
   } catch (error) {
-    console.error(error);
     res.status(500).json({ type: "error", message: "Internal server error" });
   }
 };
@@ -252,7 +262,6 @@ exports.getUnreadMessages = async (req, res) => {
       unreadMessages,
     });
   } catch (error) {
-    console.error(error);
     res.status(500).json({ type: "error", message: "Internal server error" });
   }
 };

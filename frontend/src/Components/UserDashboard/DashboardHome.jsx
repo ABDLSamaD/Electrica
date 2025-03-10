@@ -87,6 +87,7 @@ function LoaderAll() {
 const DashboardHome = () => {
   const navigate = useNavigate();
   const [data, setData] = useState(null);
+  const [ifUser, setIfUser] = useState(null);
   const [loader, setLoader] = useState(true);
   const [error, setError] = useState(null);
   const [page, setPage] = useState(false);
@@ -112,12 +113,16 @@ const DashboardHome = () => {
     const timer = setTimeout(() => {
       try {
         setData(user);
+        const checkUser = projects.filter(
+          (project) => project.user === user._id
+        );
+        setIfUser(checkUser);
       } catch (err) {
         setError("Failed to load user data.");
       } finally {
         setLoader(false);
       }
-    }, 1500);
+    }, 300);
 
     return () => clearTimeout(timer);
   }, [user, projects]);
@@ -174,15 +179,20 @@ const DashboardHome = () => {
   };
 
   const stats = [
-    { icon: BarChart, label: "Active Projects", value: "2", color: "blue" },
+    {
+      icon: BarChart,
+      label: "Active Projects",
+      value: ifUser?.length,
+      color: "blue",
+    },
     {
       icon: CheckCircle,
       label: "Tasks Completed",
-      value: "45",
+      value: "0",
       color: "green",
     },
-    { icon: Users, label: "Team Members", value: "12", color: "purple" },
-    { icon: Activity, label: "Progress Rate", value: "78%", color: "pink" },
+    { icon: Users, label: "Team Members", value: "0", color: "purple" },
+    { icon: Activity, label: "Progress Rate", value: "8%", color: "pink" },
   ];
 
   const recentActivities = [
@@ -213,9 +223,9 @@ const DashboardHome = () => {
   ];
 
   const upcomingDeadlines = [
-    { project: "Project Beta", deadline: "March 15", progress: 75 },
-    { project: "Marketing Campaign", deadline: "March 20", progress: 60 },
-    { project: "UI Redesign", deadline: "March 25", progress: 40 },
+    { project: "Project Beta", deadline: "March 15", progress: 0 },
+    { project: "Marketing Campaign", deadline: "March 20", progress: 0 },
+    { project: "UI Redesign", deadline: "March 25", progress: 0 },
   ];
 
   if (loader) {
@@ -246,12 +256,12 @@ const DashboardHome = () => {
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
-          className="flex items-center justify-between mb-12"
+          className="flex sm:items-center items-start sm:gap-0 gap-3 justify-between sm:flex-row flex-col mb-12"
         >
           <div>
             <div className="flex items-center gap-4 mb-3">
               <h1 className="text-5xl font-bold gradient-text flex items-center gap-3">
-                Welcome back, {data?.name}!{" "}
+                Welcome {data?.name}!{" "}
                 <Sparkles className="text-yellow-400" size={32} />
               </h1>
               <span className="px-4 py-1 bg-purple-500/20 text-purple-400 rounded-full text-sm font-medium">
@@ -283,6 +293,7 @@ const DashboardHome = () => {
             )}
           </motion.button>
         </motion.div>
+
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-12">
           {stats.map((stat, index) => (
             <motion.div
@@ -308,6 +319,7 @@ const DashboardHome = () => {
             </motion.div>
           ))}
         </div>
+
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 mb-12">
           <motion.div
             initial={{ opacity: 0, x: -20 }}
@@ -358,6 +370,7 @@ const DashboardHome = () => {
             </div>
           </motion.div>
         </div>
+
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 mb-12">
           <motion.div
             initial={{ opacity: 0, y: 20 }}
@@ -432,6 +445,7 @@ const DashboardHome = () => {
             </div>
           </motion.div>
         </div>
+
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
@@ -469,7 +483,6 @@ const DashboardHome = () => {
             </div>
           </div>
         </motion.div>
-        x
       </div>
     </div>
   );

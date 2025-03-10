@@ -10,12 +10,25 @@ const projectSchema = new mongoose.Schema({
   projectName: { type: String, required: true },
   projectAddress: { type: String, required: true },
   projectCity: { type: String, required: true },
+  category: {
+    type: String,
+    enum: ["Residential", "Commercial", "Industrial"],
+    required: true,
+  },
+  voltageType: {
+    type: String,
+    enum: ["Low", "Medium", "High"],
+    required: true,
+  },
   projectPics: [String], // General project images
   status: {
     type: String,
     enum: ["submitted", "pending", "approved", "rejected"],
     default: "submitted",
   },
+  phases: { type: Number, enum: [1, 3], required: true },
+  estimatedBudget: { type: Number, required: true },
+  advancePaid: { type: Number, default: 0 },
   statusChangedAt: { type: Date, default: Date.now },
   admin: { type: mongoose.Schema.Types.ObjectId, ref: "User" },
   user: { type: mongoose.Schema.Types.ObjectId, ref: "User" },

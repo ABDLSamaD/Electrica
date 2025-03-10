@@ -2,14 +2,11 @@ import React, { useState } from "react";
 import axios from "axios";
 import { useNavigate, useOutletContext } from "react-router-dom";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import {
-  faArrowLeft,
-  faCamera,
-  faTrash,
-} from "@fortawesome/free-solid-svg-icons";
+import { faArrowLeft } from "@fortawesome/free-solid-svg-icons";
+import { Camera, Trash2 } from "lucide-react";
 import "../dashboard.css";
 import Alert from "../../OtherComponents/Alert";
-import LoginLoader from "../../OtherComponents/LoginLoader";
+import MiniLoader from "../../OtherComponents/Miniloader";
 
 const AddProjectForm = () => {
   const navigate = useNavigate();
@@ -26,8 +23,14 @@ const AddProjectForm = () => {
     projectAddress: user.address || "",
     projectName: "",
     projectCity: user.city || "",
+    category: "",
+    voltageType: "",
+    phases: "",
+    estimatedBudget: "",
+    advancePaid: "",
     projectPics: [], // Handle file uploads here
   });
+
   const [alert, setAlert] = useState(null);
   const [loading, setLoading] = useState(false);
   const [picMessage, setPicMessage] = useState("");
@@ -41,7 +44,6 @@ const AddProjectForm = () => {
     });
   };
 
-  // Upload images to Cloudinary
   const uploadImagesToCloudinary = async (files) => {
     if (!files || files.length === 0) {
       setPicMessage("Please select at least one image.");
@@ -117,6 +119,11 @@ const AddProjectForm = () => {
         projectAddress,
         projectName,
         projectCity,
+        category,
+        voltageType,
+        phases,
+        estimatedBudget,
+        advancePaid,
       } = formData;
 
       const newFormData = new FormData(); // Create a new FormData instance
@@ -128,6 +135,11 @@ const AddProjectForm = () => {
       newFormData.append("projectAddress", projectAddress);
       newFormData.append("projectName", projectName);
       newFormData.append("projectCity", projectCity);
+      newFormData.append("category", category);
+      newFormData.append("voltageType", voltageType);
+      newFormData.append("phases", phases);
+      newFormData.append("estimatedBudget", estimatedBudget);
+      newFormData.append("advancePaid", advancePaid);
 
       // Append files to FormData
       imageUrls.forEach((url) => {
@@ -141,6 +153,7 @@ const AddProjectForm = () => {
           withCredentials: true,
         }
       );
+
       if (response.status === 200) {
         setAlert({ type: response.data.type, message: response.data.message });
         setLoading(false);
@@ -165,7 +178,7 @@ const AddProjectForm = () => {
   };
 
   return (
-    <div className="p-4 min-h-screen relative top-10 mb-16 animate-fade-in">
+    <div className="p-4 min-h-screen relative top-10 mb-16">
       {alert && (
         <Alert
           type={alert.type}
@@ -182,7 +195,7 @@ const AddProjectForm = () => {
           <FontAwesomeIcon icon={faArrowLeft} size="1x" />
         </button>
       </div>
-      <div className="text mb-8 animate-slide-in-left">
+      <div className="text mb-8">
         <h2 className="text-3xl text-cyan-50 font-semibold leading-10 mb-2">
           Add New Project
         </h2>
@@ -192,145 +205,283 @@ const AddProjectForm = () => {
           project.
         </p>
       </div>
-      {/* ```jsx */}
-      <form
-        onSubmit={handleSubmit}
-        className="gap-10 grid grid-cols-1 md:grid-cols-2 text-white animate-slide-in-up"
-      >
-        <div className="group">
-          <input
-            type="text"
-            name="clientName"
-            className="inputes animate-appear"
-            value={formData.clientName}
-            onChange={handleInputChange}
-            required
-          />
-          <span className="highlight" />
-          <span className="bar" />
-          <label className="labled">Name</label>
+      <form onSubmit={handleSubmit} className="space-y-8">
+        {/* Client Information Section */}
+        <div className="p-5">
+          <h3 className="text-lg font-medium mb-4 text-gray-700 dark:text-gray-200">
+            Client Information
+          </h3>
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <div>
+              <label className="block text-sm font-medium mb-1.5 text-gray-700 dark:text-gray-300">
+                Client Name
+              </label>
+              <input
+                type="text"
+                name="clientName"
+                value={formData.clientName}
+                onChange={handleInputChange}
+                className="w-full px-4 py-2.5 rounded-lg border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-900 dark:text-white focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all"
+                required
+              />
+            </div>
+
+            <div>
+              <label className="block text-sm font-medium mb-1.5 text-gray-700 dark:text-gray-300">
+                Client Number
+              </label>
+              <input
+                type="number"
+                name="clientNumber"
+                value={formData.clientNumber}
+                onChange={handleInputChange}
+                className="w-full px-4 py-2.5 rounded-lg border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-900 dark:text-white focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all"
+                required
+              />
+            </div>
+          </div>
         </div>
 
-        <div className="group">
-          <input
-            type="number"
-            name="clientNumber"
-            value={formData.clientNumber}
-            onChange={handleInputChange}
-            className="inputes animate-appear"
-            required
-          />
-          <span className="highlight" />
-          <span className="bar" />
-          <label className="labled">Client Number:</label>
+        {/* Project Details Section */}
+        <div className="p-5">
+          <h3 className="text-lg font-medium mb-4 text-gray-700 dark:text-gray-200">
+            Project Details
+          </h3>
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <div>
+              <label className="block text-sm font-medium mb-1.5 text-gray-700 dark:text-gray-300">
+                Project Name
+              </label>
+              <input
+                type="text"
+                name="projectName"
+                value={formData.projectName}
+                onChange={handleInputChange}
+                className="w-full px-4 py-2.5 rounded-lg border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-900 dark:text-white focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all"
+                required
+              />
+            </div>
+
+            <div>
+              <label className="block text-sm font-medium mb-1.5 text-gray-700 dark:text-gray-300">
+                Project Description
+              </label>
+              <input
+                type="text"
+                name="projectDescription"
+                value={formData.projectDescription}
+                onChange={handleInputChange}
+                className="w-full px-4 py-2.5 rounded-lg border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-900 dark:text-white focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all"
+                required
+              />
+            </div>
+
+            <div>
+              <label className="block text-sm font-medium mb-1.5 text-gray-700 dark:text-gray-300">
+                Project Address
+              </label>
+              <input
+                type="text"
+                name="projectAddress"
+                value={formData.projectAddress}
+                onChange={handleInputChange}
+                className="w-full px-4 py-2.5 rounded-lg border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-900 dark:text-white focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all"
+                required
+              />
+            </div>
+
+            <div>
+              <label className="block text-sm font-medium mb-1.5 text-gray-700 dark:text-gray-300">
+                Project City
+              </label>
+              <input
+                type="text"
+                name="projectCity"
+                value={formData.projectCity}
+                onChange={handleInputChange}
+                className="w-full px-4 py-2.5 rounded-lg border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-900 dark:text-white focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all"
+                required
+              />
+            </div>
+          </div>
         </div>
 
-        <div className="group">
-          <input
-            type="text"
-            name="projectDescription"
-            value={formData.projectDescription}
-            onChange={handleInputChange}
-            className="inputes animate-appear"
-            required
-          />
-          <span className="highlight" />
-          <span className="bar" />
-          <label className="labled">Project Description:</label>
+        {/* Technical Specifications */}
+        <div className="p-5">
+          <h3 className="text-lg font-medium mb-4 text-gray-700 dark:text-gray-200">
+            Technical Specifications
+          </h3>
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+            <div>
+              <label className="block text-sm font-medium mb-1.5 text-gray-700 dark:text-gray-300">
+                Category
+              </label>
+              <select
+                name="category"
+                value={formData.category}
+                onChange={handleInputChange}
+                className="w-full px-4 py-2.5 rounded-lg border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-900 dark:text-white focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all"
+                required
+              >
+                <option value="">Select Category</option>
+                <option value="Residential">Residential</option>
+                <option value="Commercial">Commercial</option>
+                <option value="Industrial">Industrial</option>
+              </select>
+            </div>
+
+            <div>
+              <label className="block text-sm font-medium mb-1.5 text-gray-700 dark:text-gray-300">
+                Voltage Type
+              </label>
+              <select
+                name="voltageType"
+                value={formData.voltageType}
+                onChange={handleInputChange}
+                className="w-full px-4 py-2.5 rounded-lg border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-900 dark:text-white focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all"
+                required
+              >
+                <option value="">Select Voltage Type</option>
+                <option value="Low">Low Voltage</option>
+                <option value="Medium">Medium Voltage</option>
+                <option value="High">High Voltage</option>
+              </select>
+            </div>
+
+            <div>
+              <label className="block text-sm font-medium mb-1.5 text-gray-700 dark:text-gray-300">
+                Phases
+              </label>
+              <select
+                name="phases"
+                value={formData.phases}
+                onChange={handleInputChange}
+                className="w-full px-4 py-2.5 rounded-lg border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-900 dark:text-white focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all"
+                required
+              >
+                <option value="">Select Phases</option>
+                <option value={1}>Single Phase</option>
+                <option value={3}>Three Phase</option>
+              </select>
+            </div>
+          </div>
         </div>
 
-        <div className="group">
-          <input
-            type="text"
-            name="projectAddress"
-            value={formData.projectAddress}
-            onChange={handleInputChange}
-            className="inputes animate-appear"
-            required
-          />
-          <span className="highlight" />
-          <span className="bar" />
-          <label className="labled">Project Address:</label>
+        {/* Financial Information */}
+        <div className="p-5">
+          <h3 className="text-lg font-medium mb-4 text-gray-700 dark:text-gray-200">
+            Financial Information
+          </h3>
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <div>
+              <label className="block text-sm font-medium mb-1.5 text-gray-700 dark:text-gray-300">
+                Estimated Budget
+              </label>
+              <div className="relative">
+                <div className="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none">
+                  <span className="text-gray-500 dark:text-gray-400">$</span>
+                </div>
+                <input
+                  type="number"
+                  name="estimatedBudget"
+                  value={formData.estimatedBudget}
+                  onChange={handleInputChange}
+                  className="w-full pl-8 px-4 py-2.5 rounded-lg border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-900 dark:text-white focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all"
+                  required
+                />
+              </div>
+            </div>
+
+            <div>
+              <label className="block text-sm font-medium mb-1.5 text-gray-700 dark:text-gray-300">
+                Advance Paid
+              </label>
+              <div className="relative">
+                <div className="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none">
+                  <span className="text-gray-500 dark:text-gray-400">$</span>
+                </div>
+                <input
+                  type="number"
+                  name="advancePaid"
+                  value={formData.advancePaid}
+                  onChange={handleInputChange}
+                  className="w-full pl-8 px-4 py-2.5 rounded-lg border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-900 dark:text-white focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all"
+                  required
+                />
+              </div>
+            </div>
+          </div>
         </div>
 
-        <div className="group">
-          <input
-            type="text"
-            name="projectName"
-            value={formData.projectName}
-            onChange={handleInputChange}
-            className="inputes animate-appear"
-            required
-          />
-          <span className="highlight" />
-          <span className="bar" />
-          <label className="labled">Project Name:</label>
-        </div>
-
-        <div className="group">
-          <input
-            type="text"
-            name="projectCity"
-            value={formData.projectCity}
-            onChange={handleInputChange}
-            className="inputes animate-appear"
-            required
-          />
-          <span className="highlight" />
-          <span className="bar" />
-          <label className="labled">Project City:</label>
-        </div>
-
-        <div className="p-1 rounded-lg shadow-md group animate-fade-in">
-          <h2 className="text-xl font-semibold text-gray-200 mb-4">
+        {/* Image Upload Section */}
+        <div className="p-5">
+          <h3 className="text-lg font-medium mb-4 text-gray-700 dark:text-gray-200">
             Project Images
-          </h2>
-          <div className="relative border-2 border-dashed border-gray-400 rounded-lg p-6 hover:bg-gray-50 transition-colors duration-300">
+          </h3>
+
+          <div className="border-2 border-dashed border-gray-300 dark:border-gray-600 rounded-lg p-8 text-center hover:bg-gray-800 dark:hover:bg-gray-750 transition-colors">
             <input
               type="file"
               multiple
               onChange={handleFileChange}
               accept="image/*"
-              className="absolute inset-0 w-full h-full opacity-0 cursor-pointer"
+              className="hidden"
+              id="file-upload"
             />
-            <div className="flex flex-col items-center justify-center">
-              <FontAwesomeIcon
-                icon={!uploadImage && faCamera}
-                className="text-4xl text-gray-500 mb-2"
-              />
-              <p className="text-gray-600 font-medium animate-pulse">
-                {uploadImage ? "Uploading..." : "Upload Project Images"}
-              </p>
-            </div>
+            <label
+              htmlFor="file-upload"
+              className="cursor-pointer flex flex-col items-center"
+            >
+              <Camera className="h-10 w-10 text-gray-400 mb-3" />
+              <span className="text-sm font-medium text-gray-600 dark:text-gray-300">
+                {uploadImage
+                  ? "Uploading..."
+                  : "Drag and drop files or click to upload"}
+              </span>
+              <span className="text-xs text-gray-500 dark:text-gray-400 mt-1">
+                PNG, JPG, GIF up to 10MB
+              </span>
+            </label>
           </div>
+
           {/* Image Previews */}
-          {formData.projectPics.length > 0 &&
-            (uploadImage ? (
-              "wait image load"
-            ) : (
-              <div className="mt-4 flex flex-wrap gap-4">
-                {formData.projectPics.map((file, index) => (
-                  <div key={index} className="relative">
-                    <img
-                      src={URL.createObjectURL(file)} // Create a preview URL for the image
-                      alt={`preview-${index}`}
-                      className="w-24 h-24 object-cover rounded-md"
-                    />
-                    <button
-                      type="button"
-                      onClick={() => handleRemoveImage(index)}
-                      className="absolute top-0 right-0 bg-red-500 text-white rounded-full p-1 text-xs"
-                    >
-                      <FontAwesomeIcon icon={faTrash} />
-                    </button>
-                  </div>
-                ))}
-              </div>
-            ))}
+          {formData.projectPics.length > 0 && (
+            <div className="mt-6 grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-4">
+              {formData.projectPics.map((file, index) => (
+                <div key={index} className="relative group">
+                  <img
+                    src={URL.createObjectURL(file) || "/placeholder.svg"}
+                    alt={`preview-${index}`}
+                    className="w-full h-24 object-cover rounded-lg"
+                  />
+                  <button
+                    type="button"
+                    onClick={() => handleRemoveImage(index)}
+                    className="absolute top-2 right-2 bg-red-500 text-white rounded-full p-1 opacity-0 group-hover:opacity-100 transition-opacity"
+                    aria-label="Remove image"
+                  >
+                    <Trash2 className="h-4 w-4" />
+                  </button>
+                </div>
+              ))}
+            </div>
+          )}
         </div>
 
-        <button type="submit" className="buttons" disabled={loading}>
-          <p>{loading ? <LoginLoader /> : "Submit"}</p>
+        {/* Submit Button */}
+        <button
+          type="submit"
+          className="w-full bg-blue-600 hover:bg-blue-700 text-white font-medium py-3 px-4 rounded-lg transition-colors focus:outline-none focus:ring-4 focus:ring-blue-300 disabled:opacity-70"
+          disabled={loading}
+        >
+          {loading ? (
+            <div className="flex items-center justify-center space-x-2">
+              <MiniLoader />
+              <span>Processing...</span>
+            </div>
+          ) : (
+            "Submit Project"
+          )}
         </button>
       </form>
     </div>

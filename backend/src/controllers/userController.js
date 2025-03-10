@@ -699,3 +699,26 @@ exports.deleteAccount = async (req, res) => {
     });
   }
 };
+
+exports.checkDatabaseAndSession = (req, res) => {
+  // Check if MongoDB is connected
+  if (mongoose.connection.readyState !== 1) {
+    return res
+      .status(500)
+      .json({ type: "error", message: "Database Disconnected" });
+  }
+
+  // Check if user is logged in via session
+  if (!req.session || !req.session.user) {
+    return res
+      .status(401)
+      .json({ type: "error", message: "Unauthorized: Please log in" });
+  }
+
+  // If database is connected and user is authenticated
+  res.status(200).json({
+    type: "success",
+    message: "Database connected, user authenticated",
+    user: req.session.user,
+  });
+};
