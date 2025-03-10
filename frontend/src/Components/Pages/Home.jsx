@@ -13,6 +13,7 @@ import { useEffect, useRef } from "react";
 import HeaderMain from "./HeaderMain";
 import AdvancedFuturisticCards from "./AdvancedFuturisticCards";
 import Footer from "./Footer";
+import ContactCTA from "./ContactCTA";
 
 const floatingAnimation = {
   animate: {
@@ -169,8 +170,11 @@ const Home = () => {
             </motion.div>
           </div>
         </div>
-        <div className="mb-64">
+        <div className="mb-10">
           <AdvancedFuturisticCards />
+        </div>
+        <div className="mb-64">
+          <ContactCTA />
         </div>
       </section>
       <Footer />

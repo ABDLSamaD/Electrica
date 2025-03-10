@@ -1,129 +1,212 @@
-import React, { useEffect } from "react";
+import React from "react";
 import { motion } from "framer-motion";
+import {
+  Wrench,
+  Home,
+  Factory,
+  Battery,
+  Shield,
+  Gauge,
+  Lightbulb,
+  Zap,
+  ArrowRight,
+} from "lucide-react";
 import HeaderMain from "./HeaderMain";
-import AnimatedFooter from "./Footer";
 
-const ElectricalServicePage = () => {
-  useEffect(() => {
-    window.scroll(0, 0);
-  }, []);
+const ServicesDetails = () => {
+  const services = [
+    {
+      icon: <Wrench className="w-8 h-8" />,
+      title: "Electrical Installation",
+      description:
+        "Professional electrical installation services for both residential and commercial properties. We ensure all installations meet the latest safety standards and energy efficiency requirements.",
+      features: [
+        "Complete wiring solutions",
+        "Circuit breaker installation",
+        "Electrical panel upgrades",
+        "Emergency power systems",
+      ],
+      image:
+        "https://images.unsplash.com/photo-1621905252507-b35492cc74b4?w=800&auto=format&fit=crop&q=80",
+    },
+    {
+      icon: <Home className="w-8 h-8" />,
+      title: "Smart Home Automation",
+      description:
+        "Transform your home into an intelligent living space with our cutting-edge smart home automation solutions. Control everything from lighting to security with a single touch.",
+      features: [
+        "Smart lighting control",
+        "Automated climate systems",
+        "Security integration",
+        "Voice-activated controls",
+      ],
+      image:
+        "https://lh7-rt.googleusercontent.com/docsz/AD_4nXeVTUrFLvt9RcA6r-PNc8yRGrzwh7d_JfB6AjxDAlIKL5vmScIi9dNwj-UIQ3bq-yMiZBgLnG97iRjB9TBvZw0mDAbHSSIGdIv1Mw1Q-r-67p7Ql8seXBOFV_3dZBtGAIxqdkoa02SbEXavxWNIMbeBfXe4?key=2qoHpCtVeGkrIsOF-RzNgw",
+    },
+    {
+      icon: <Battery className="w-8 h-8" />,
+      title: "Energy Management",
+      description:
+        "Optimize your energy consumption and reduce costs with our advanced energy management solutions. We help businesses and homes become more energy-efficient.",
+      features: [
+        "Energy audits",
+        "Consumption monitoring",
+        "Renewable integration",
+        "Cost optimization",
+      ],
+      image:
+        "https://images.unsplash.com/photo-1473341304170-971dccb5ac1e?w=800&auto=format&fit=crop&q=80",
+    },
+    {
+      icon: <Shield className="w-8 h-8" />,
+      title: "Safety Inspections",
+      description:
+        "Regular safety inspections and maintenance services to ensure your electrical systems are operating safely and efficiently. Prevent potential hazards before they occur.",
+      features: [
+        "Comprehensive audits",
+        "Code compliance checks",
+        "Safety certifications",
+        "Risk assessment",
+      ],
+      image:
+        "https://images.unsplash.com/photo-1581092918056-0c4c3acd3789?w=800&auto=format&fit=crop&q=80",
+    },
+  ];
 
-  // Animation Variants
   const containerVariants = {
-    hidden: { opacity: 0, y: 50 },
+    hidden: { opacity: 0 },
     visible: {
       opacity: 1,
-      y: 0,
-      transition: { duration: 0.8, ease: "easeInOut", when: "beforeChildren" },
+      transition: {
+        staggerChildren: 0.2,
+      },
     },
   };
 
   const itemVariants = {
-    hidden: { opacity: 0, scale: 0.9 },
-    visible: { opacity: 1, scale: 1, transition: { duration: 0.5 } },
+    hidden: { opacity: 0, y: 20 },
+    visible: {
+      opacity: 1,
+      y: 0,
+      transition: { duration: 0.5 },
+    },
   };
 
-  const services = [
-    {
-      title: "Residential Electrical Services",
-      description:
-        "Safe and reliable electrical installations, repairs, and upgrades for your home.",
-      icon: "🏡",
-    },
-    {
-      title: "Commercial Electrical Services",
-      description:
-        "Comprehensive electrical solutions for businesses of all sizes.",
-      icon: "🏢",
-    },
-    {
-      title: "Emergency Repairs",
-      description:
-        "24/7 emergency electrical services to restore power quickly.",
-      icon: "⚡",
-    },
-    {
-      title: "Energy Efficiency Solutions",
-      description:
-        "Upgrade to energy-efficient systems and save on electricity costs.",
-      icon: "🌱",
-    },
-  ];
-
   return (
-    <>
+    <section className="py-20 relative top-16 overflow-hidden">
       <HeaderMain />
-      <motion.div
-        className="text-gray-100 relative top-40"
-        variants={containerVariants}
-        initial="hidden"
-        animate="visible"
-      >
-        {/* Hero Section */}
+      {/* Background Effects */}
+      {/* <div className="absolute inset-0">
+        <div className="absolute inset-0 bg-gradient-to-b from-cyan-500/10 via-blue-500/5 to-transparent"></div>
+        <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_top,rgba(0,183,255,0.15),transparent_50%)]"></div>
+      </div> */}
+
+      <div className="container mx-auto px-4 relative z-10">
         <motion.div
-          className="text-center py-16"
-          variants={itemVariants}
-          initial="hidden"
-          animate="visible"
+          initial={{ opacity: 0, y: 20 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.8 }}
+          className="text-center mb-16"
         >
-          <h1 className="text-4xl md:text-5xl font-extrabold text-white mb-4">
-            Your Trusted Electrical Services Provider
-          </h1>
-          <p className="text-gray-300 max-w-3xl mx-auto text-lg">
-            Providing top-notch electrical solutions for homes, businesses, and
-            beyond. Reliable, efficient, and safe.
+          <h2 className="text-4xl font-bold text-white mb-4">
+            Our <span className="text-cyan-400">Services</span>
+          </h2>
+          <p className="text-gray-400 max-w-2xl mx-auto">
+            Discover our comprehensive range of electrical services designed to
+            meet all your residential, commercial, and industrial needs.
           </p>
         </motion.div>
 
-        {/* Services Section */}
         <motion.div
-          className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8 mt-8"
+          variants={containerVariants}
           initial="hidden"
           whileInView="visible"
-          viewport={{ once: true, amount: 0.3 }}
-          variants={containerVariants}
+          viewport={{ once: true }}
+          className="space-y-20"
         >
           {services.map((service, index) => (
             <motion.div
-              key={index}
-              className="bg-gray-800 p-6 rounded-lg shadow-lg hover:shadow-2xl transition-shadow"
+              key={service.title}
               variants={itemVariants}
+              className={`flex flex-col ${
+                index % 2 === 0 ? "lg:flex-row" : "lg:flex-row-reverse"
+              } gap-12 items-center`}
             >
-              <div className="flex items-center justify-center w-16 h-16 rounded-full bg-indigo-600 mb-4 text-white text-3xl">
-                {service.icon}
+              <div className="lg:w-1/2">
+                <motion.div
+                  whileHover={{ scale: 1.02 }}
+                  className="relative group"
+                >
+                  <img
+                    src={service.image}
+                    alt={service.title}
+                    className="rounded-2xl shadow-2xl shadow-cyan-500/20 w-full object-cover aspect-video"
+                  />
+                  <div className="absolute inset-0 bg-gradient-to-t from-gray-900 via-gray-900/40 to-transparent rounded-2xl opacity-60 group-hover:opacity-40 transition-opacity"></div>
+                </motion.div>
               </div>
-              <h3 className="text-xl font-semibold mb-2">{service.title}</h3>
-              <p className="text-gray-400">{service.description}</p>
+
+              <div className="lg:w-1/2 space-y-6">
+                <div className="inline-block p-3 bg-cyan-400/20 rounded-xl">
+                  {service.icon}
+                </div>
+                <h3 className="text-3xl font-bold text-white">
+                  {service.title}
+                </h3>
+                <p className="text-gray-400 leading-relaxed">
+                  {service.description}
+                </p>
+
+                <ul className="space-y-3">
+                  {service.features.map((feature) => (
+                    <li
+                      key={feature}
+                      className="flex items-center gap-3 text-gray-300"
+                    >
+                      <div className="h-1.5 w-1.5 rounded-full bg-cyan-400"></div>
+                      {feature}
+                    </li>
+                  ))}
+                </ul>
+
+                <motion.button
+                  whileHover={{ x: 5 }}
+                  className="inline-flex items-center gap-2 text-cyan-400 font-semibold mt-4"
+                >
+                  Learn More <ArrowRight className="w-4 h-4" />
+                </motion.button>
+              </div>
             </motion.div>
           ))}
         </motion.div>
 
         {/* Call to Action */}
         <motion.div
-          className="mt-16 bg-white/5 backdrop-blur-md text-center py-8 rounded-lg shadow-lg"
-          initial={{ opacity: 0 }}
-          whileInView={{ opacity: 1, transition: { duration: 1 } }}
-          viewport={{ once: true }}
+          initial={{ opacity: 0, y: 20 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.8 }}
+          className="mt-32 text-center"
         >
-          <h2 className="text-2xl font-bold text-white">
-            Ready to Experience Excellence?
-          </h2>
-          <p className="text-gray-300 mt-2">
-            Contact us today and let us handle your electrical needs.
-          </p>
-          <motion.button
-            className="mt-6 px-6 py-3 bg-gray-900 text-white font-semibold rounded-lg hover:bg-gray-800 transition-all"
-            whileHover={{ scale: 1.1 }}
-          >
-            Get in Touch
-          </motion.button>
+          <div className="bg-gradient-to-r from-cyan-500/10 to-blue-500/10 p-12 rounded-3xl border border-cyan-500/20 backdrop-blur-sm">
+            <h3 className="text-3xl font-bold text-white mb-4">
+              Ready to Get Started?
+            </h3>
+            <p className="text-gray-400 mb-8 max-w-2xl mx-auto">
+              Contact us today to discuss your electrical needs and discover how
+              we can help you achieve your goals.
+            </p>
+            <motion.button
+              whileHover={{ scale: 1.05 }}
+              whileTap={{ scale: 0.95 }}
+              className="bg-gradient-to-r from-cyan-400 to-blue-500 text-white font-semibold py-3 px-8 rounded-lg hover:opacity-90 transition-opacity"
+            >
+              Contact Us Now
+            </motion.button>
+          </div>
         </motion.div>
-        <div className="relative top-20">
-          <AnimatedFooter />
-        </div>
-      </motion.div>
-    </>
+      </div>
+    </section>
   );
 };
 
-export default ElectricalServicePage;
+export default ServicesDetails;

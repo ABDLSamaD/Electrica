@@ -46,6 +46,7 @@ import UserPublicRoute from "./Private/UserPublicRoute";
 // Private Routes End
 
 // Admin Dashboard Start
+
 const Admin = React.lazy(() => import("./Admin/Admin"));
 
 import AddProjectForm from "./UserDashboard/Project/AddProjectForm";
@@ -65,8 +66,10 @@ import LoaderAll from "./OtherComponents/LoaderAll";
 import AdminSettings from "./Admin/AdminSettings";
 import NextProcess from "./UserDashboard/Project/CompletionProject/NextProcess";
 import CreatingBill from "./Admin/Projectsteps/BillingSystem/CreatingBill";
-const Complain = React.lazy(() => import("./Pages/Complain/Complain"));
+import Complain from "./Pages/Complain/Complain";
 import CheckSignupProgress from "./OtherComponents/CheckSignupProgress";
+import TermsAndPolicy from "./Pages/TermsAndPolicy";
+import CookiesAndPolicy from "./Pages/CookiesAndPolicy";
 
 // Admin Dashboard End
 
@@ -109,6 +112,8 @@ const Main = () => {
             <Route path="/about" element={<About />} />
             <Route path="/project-details" element={<ProjectDetails />} />
             <Route path="/service" element={<ElectricalServicePage />} />
+            <Route path="/terms" element={<TermsAndPolicy />} />
+            <Route path="/cookies" element={<CookiesAndPolicy />} />
             <Route path="/complain" element={<Complain />} />
             <Route
               path="/signin"
@@ -118,11 +123,17 @@ const Main = () => {
                 </UserPublicRoute>
               }
             />
-            <Route path="/signup" element={<Signup />} />
-            <Route path="/otpverify" element={<EmailVerification />} />
-            <Route path="*" element={<Errornotfound />} />
+            <Route
+              path="/signup"
+              element={
+                <UserPublicRoute>
+                  <Signup />
+                </UserPublicRoute>
+              }
+            />
             {/* User forgot password */}
             <Route path="/forgot_password" element={<Forgot />} />
+            <Route path="*" element={<Errornotfound />} />
 
             {/* Admin Authentication signin Routes */}
             <Route
@@ -171,6 +182,7 @@ const Main = () => {
                 </PrivateRouteResetPass>
               }
             />
+            <Route path="/otpverify" element={<EmailVerification />} />
 
             {/* User Dashboard Routes */}
             <Route element={<PrivateRoute />}>
