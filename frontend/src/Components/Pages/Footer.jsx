@@ -142,7 +142,7 @@ const AnimatedFooter = () => {
           </motion.div>
 
           {/* Contact Info */}
-          <motion.div variants={itemVariants} className="space-y-4">
+          <div className="space-y-4">
             <h4 className="text-lg font-semibold text-white mb-4">
               Contact Info
             </h4>
@@ -164,20 +164,17 @@ const AnimatedFooter = () => {
                 <span className="text-white">Mon-Fri: 8AM - 5PM</span>
               </li>
             </ul>
-          </motion.div>
+          </div>
         </div>
 
         {/* Bottom Bar */}
-        <motion.div
-          variants={itemVariants}
-          className="pt-8 mt-8 border-t border-gray-800 flex flex-col md:flex-row justify-between items-center gap-4"
-        >
+        <div className="pt-8 mt-8 border-t border-gray-800 flex flex-col md:flex-row justify-between items-center gap-4">
           <p className="text-gray-400 text-sm text-center md:text-left">
             © {new Date().getFullYear()} Electrica. All rights reserved.
           </p>
           <div className="flex flex-wrap justify-center gap-6 text-sm text-gray-400">
             <Link
-              to="/privacy"
+              to="/privacy-policy"
               className="hover:text-cyan-400 transition-colors"
             >
               Privacy Policy
@@ -192,7 +189,7 @@ const AnimatedFooter = () => {
               Cookie Policy
             </Link>
           </div>
-        </motion.div>
+        </div>
       </motion.div>
     </footer>
   );

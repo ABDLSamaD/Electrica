@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { FaBolt, FaLightbulb, FaCog } from "react-icons/fa";
+import { Link } from "react-router-dom";
 
 const AdvancedFuturisticCards = () => {
   const [hoveredCard, setHoveredCard] = useState(null);
@@ -31,7 +32,7 @@ const AdvancedFuturisticCards = () => {
 
   return (
     <section className="p-2">
-      <div className="container mx-auto px-4">
+      <div className="mx-auto px-4">
         <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
           {cards.map((card, index) => (
             <motion.div
@@ -70,7 +71,7 @@ const AdvancedFuturisticCards = () => {
                   whileHover={{ scale: 1.05 }}
                   whileTap={{ scale: 0.95 }}
                 >
-                  Explore
+                  <Link to="/project-details">Explore</Link>
                 </motion.button>
               </div>
               <AnimatePresence>

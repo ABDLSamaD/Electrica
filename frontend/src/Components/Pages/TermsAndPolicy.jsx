@@ -22,10 +22,7 @@ export default function TermsAndPolicy() {
   return (
     <div className="min-h-screen bg-black text-gray-300">
       {/* Animated gradient header */}
-      <header className="relative overflow-hidden py-8">
-        <div className="absolute inset-0 bg-gradient-to-r from-blue-900 via-purple-900 to-blue-900 opacity-50"></div>
-        <div className="absolute -inset-[10px] blur-xl bg-gradient-to-r from-blue-600 via-purple-600 to-blue-600 opacity-20"></div>
-
+      <header className="relative overflow-hidden py-8 bg-gray-50/5 backdrop-blur-md">
         {/* Electric circuit lines */}
         <div className="absolute inset-0 opacity-10">
           <svg
@@ -73,7 +70,6 @@ export default function TermsAndPolicy() {
           <div className="flex items-center justify-between">
             <div className="flex items-center space-x-3">
               <div className="relative h-10 w-10">
-                <div className="absolute inset-0 rounded-full bg-blue-500 blur-sm"></div>
                 <div className="relative flex h-full w-full items-center justify-center rounded-full bg-gradient-to-br from-blue-400 to-indigo-600">
                   <svg
                     xmlns="http://www.w3.org/2000/svg"
@@ -124,7 +120,7 @@ export default function TermsAndPolicy() {
                 </li>
                 <li>
                   <Link
-                    to="/project"
+                    to="/project-details"
                     className="text-sm font-medium text-gray-300 transition-colors hover:text-white"
                   >
                     Project

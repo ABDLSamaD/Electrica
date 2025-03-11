@@ -1,4 +1,3 @@
-import { motion } from "framer-motion";
 import { Star, Quote } from "lucide-react";
 
 const testimonials = [
@@ -29,12 +28,7 @@ const TestimonialSection = () => {
   return (
     <section className="py-20">
       <div className="container mx-auto px-4">
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.8 }}
-          className="text-center mb-16"
-        >
+        <div className="text-center mb-16">
           <h2 className="text-4xl font-bold text-white mb-4">
             Client <span className="text-cyan-400">Testimonials</span>
           </h2>
@@ -42,15 +36,12 @@ const TestimonialSection = () => {
             Don't just take our word for it. Here's what our clients have to say
             about their experience with Electrica.
           </p>
-        </motion.div>
+        </div>
 
         <div className="grid md:grid-cols-3 gap-8">
           {testimonials.map((testimonial, index) => (
-            <motion.div
+            <div
               key={index}
-              initial={{ opacity: 0, y: 50 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.5, delay: index * 0.2 }}
               className="bg-gray-800/50 p-6 rounded-2xl backdrop-blur-sm border border-gray-700 hover:border-cyan-500/50"
             >
               <Quote className="text-cyan-400 w-10 h-10 mb-4" />
@@ -76,7 +67,7 @@ const TestimonialSection = () => {
                   />
                 ))}
               </div>
-            </motion.div>
+            </div>
           ))}
         </div>
       </div>

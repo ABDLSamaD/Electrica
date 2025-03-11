@@ -70,6 +70,7 @@ import Complain from "./Pages/Complain/Complain";
 import CheckSignupProgress from "./OtherComponents/CheckSignupProgress";
 import TermsAndPolicy from "./Pages/TermsAndPolicy";
 import CookiesAndPolicy from "./Pages/CookiesAndPolicy";
+import PrivacyPolicy from "./Pages/PrivacyPolicy";
 
 // Admin Dashboard End
 
@@ -113,6 +114,7 @@ const Main = () => {
             <Route path="/project-details" element={<ProjectDetails />} />
             <Route path="/service" element={<ElectricalServicePage />} />
             <Route path="/terms" element={<TermsAndPolicy />} />
+            <Route path="/privacy-policy" element={<PrivacyPolicy />} />
             <Route path="/cookies" element={<CookiesAndPolicy />} />
             <Route path="/complain" element={<Complain />} />
             <Route

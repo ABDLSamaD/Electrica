@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 
 export default function CookiesPolicy() {
   const navigate = useNavigate();
@@ -13,10 +13,7 @@ export default function CookiesPolicy() {
   return (
     <div className="min-h-screen bg-black text-gray-300">
       {/* Animated gradient header */}
-      <header className="relative overflow-hidden py-8">
-        <div className="absolute inset-0 bg-gradient-to-r from-blue-900 via-purple-900 to-blue-900 opacity-50"></div>
-        <div className="absolute -inset-[10px] blur-xl bg-gradient-to-r from-blue-600 via-purple-600 to-blue-600 opacity-20"></div>
-
+      <header className="relative overflow-hidden py-8 bg-gray-50/5 backdrop-blur-md">
         {/* Electric circuit lines */}
         <div className="absolute inset-0 opacity-10">
           <svg
@@ -90,36 +87,36 @@ export default function CookiesPolicy() {
             <nav className="hidden md:block">
               <ul className="flex space-x-8">
                 <li>
-                  <a
-                    href="#"
+                  <Link
+                    to="/"
                     className="text-sm font-medium text-gray-300 transition-colors hover:text-white"
                   >
                     Home
-                  </a>
+                  </Link>
                 </li>
                 <li>
-                  <a
-                    href="#"
+                  <Link
+                    to="/service"
                     className="text-sm font-medium text-gray-300 transition-colors hover:text-white"
                   >
                     Services
-                  </a>
+                  </Link>
                 </li>
                 <li>
-                  <a
-                    href="#"
+                  <Link
+                    to="/about"
                     className="text-sm font-medium text-gray-300 transition-colors hover:text-white"
                   >
                     About
-                  </a>
+                  </Link>
                 </li>
                 <li>
-                  <a
-                    href="#"
+                  <Link
+                    to="/project-details"
                     className="text-sm font-medium text-gray-300 transition-colors hover:text-white"
                   >
-                    Contact
-                  </a>
+                    Project
+                  </Link>
                 </li>
               </ul>
             </nav>
@@ -780,36 +777,36 @@ export default function CookiesPolicy() {
               </h3>
               <ul className="space-y-2">
                 <li>
-                  <a
-                    href="#"
+                  <Link
+                    to="/"
                     className="text-sm text-gray-400 transition-colors hover:text-blue-400"
                   >
                     Home
-                  </a>
+                  </Link>
                 </li>
                 <li>
-                  <a
-                    href="#"
+                  <Link
+                    to="/service"
                     className="text-sm text-gray-400 transition-colors hover:text-blue-400"
                   >
                     Services
-                  </a>
+                  </Link>
                 </li>
                 <li>
-                  <a
-                    href="#"
+                  <Link
+                    to="/about"
                     className="text-sm text-gray-400 transition-colors hover:text-blue-400"
                   >
                     About Us
-                  </a>
+                  </Link>
                 </li>
                 <li>
-                  <a
-                    href="#"
+                  <Link
+                    to="/project-details"
                     className="text-sm text-gray-400 transition-colors hover:text-blue-400"
                   >
                     Contact
-                  </a>
+                  </Link>
                 </li>
               </ul>
             </div>
@@ -820,28 +817,28 @@ export default function CookiesPolicy() {
               </h3>
               <ul className="space-y-2">
                 <li>
-                  <a
-                    href="/terms"
+                  <Link
+                    to="/terms"
                     className="text-sm text-gray-400 transition-colors hover:text-blue-400"
                   >
                     Terms & Conditions
-                  </a>
+                  </Link>
                 </li>
                 <li>
-                  <a
-                    href="/cookies"
+                  <Link
+                    to="/cookies"
                     className="text-sm text-gray-400 transition-colors hover:text-blue-400"
                   >
                     Cookies Policy
-                  </a>
+                  </Link>
                 </li>
                 <li>
-                  <a
-                    href="#"
+                  <Link
+                    to="/privacy-policy"
                     className="text-sm text-gray-400 transition-colors hover:text-blue-400"
                   >
                     Privacy Policy
-                  </a>
+                  </Link>
                 </li>
               </ul>
             </div>
