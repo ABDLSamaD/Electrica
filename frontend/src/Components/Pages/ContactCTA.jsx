@@ -1,5 +1,3 @@
-import { motion } from "framer-motion";
-import { Phone, Mail, Clock } from "lucide-react";
 import TestimonialSection from "./TestimonialSection";
 
 const ContactCTA = () => {

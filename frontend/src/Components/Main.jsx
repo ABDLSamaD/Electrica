@@ -66,13 +66,17 @@ import LoaderAll from "./OtherComponents/LoaderAll";
 import AdminSettings from "./Admin/AdminSettings";
 import NextProcess from "./UserDashboard/Project/CompletionProject/NextProcess";
 import CreatingBill from "./Admin/Projectsteps/BillingSystem/CreatingBill";
+// Admin Dashboard End
+
+// Other COmponent Start
 import Complain from "./Pages/Complain/Complain";
 import CheckSignupProgress from "./OtherComponents/CheckSignupProgress";
 import TermsAndPolicy from "./Pages/TermsAndPolicy";
 import CookiesAndPolicy from "./Pages/CookiesAndPolicy";
 import PrivacyPolicy from "./Pages/PrivacyPolicy";
 import ReviewPage from "./Pages/ReviewPage";
-// Admin Dashboard End
+import ScrollToTop from "./Pages/ScrollToTop";
+// Other COmponent End
 
 const Main = () => {
   // const location = useLocation();
@@ -108,6 +112,7 @@ const Main = () => {
       >
         <Background>
           <CheckSignupProgress />
+          <ScrollToTop />
           <Routes>
             <Route path="/" element={<Home />} />
             <Route path="/about" element={<About />} />
