@@ -14,6 +14,7 @@ const helmet = require("helmet");
 const routes = require("./src/routes/routes");
 const adminRoutes = require("./src/routes/route-admin");
 const connectionDatabase = require("./src/models/connection");
+const controllerRoutes = require("./src/routes/controllerRoutes");
 
 dotenv.config();
 
@@ -88,6 +89,7 @@ io.on("connection", (socket) => {
 // routes call
 app.use("/api/auth", routes);
 app.use("/api/adminauth", adminRoutes);
+app.use("/api/reviews", controllerRoutes);
 app.get("/", (req, res) => {
   res.send("Server electrica");
 });

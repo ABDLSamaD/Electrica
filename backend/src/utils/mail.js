@@ -58,7 +58,7 @@ const sendEmail = async (userEmail, subject, text) => {
                             <table cellpadding="0" cellspacing="0" role="presentation">
                                 <tr>
                                     <td style="background-color: #ff1493; border-radius: 4px; padding: 12px 24px;">
-                                        <a href="#" style="color: #ffffff; font-size: 16px; text-decoration: none; font-weight: bold; display: inline-block;">Learn More</a>
+                                        <a href="https://electrica-theta.vercel.app/" style="color: #ffffff; font-size: 16px; text-decoration: none; font-weight: bold; display: inline-block;">Learn More</a>
                                     </td>
                                 </tr>
                             </table>
