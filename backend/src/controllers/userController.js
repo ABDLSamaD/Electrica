@@ -18,12 +18,22 @@ const generateOTP = () => {
 // function of delete user is  not verified
 const deleteUnverifiedUsers = async () => {
   try {
-    const deletedUser = await User.deleteMany({
+    // Find users who match the criteria before deleting them
+    const usersToDelete = await User.find({
       isVerified: false,
       createdAt: { $lte: new Date(Date.now() - 24 * 60 * 60 * 1000) }, // Older than 24 hours
     });
 
-    console.log(`${deletedUser.deletedCount} unverified users deleted`);
+    if (usersToDelete.length > 0) {
+      const deletedUser = await User.deleteMany({
+        isVerified: false,
+        createdAt: { $lte: new Date(Date.now() - 24 * 60 * 60 * 1000) },
+      });
+
+      console.log(`${deletedUser.deletedCount} unverified users deleted`);
+    } else {
+      console.log("No unverified users found for deletion.");
+    }
   } catch (error) {
     console.error("Error deleting unverified users:", error);
   }
@@ -277,15 +287,14 @@ exports.login = async (req, res) => {
     }
 
     const users = await User.findOne({ email });
-
-    if (!users.isVerified) {
-      return res.status(400).json({ type: "error", message: "Verify first" });
-    }
-
     if (!users) {
       return res
         .status(404)
         .json({ type: "error", message: "User not found?" });
+    }
+
+    if (!users.isVerified) {
+      return res.status(400).json({ type: "error", message: "Verify first" });
     }
 
     // Check if the user is blocked
