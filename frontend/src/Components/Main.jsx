@@ -71,7 +71,7 @@ import CheckSignupProgress from "./OtherComponents/CheckSignupProgress";
 import TermsAndPolicy from "./Pages/TermsAndPolicy";
 import CookiesAndPolicy from "./Pages/CookiesAndPolicy";
 import PrivacyPolicy from "./Pages/PrivacyPolicy";
-
+import ReviewPage from "./Pages/ReviewPage";
 // Admin Dashboard End
 
 const Main = () => {
@@ -117,6 +117,7 @@ const Main = () => {
             <Route path="/privacy-policy" element={<PrivacyPolicy />} />
             <Route path="/cookies" element={<CookiesAndPolicy />} />
             <Route path="/complain" element={<Complain />} />
+            <Route path="/review" element={<ReviewPage />} />
             <Route
               path="/signin"
               element={

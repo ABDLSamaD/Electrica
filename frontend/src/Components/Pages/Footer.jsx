@@ -5,18 +5,6 @@ import { motion } from "framer-motion";
 import { MapPin, Phone, Mail, Clock } from "lucide-react";
 
 const AnimatedFooter = () => {
-  const containerVariants = {
-    hidden: { opacity: 0, y: 50 },
-    visible: {
-      opacity: 1,
-      y: 0,
-      transition: {
-        duration: 0.8,
-        staggerChildren: 0.2,
-      },
-    },
-  };
-
   const itemVariants = {
     hidden: { opacity: 0, y: 20 },
     visible: {
@@ -30,17 +18,11 @@ const AnimatedFooter = () => {
     <footer className="relative bg-gray-900/30 pt-16 pb-8 overflow-hidden">
       {/* Animated Gradient Background */}
       <div className="absolute inset-0">
-        <div className="absolute inset-0 bg-gradient-to-r from-cyan-500/10 via-blue-500/10 to-purple-500/10 animate-gradient-x"></div>
-        <div className="absolute inset-0 bg-[radial-gradient(circle_at_50%_120%,rgba(0,183,255,0.15),rgba(0,0,0,0))]"></div>
+        <div className="absolute inset-0 bg-gray-950 animate-gradient-x"></div>
+        <div className="absolute inset-0 bg-[radial-gradient(circle_at_50%_120%,rgba(0,183,155,0.15),rgba(0,0,0,0))]"></div>
       </div>
 
-      <motion.div
-        variants={containerVariants}
-        initial="hidden"
-        whileInView="visible"
-        viewport={{ once: true }}
-        className="container mx-auto px-6 relative z-10"
-      >
+      <div className="container mx-auto px-6 relative z-10">
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-12 mb-12">
           {/* Company Info */}
           <motion.div variants={itemVariants} className="space-y-4">
@@ -190,7 +172,7 @@ const AnimatedFooter = () => {
             </Link>
           </div>
         </div>
-      </motion.div>
+      </div>
     </footer>
   );
 };
