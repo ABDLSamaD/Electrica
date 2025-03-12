@@ -68,7 +68,7 @@ exports.likeReview = async (req, res) => {
     res.cookie("jsxa24jsxd__2jala", JSON.stringify(likedReviews), {
       httpOnly: true,
       secure: true, // Ensure cookies work over HTTPS
-      sameSite: "strict", // Prevent CSRF attacks
+      sameSite: "None", // Prevent CSRF attacks
       maxAge: 24 * 60 * 60 * 1000, // 30 days
     });
     res.status(200).json(updatedReview);
