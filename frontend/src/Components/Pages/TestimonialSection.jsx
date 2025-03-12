@@ -1,30 +1,61 @@
-import { Star, Quote } from "lucide-react";
-
-const testimonials = [
-  {
-    name: "Sarah Johnson",
-    role: "Business Owner",
-    image: "https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=400",
-    content:
-      "Electrica transformed our office space with their smart lighting solutions. The energy savings have been remarkable!",
-  },
-  {
-    name: "Michael Chen",
-    role: "Factory Manager",
-    image: "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=400",
-    content:
-      "Their industrial automation expertise helped us modernize our entire production line. Exceptional service!",
-  },
-  {
-    name: "Emily Rodriguez",
-    role: "Home Owner",
-    image: "https://images.unsplash.com/photo-1438761681033-6461ffad8d80?w=400",
-    content:
-      "The smart home integration was seamless. Now I can control everything from my phone. Simply amazing!",
-  },
-];
+import axios from "axios";
+import { Star, Quote, ThumbsUp, ThumbsDown } from "lucide-react";
+import { useEffect, useState } from "react";
+import { Link } from "react-router-dom";
+// import review from "../../../../backend/src/models/review";
 
 const TestimonialSection = () => {
+  const [testimonials, setTestimonials] = useState([]);
+  const electricaURL = import.meta.env.VITE_ELECTRICA_API_URL;
+
+  const fetchTestimonials = async () => {
+    try {
+      const response = await axios.get(
+        `${electricaURL}/api/reviews/get-reviews`
+      );
+      if (response.status === 200) {
+        setTestimonials(response.data);
+      } else {
+        setTestimonials([]);
+      }
+    } catch (error) {
+      console.error("Error fetching testimonials:", error);
+    }
+  };
+  useEffect(() => {
+    fetchTestimonials();
+  }, []);
+
+  const handleLike = async (reviewId) => {
+    try {
+      const response = await axios.put(
+        `${electricaURL}/api/reviews/like-review/${reviewId}`,
+        {},
+        { withCredentials: true }
+      );
+
+      if (response.status === 200) {
+        // Update the testimonials state to reflect the new like/dislike count
+        fetchTestimonials();
+        setTestimonials(
+          testimonials.map((testimonial) => {
+            if (testimonial._id === reviewId) {
+              return {
+                ...testimonial,
+                likes: response.data.likes,
+              };
+            }
+            return testimonial;
+          })
+        );
+      } else {
+        console.log("Error updating like:");
+      }
+    } catch (error) {
+      console.error("Error updating like:", error);
+    }
+  };
+
   return (
     <section className="py-20">
       <div className="container mx-auto px-4">
@@ -45,7 +76,7 @@ const TestimonialSection = () => {
               className="bg-gray-800/50 p-6 rounded-2xl backdrop-blur-sm border border-gray-700 hover:border-cyan-500/50"
             >
               <Quote className="text-cyan-400 w-10 h-10 mb-4" />
-              <p className="text-gray-300 mb-6">{testimonial.content}</p>
+              <p className="text-gray-300 mb-6">{testimonial.message}</p>
               <div className="flex items-center gap-4">
                 <img
                   src={testimonial.image}
@@ -56,7 +87,9 @@ const TestimonialSection = () => {
                   <h4 className="text-white font-semibold">
                     {testimonial.name}
                   </h4>
-                  <p className="text-gray-400 text-sm">{testimonial.role}</p>
+                  <p className="text-gray-400 text-sm">
+                    {testimonial.occupation}
+                  </p>
                 </div>
               </div>
               <div className="flex gap-1 mt-4">
@@ -67,8 +100,34 @@ const TestimonialSection = () => {
                   />
                 ))}
               </div>
+              {/* like shown */}
+              <div className="flex items-center gap-4 mt-4">
+                <span className="text-gray-400 text-sm">
+                  {testimonial.likes || 0} likes
+                </span>
+              </div>
+              {/* like option */}
+              <div className="flex items-center gap-4 mt-4">
+                <button
+                  onClick={() => handleLike(testimonial._id)}
+                  className="flex items-center gap-2 text-gray-400 hover:text-cyan-400 transition-colors"
+                >
+                  <ThumbsUp className="w-5 h-5" />
+                  <span>{testimonial.likes || 0}</span>
+                </button>
+              </div>
             </div>
           ))}
+        </div>
+        {/* Add Review Button */}
+        <div className="text-center mt-12">
+          <Link
+            to="/review" // Update this URL to match your review page route
+            className="inline-flex items-center px-6 py-3 bg-cyan-500 hover:bg-cyan-600 text-white font-medium rounded-lg transition-colors duration-200"
+          >
+            <Star className="w-5 h-5 mr-2" />
+            Give Us Your Review
+          </Link>
         </div>
       </div>
     </section>

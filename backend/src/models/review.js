@@ -35,13 +35,11 @@ const reviewSchema = new mongoose.Schema({
     min: [1, "Rating must be at least 1"],
     max: [5, "Rating cannot exceed 5"],
   },
-  images: [
-    {
-      type: String, // URLs to uploaded images
-      default:
-        "https://upload.wikimedia.org/wikipedia/commons/thumb/b/b5/Windows_10_Default_Profile_Picture.svg/2048px-Windows_10_Default_Profile_Picture.svg.png",
-    },
-  ],
+  image: {
+    type: String, // URLs to uploaded images
+    default:
+      "https://upload.wikimedia.org/wikipedia/commons/thumb/b/b5/Windows_10_Default_Profile_Picture.svg/2048px-Windows_10_Default_Profile_Picture.svg.png",
+  },
   likes: {
     type: Number,
     default: 0,

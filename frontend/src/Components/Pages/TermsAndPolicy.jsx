@@ -104,7 +104,7 @@ export default function TermsAndPolicy() {
                 </li>
                 <li>
                   <Link
-                    to="/services"
+                    to="/service"
                     className="text-sm font-medium text-gray-300 transition-colors hover:text-white"
                   >
                     Services

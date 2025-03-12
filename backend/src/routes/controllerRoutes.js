@@ -5,6 +5,5 @@ const controller = require("../controllers/controller");
 router.post("/create-review", controller.createReview);
 router.get("/get-reviews", controller.getReviews);
 router.put("/like-review/:id", controller.likeReview);
-router.put("/dislike-review/:id", controller.dislikeReview);
 
 module.exports = router;

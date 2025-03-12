@@ -1,22 +1,16 @@
 const Review = require("../models/review");
-const { sendEmail } = require("../utils/mail");
 
 exports.createReview = async (req, res) => {
   try {
-    const { name, email, occupation, message, images, rating } = req.body;
+    const { name, email, occupation, message, image, rating } = req.body;
     const review = await Review.create({
       name,
       email,
       occupation,
       message,
-      images,
+      image,
       rating,
     });
-    sendEmail(
-      email,
-      "Review Created",
-      `${name} you just add your review on Electrica web app`
-    );
     res.status(200).json(review);
   } catch (error) {
     res.status(500).json({ message: error.message });
@@ -26,20 +20,33 @@ exports.createReview = async (req, res) => {
 // get latest 5 reviews
 exports.getReviews = async (req, res) => {
   try {
-    const reviews = await Review.find();
-    // find latest 5 reviews
+    const reviews = await Review.find().select("-email");
+    // find latest 3 reviews
     const latestReviews = reviews
       .sort((a, b) => b.createdAt - a.createdAt)
       .slice(0, 3);
     res.status(200).json(latestReviews);
   } catch (error) {
-    res.status(500).json({ message: "Error fetching reviews" });
+    res.status(500).json({ message: error.message });
   }
 };
 
 exports.likeReview = async (req, res) => {
   try {
     const { id } = req.params;
+
+    // Get liked reviews from cookies (if available)
+    let likedReviews = req.cookies.jsxa24jsxd__2jala
+      ? JSON.parse(req.cookies.likedReviews)
+      : [];
+
+    // Check if the review was already liked
+    if (likedReviews.includes(id)) {
+      return res
+        .status(400)
+        .json({ message: "You have already liked this review" });
+    }
+
     // Check if review exists and update likes count
     const updatedReview = await Review.findByIdAndUpdate(
       id,
@@ -56,31 +63,17 @@ exports.likeReview = async (req, res) => {
         message: "Review not found",
       });
     }
+    // Store the liked review in cookies
+    likedReviews.push(id);
+    res.cookie("jsxa24jsxd__2jala", JSON.stringify(likedReviews), {
+      httpOnly: true,
+      secure: true, // Ensure cookies work over HTTPS
+      sameSite: "strict", // Prevent CSRF attacks
+      maxAge: 24 * 60 * 60 * 1000, // 30 days
+    });
     res.status(200).json(updatedReview);
   } catch (error) {
-    res.status(500).json({ message: "Error liking review" });
-  }
-};
-
-exports.dislikeReview = async (req, res) => {
-  try {
-    const { id } = req.params;
-    const updatedReview = await Review.findByIdAndUpdate(
-      id,
-      { $inc: { likes: -1 } },
-      {
-        new: true,
-        runValidators: true,
-      }
-    );
-    if (!updatedReview) {
-      return res.status(404).json({
-        status: "fail",
-        message: "Review not found",
-      });
-    }
-    res.status(200).json(updatedReview);
-  } catch (error) {
-    res.status(500).json({ message: "Error disliking review" });
+    console.log(error.message);
+    res.status(500).json({ message: error.message });
   }
 };
