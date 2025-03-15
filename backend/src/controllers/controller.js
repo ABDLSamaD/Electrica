@@ -11,6 +11,7 @@ exports.createReview = async (req, res) => {
       image,
       rating,
     });
+    sendEmail(email,"Review Submitted",`${name} you review is submitted success thankyou for your support or feedback to our team and mamnagment.`)
     res.status(200).json(review);
   } catch (error) {
     res.status(500).json({ message: error.message });
