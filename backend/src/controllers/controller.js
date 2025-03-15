@@ -69,7 +69,7 @@ exports.likeReview = async (req, res) => {
       httpOnly: true,
       secure: true, // Ensure cookies work over HTTPS
       sameSite: "None", // Prevent CSRF attacks
-      maxAge: 24 * 60 * 60 * 1000, // 30 days
+      maxAge: 30 * 24 * 60 * 60 * 1000, // 30 days
     });
     res.status(200).json(updatedReview);
   } catch (error) {

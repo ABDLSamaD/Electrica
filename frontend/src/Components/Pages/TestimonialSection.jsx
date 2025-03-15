@@ -2,7 +2,6 @@ import axios from "axios";
 import { Star, Quote, ThumbsUp, ThumbsDown } from "lucide-react";
 import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
-// import review from "../../../../backend/src/models/review";
 
 const TestimonialSection = () => {
   const [testimonials, setTestimonials] = useState([]);

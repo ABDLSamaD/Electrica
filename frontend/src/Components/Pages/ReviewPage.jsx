@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import {
   Star,
   Send,
@@ -9,21 +9,25 @@ import {
   Mail,
   MessageSquare,
   Zap,
+  Image,
 } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import HeaderMain from "./HeaderMain";
 import { Link } from "react-router-dom";
+import axios from "axios";
+import Miniloader from "../OtherComponents/Miniloader";
 
 const ReviewPage = () => {
-  useEffect(() => {
-    window.scrollTo({ top: 0, left: 0, behavior: "instant" });
-  }, []);
+  const electricaURL = import.meta.env.VITE_ELECTRICA_API_URL;
   const [rating, setRating] = useState(0);
+  const [loading, setLoading] = useState(false);
   const [hoverRating, setHoverRating] = useState(0);
   const [formData, setFormData] = useState({
     name: "",
     email: "",
     message: "",
+    occupation: "",
+    images: [],
   });
   const [submitted, setSubmitted] = useState(false);
   const [focused, setFocused] = useState("");
@@ -47,22 +51,45 @@ const ReviewPage = () => {
     });
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
     // Add your submission logic here
-    console.log({ ...formData, rating });
     setSubmitted(true);
-
-    // Reset form after 3 seconds
-    setTimeout(() => {
+    setLoading(true);
+    const { name, email, message, occupation, images } = formData;
+    try {
+      const response = await axios.post(
+        `${electricaURL}/api/reviews/create-review`,
+        {
+          name,
+          email,
+          message,
+          occupation,
+          images,
+          rating,
+        }
+      );
+      if (response.status === 200) {
+        setSubmitted(false);
+        setTimeout(() => {
+          setFormData({
+            name: "",
+            email: "",
+            message: "",
+            occupation: "",
+            images: [],
+          });
+          setLoading(false);
+        }, 3000);
+      } else {
+        setSubmitted(false);
+      }
+    } catch (error) {
       setSubmitted(false);
-      setRating(0);
-      setFormData({
-        name: "",
-        email: "",
-        message: "",
-      });
-    }, 3000);
+      console.error("Error submitting review:", error);
+    } finally {
+      setLoading(false);
+    }
   };
 
   const handleFocus = (field) => {
@@ -276,6 +303,71 @@ const ReviewPage = () => {
                         </div>
                       </div>
 
+                      {/* Occupation Input */}
+                      <div
+                        className={`relative ${
+                          focused === "occupation" ? "z-10" : ""
+                        }`}
+                      >
+                        <div
+                          className={`absolute inset-0 bg-cyan-500/20 rounded-lg blur-md transition-opacity duration-300 ${
+                            focused === "occupation"
+                              ? "opacity-100"
+                              : "opacity-0"
+                          }`}
+                        ></div>
+                        <div className="relative">
+                          <label
+                            htmlFor="occupation"
+                            className="text-gray-300 font-medium mb-2 flex items-center"
+                          >
+                            <User className="w-4 h-4 mr-2 text-cyan-400" />
+                            Occupation
+                          </label>
+                          <input
+                            type="text"
+                            id="occupation"
+                            name="occupation"
+                            value={formData.occupation}
+                            onChange={handleInputChange}
+                            onFocus={() => handleFocus("occupation")}
+                            onBlur={handleBlur}
+                            className="w-full px-4 py-3 rounded-lg bg-gray-800/70 border border-gray-700 text-white placeholder-gray-500 focus:ring-2 focus:ring-cyan-500 focus:border-transparent transition-all"
+                            placeholder="Enter Occupation"
+                            required
+                          />
+                        </div>
+                      </div>
+
+                      {/* Images Input */}
+                      <div
+                        className={`relative ${
+                          focused === "images" ? "z-10" : ""
+                        }`}
+                      >
+                        <div
+                          className={`absolute inset-0 bg-cyan-500/20 rounded-lg blur-md transition-opacity duration-300 ${
+                            focused === "images" ? "opacity-100" : "opacity-0"
+                          }`}
+                        ></div>
+                        <div className="relative">
+                          <label
+                            htmlFor="images"
+                            className="text-gray-300 font-medium mb-2 flex items-center"
+                          >
+                            <Image className="w-4 h-4 mr-2 text-cyan-400" />
+                            Images
+                          </label>
+                          <input
+                            type="file"
+                            id="images"
+                            name="images"
+                            onChange={handleInputChange}
+                            className="w-full px-4 py-3 rounded-lg bg-gray-800/70 border border-gray-700 text-white placeholder-gray-500 focus:ring-2 focus:ring-cyan-500 focus:border-transparent transition-all"
+                          />
+                        </div>
+                      </div>
+
                       {/* Message Input */}
                       <div
                         className={`relative ${
@@ -315,13 +407,14 @@ const ReviewPage = () => {
                     <div>
                       <button
                         type="submit"
-                        className="w-full relative overflow-hidden group"
+                        disabled={loading}
+                        className="w-full relative overflow-hidden group bg-gradient-to-r from-cyan-500 to-blue-600 rounded-lg"
                       >
-                        <div className="absolute inset-0 w-full h-full bg-gradient-to-r from-cyan-500 to-blue-600 rounded-lg"></div>
-                        <div className="absolute inset-0 w-full h-full transition-all duration-300 bg-gradient-to-r from-cyan-600 to-blue-700 rounded-lg opacity-0 group-hover:opacity-100"></div>
                         <div className="relative flex items-center justify-center py-3 text-white font-semibold">
-                          <Send className="w-5 h-5 mr-2 group-hover:translate-x-1 transition-transform duration-200" />
-                          Submit Review
+                          {!loading && (
+                            <Send className="w-5 h-5 mr-2 group-hover:translate-x-1 transition-transform duration-200" />
+                          )}
+                          {loading ? <Miniloader /> : "Submit Review"}
                         </div>
                       </button>
 
@@ -367,42 +460,6 @@ const ReviewPage = () => {
               </AnimatePresence>
             </div>
           </div>
-
-          {/* Testimonial Preview */}
-          {rating > 0 && formData.message && !submitted && (
-            <div className="mt-12 bg-gray-900/50 backdrop-blur-sm rounded-xl p-6 border border-gray-800">
-              <h3 className="text-xl font-semibold text-white mb-4">
-                Preview Your Review
-              </h3>
-              <div className="flex items-start">
-                <div className="w-12 h-12 rounded-full bg-gradient-to-r from-cyan-500 to-blue-600 flex items-center justify-center mr-4 flex-shrink-0">
-                  <span className="text-white font-bold">
-                    {formData.name.charAt(0) || "?"}
-                  </span>
-                </div>
-                <div>
-                  <div className="flex items-center mb-2">
-                    <p className="font-medium text-white mr-3">
-                      {formData.name || "Your Name"}
-                    </p>
-                    <div className="flex">
-                      {[1, 2, 3, 4, 5].map((star) => (
-                        <Star
-                          key={star}
-                          className={`w-4 h-4 ${
-                            star <= rating
-                              ? "fill-yellow-400 text-yellow-400"
-                              : "text-gray-600"
-                          }`}
-                        />
-                      ))}
-                    </div>
-                  </div>
-                  <p className="text-gray-400">{formData.message}</p>
-                </div>
-              </div>
-            </div>
-          )}
 
           {/* Review Guidelines */}
           <div className="mt-8 bg-gray-900/30 backdrop-blur-sm rounded-xl p-6 border border-gray-800">

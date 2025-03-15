@@ -168,8 +168,8 @@ exports.updateProjectStatus = async (req, res) => {
     await project.save();
     sendEmail(
       user.email,
-      "Accepted",
-      "Your request for the project has been accepted."
+      "Project Accepted",
+      `Your request for the project has been accepted, & Contractor visit your site tommorrow ${user.name}`
     );
 
     res.status(200).json({
