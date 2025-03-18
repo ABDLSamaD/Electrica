@@ -1,13 +1,18 @@
+// Libararies **
 const bcrypt = require("bcryptjs");
 const User = require("../models/user");
 const jwt = require("jsonwebtoken");
 const crypto = require("crypto");
+const mongoose = require("mongoose");
+const cron = require("node-cron"); 
+// ** Libararies
+// Files **
 const { sendOtpEmail } = require("../utils/otpService");
 const { sendForgotOtpEmail } = require("../utils/OtpForgot");
 const { loginMail } = require("../utils/loginmail");
 const { sendEmail } = require("../utils/mail");
 const Project = require("../models/project");
-const mongoose = require("mongoose");
+// ** Files
 require("dotenv").config();
 
 const generateOTP = () => {
@@ -21,13 +26,15 @@ const deleteUnverifiedUsers = async () => {
     // Find users who match the criteria before deleting them
     const usersToDelete = await User.find({
       isVerified: false,
-      createdAt: { $lte: new Date(Date.now() - 24 * 60 * 60 * 1000) }, // Older than 24 hours
+      createdAt: { $lte: new Date(Date.now() - 60 * 1000) }, // Older than 24 hours
     });
 
     if (usersToDelete.length > 0) {
       const deletedUser = await User.deleteMany({
-        isVerified: false,
-        createdAt: { $lte: new Date(Date.now() - 24 * 60 * 60 * 1000) },
+        $and: [
+          { isVerified: false },
+          { createdAt: { $lte: new Date(Date.now() - 60 * 1000) } },
+        ],
       });
 
       console.log(`${deletedUser.deletedCount} unverified users deleted`);
@@ -40,12 +47,17 @@ const deleteUnverifiedUsers = async () => {
 };
 
 // Run once after 24 hours (First-time execution)
-setTimeout(deleteUnverifiedUsers, 24 * 60 * 60 * 1000);
+cron.schedule("* * * * *", () => {
+  deleteUnverifiedUsers();
+});
 
 // Call this function every time a new user signs up
 const handleNewUserSignup = () => {
-  setTimeout(deleteUnverifiedUsers, 24 * 60 * 60 * 1000); // Runs after 24 hours when a new user is created
+  cron.schedule("* * * * *", () => {
+    deleteUnverifiedUsers();
+  });
 };
+
 
 exports.signUp = async (req, res) => {
   try {
