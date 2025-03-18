@@ -47,13 +47,13 @@ const deleteUnverifiedUsers = async () => {
 };
 
 // Run once after 24 hours (First-time execution)
-cron.schedule("* * * * *", () => {
+cron.schedule("0 0 * * *", () => {
   deleteUnverifiedUsers();
 });
 
 // Call this function every time a new user signs up
 const handleNewUserSignup = () => {
-  cron.schedule("* * * * *", () => {
+  cron.schedule("0 0 * * *", () => {
     deleteUnverifiedUsers();
   });
 };
