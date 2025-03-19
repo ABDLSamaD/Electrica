@@ -76,6 +76,7 @@ import CookiesAndPolicy from "./Pages/CookiesAndPolicy";
 import PrivacyPolicy from "./Pages/PrivacyPolicy";
 import ReviewPage from "./Pages/ReviewPage";
 import ScrollToTop from "./Pages/ScrollToTop";
+import Contact from "./Pages/Contact";
 // Other COmponent End
 
 const Main = () => {
@@ -116,6 +117,7 @@ const Main = () => {
           <Routes>
             <Route path="/" element={<Home />} />
             <Route path="/about" element={<About />} />
+            <Route path="/contact" element={<Contact />} />
             <Route path="/project-details" element={<ProjectDetails />} />
             <Route path="/service" element={<ElectricalServicePage />} />
             <Route path="/terms" element={<TermsAndPolicy />} />
