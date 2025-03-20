@@ -1,18 +1,14 @@
-// Libararies **
 const bcrypt = require("bcryptjs");
 const User = require("../models/user");
 const jwt = require("jsonwebtoken");
 const crypto = require("crypto");
-const mongoose = require("mongoose");
-const cron = require("node-cron"); 
-// ** Libararies
-// Files **
 const { sendOtpEmail } = require("../utils/otpService");
 const { sendForgotOtpEmail } = require("../utils/OtpForgot");
 const { loginMail } = require("../utils/loginmail");
 const { sendEmail } = require("../utils/mail");
 const Project = require("../models/project");
-// ** Files
+const mongoose = require("mongoose");
+const cron = require("node-cron");
 require("dotenv").config();
 
 const generateOTP = () => {
@@ -20,48 +16,73 @@ const generateOTP = () => {
   return otp.toString(); // Generates a 6-digit OTP
 };
 
-// function of delete user is  not verified
-const deleteUnverifiedUsers = async () => {
-  try {
-    // Find users who match the criteria before deleting them
-    const usersToDelete = await User.find({
-      isVerified: false,
-      createdAt: { $lte: new Date(Date.now() - 60 * 1000) }, // Older than 24 hours
-    });
+// // function of delete user is  not verified
+// const deleteUnverifiedUsers = async () => {
+//   try {
+//     // Find users who match the criteria before deleting them
+//     const usersToDelete = await User.find({
+//       isVerified: false,
+//       createdAt: { $lte: new Date(Date.now() - 60 * 1000) }, // Older than 24 hours
+//     });
 
-    if (usersToDelete.length > 0) {
-      const deletedUser = await User.deleteMany({
-        $and: [
-          { isVerified: false },
-          { createdAt: { $lte: new Date(Date.now() - 60 * 1000) } },
-        ],
-      });
+//     if (usersToDelete.length > 0) {
+//       const deletedUser = await User.deleteMany({
+//         $and: [
+//           { isVerified: false },
+//           { createdAt: { $lte: new Date(Date.now() - 60 * 1000) } },
+//         ],
+//       });
 
-      console.log(`${deletedUser.deletedCount} unverified users deleted`);
-    } else {
-      console.log("No unverified users found for deletion.");
+//       console.log(`${deletedUser.deletedCount} unverified users deleted`);
+//     } else {
+//       console.log("No unverified users found for deletion.");
+//     }
+//   } catch (error) {
+//     console.error("Error deleting unverified users:", error);
+//   }
+// };
+
+// // Call this function every time a new user signs up
+// const handleNewUserSignup = () => {
+//   cron.schedule("* * * * *", () => {
+//     deleteUnverifiedUsers();
+//   });
+// };
+
+const handleNewUserSignup = async (userId) => {
+  setTimeout(async () => {
+    try {
+      const user = await User.findById(userId);
+
+      if (!user) {
+        console.log(`[DEBUG] User ${userId} not found, skipping deletion.`);
+        return;
+      }
+
+      if (!user.isVerified) {
+        await User.deleteOne({ _id: userId });
+        console.log(`[DEBUG] Unverified user ${userId} deleted.`);
+      } else {
+        console.log(`[DEBUG] User ${userId} is verified, not deleting.`);
+      }
+    } catch (error) {
+      console.error(`[ERROR] Failed to delete user ${userId}:`, error);
     }
-  } catch (error) {
-    console.error("Error deleting unverified users:", error);
-  }
+  }, 24 * 60 * 60 * 1000);
 };
-
-// Run once after 24 hours (First-time execution)
-cron.schedule("0 0 * * *", () => {
-  deleteUnverifiedUsers();
-});
-
-// Call this function every time a new user signs up
-const handleNewUserSignup = () => {
-  cron.schedule("0 0 * * *", () => {
-    deleteUnverifiedUsers();
-  });
-};
-
 
 exports.signUp = async (req, res) => {
   try {
-    const { name, email, password } = req.body;
+    const { name, email, password, termsAndCondition } = req.body;
+
+    if (!termsAndCondition) {
+      return res
+        .status(400)
+        .json({
+          type: "error",
+          message: "You must accept the Terms and Conditions.",
+        });
+    }
 
     const userExists = await User.findOne({ email });
     if (userExists) {
@@ -77,6 +98,7 @@ exports.signUp = async (req, res) => {
       email,
       password: hashedPassword,
       isFirstTime: true,
+      termsAndCondition: true,
     });
 
     if (!user) {
@@ -101,8 +123,8 @@ exports.signUp = async (req, res) => {
     const token = jwt.sign(data, process.env.JWT_SECRET, { expiresIn: "1h" });
     user.token = token;
 
-    // ✅ Schedule deletion check after 1 minute
-    handleNewUserSignup();
+    // ✅ Schedule deletion check after 24 hours
+    handleNewUserSignup(user._id);
 
     await user.save();
 

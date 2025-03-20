@@ -91,6 +91,7 @@ const Signup = () => {
     name: "",
     email: "",
     password: "",
+    termsAndCondition: false,
   });
   const [alert, setAlert] = useState(null);
   const [isPasswordVisible, setIsPasswordVisible] = useState(false);
@@ -124,8 +125,11 @@ const Signup = () => {
     setIsPasswordVisible(!isPasswordVisible);
 
   const onChange = (e) => {
-    const { name, value } = e.target;
-    setCredentials({ ...credentials, [name]: value });
+    const { name, type, checked, value } = e.target;
+    setCredentials({
+      ...credentials,
+      [name]: type === "checkbox" ? checked : value,
+    });
   };
 
   // Simulate loading progress
@@ -153,7 +157,7 @@ const Signup = () => {
     const clearProgressInterval = simulateProgress();
 
     try {
-      const { name, email, password } = credentials;
+      const { name, email, password, termsAndCondition } = credentials;
 
       // After 1 second, update the loading message
       setTimeout(() => {
@@ -165,6 +169,7 @@ const Signup = () => {
         name,
         email,
         password,
+        termsAndCondition,
       });
 
       if (response.status === 200) {
@@ -173,6 +178,7 @@ const Signup = () => {
           secure: true,
           sameSite: "Strict",
         });
+
         Cookies.set("signup_time", Date.now().toString(), {
           expires: 1,
           secure: true,
@@ -357,6 +363,9 @@ const Signup = () => {
               id="privacy-policy"
               required
               disabled={isLoading}
+              name="termsAndCondition"
+              onChange={onChange}
+              checked={credentials.termsAndCondition}
               className="h-4 w-4 rounded border-gray-700 bg-gray-800 text-blue-600 focus:ring-blue-500 focus:ring-offset-gray-900"
             />
             <label htmlFor="privacy-policy" className="text-sm text-gray-400">

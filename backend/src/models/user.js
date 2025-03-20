@@ -43,6 +43,7 @@ const userSchema = new mongoose.Schema(
     address: String,
     phone: String,
     city: String,
+    termsAndCondition: { type: Boolean, default: false },
     loginAttempt: [loginAttemptSchema],
     logoutTime: { type: Number, default: 86400000 },
     isVerified: { type: Boolean, default: false },
