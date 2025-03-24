@@ -58,15 +58,16 @@ const {
   updateComplaintStatus,
   deleteComplaint,
 } = require("../controllers/complainController");
+const checkLoginSession = require("../middleware/checkLoginSession");
 
 const loginRateLimiter = rateLimit({
   windowMs: 5 * 60 * 1000, // 5 minutes
-  max: 10, // Limit each IP to 10 requests per windowMs
+  max: 5, // Limit each IP to 10 requests per windowMs
   message: "Too many login attempts, please try again later.",
 });
 const signupRateLimiter = rateLimit({
   windowMs: 5 * 60 * 1000, // 5 minutes
-  max: 10, // Limit each IP to 10 requests per windowMs
+  max: 5, // Limit each IP to 10 requests per windowMs
   message: "Too many signup attempts, please try again later.",
 });
 
@@ -89,6 +90,7 @@ routes.post(
   loginValidation,
   validateRequest,
   loginRateLimiter,
+  checkLoginSession,
   login
 ); // signin
 routes.get("/check-auth", sessionAuth, checkAuth); // check auth

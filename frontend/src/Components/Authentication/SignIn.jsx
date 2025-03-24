@@ -9,6 +9,8 @@ import axios from "axios";
 import InputForm from "./InputForm";
 import { UAParser } from "ua-parser-js";
 import LoaderAll from "../OtherComponents/LoaderAll";
+import Cookies from "js-cookie";
+import LoginOtpVerification from "./LoginOtpVerification";
 
 const SignIn = () => {
   const navigate = useNavigate();
@@ -21,9 +23,12 @@ const SignIn = () => {
     password: "",
     rememberMe: false,
   });
+  const [passwords, setPasswords] = useState("");
   const [miniLoader, setMiniLoader] = useState(false);
   const [loading, setLoading] = useState(false);
   const [loginSuccess, setLoginSuccess] = useState(false);
+  const [otpRequired, setOtpRequired] = useState(false); // Show OTP field if needed
+  const [otp, setOtp] = useState(["", "", "", "", "", ""]);
 
   const onChange = (e) => {
     const { name, value, type, checked } = e.target;
@@ -57,22 +62,73 @@ const SignIn = () => {
         { withCredentials: true }
       );
 
-      const data = response.data;
-
       if (response.status === 200) {
-        setMiniLoader(false);
-        setLoginSuccess(true);
-        setAlert({ type: data.type, message: data.message });
-
-        setTimeout(() => {
-          navigate("/db-au-user");
+        if (response.data.type === "otp_required") {
+          setPasswords(password);
+          setOtpRequired(true);
           setLoading(false);
-          setLoginSuccess(false);
-        }, 1500);
+          setMiniLoader(false);
+          setAlert({ type: "success", message: response.data.message });
+          Cookies.set("ez-em-01e", JSON.stringify(email), { expires: 1 / 144 });
+        } else {
+          setMiniLoader(false);
+          setLoginSuccess(true);
+          setAlert({
+            type: response.data.type,
+            message: response.data.message,
+          });
+
+          setTimeout(() => {
+            navigate("/db-au-user");
+            setLoading(false);
+            setLoginSuccess(false);
+          }, 1500);
+        }
       } else {
         setLoading(false);
         setMiniLoader(false);
-        setAlert({ type: data.type, message: data.message });
+        setAlert({ type: response.data.type, message: response.data.message });
+      }
+    } catch (err) {
+      setLoading(false);
+      setMiniLoader(false);
+      setAlert({
+        type: err.response?.data?.type || "error",
+        message: err.response?.data?.message || "Network Error",
+      });
+    }
+  };
+
+  const handleOtpSubmit = async (e) => {
+    e.preventDefault();
+    setMiniLoader(true);
+    setLoading(true);
+    const password = passwords;
+    const otpString = otp.join("");
+
+    const email = Cookies.get("ez-em-01e");
+    try {
+      const response = await axios.post(
+        `${electricaURL}/api/auth/signin`,
+        { email: JSON.parse(email), password: password, otp: otpString },
+        { withCredentials: true }
+      );
+      if (response.status === 200) {
+        setMiniLoader(false);
+        setLoginSuccess(true);
+        setAlert({ type: response.data.type, message: response.data.message });
+        Cookies.remove("ez-em-01e");
+        setTimeout(() => {
+          navigate("/db-au-user");
+          setLoading(false);
+        }, 800);
+      } else {
+        setLoading(false);
+        setMiniLoader(false);
+        setAlert({
+          type: response.data.type,
+          message: response.data.message,
+        });
       }
     } catch (err) {
       setLoading(false);
@@ -87,7 +143,7 @@ const SignIn = () => {
   return (
     <div
       id="signin"
-      className="min-h-screen flex items-center justify-center relative overflow-hidden p-4 sm:p-8"
+      className="flex items-center justify-center relative overflow-hidden p-4 sm:p-8 z-50"
     >
       {/* Show loader when login is successful */}
       {loginSuccess && (
@@ -105,54 +161,64 @@ const SignIn = () => {
         />
       )}
 
-      {/* Main form container */}
-      <div
-        className={`w-full max-w-md relative bg-gray-900/80 border border-solid border-gray-300/20 text-white shadow-2xl rounded-xl p-8 backdrop-blur-md ${
-          loginSuccess ? "opacity-50 pointer-events-none filter blur-sm" : ""
-        }`}
-      >
-        <div className="mb-6">
-          <Link
-            to="/"
-            className="inline-block text-blue-400 hover:text-blue-300 transition-colors"
-            title="Go back"
-          >
-            <FontAwesomeIcon icon={faArrowLeft} size="lg" />
-          </Link>
-        </div>
-
-        <div className="text-center mb-8">
-          <h1 className="text-3xl font-extrabold text-white mb-2">
-            Welcome Back
-          </h1>
-          <p className="text-gray-400 text-sm">
-            Sign in to access your Electrica dashboard
-          </p>
-        </div>
-
-        <InputForm
-          hanldeLogin={handleSignin}
-          onChange={onChange}
-          credential={credentials}
-          passLink={"/forgot_password"}
-          miniLoader={miniLoader}
-          disabled={loading || loginSuccess}
-        />
-
-        <div className="mt-6 h-auto bg-gray-700/40 p-4 rounded-lg text-sm">
-          <p className="text-center text-gray-300">
-            Not a member?{" "}
+      {!otpRequired ? (
+        <div
+          className={`w-full max-w-md relative bg-gray-900/80 border border-solid border-gray-300/20 text-white shadow-2xl rounded-xl p-8 backdrop-blur-md ${
+            loginSuccess ? "opacity-50 pointer-events-none filter blur-sm" : ""
+          }`}
+        >
+          <div className="mb-6">
             <Link
-              to="/signup"
-              className={`text-blue-400 hover:text-blue-300 font-medium hover:underline ${
-                loading || loginSuccess ? "pointer-events-none opacity-60" : ""
-              }`}
+              to="/"
+              className="inline-block text-blue-400 hover:text-blue-300 transition-colors"
+              title="Go back"
             >
-              Sign up now
+              <FontAwesomeIcon icon={faArrowLeft} size="lg" />
             </Link>
-          </p>
+          </div>
+
+          <div className="text-center mb-8">
+            <h1 className="text-3xl font-extrabold text-white mb-2">
+              Welcome Back
+            </h1>
+            <p className="text-gray-400 text-sm">
+              Sign in to access your Electrica dashboard
+            </p>
+          </div>
+
+          <InputForm
+            hanldeLogin={handleSignin}
+            onChange={onChange}
+            credential={credentials}
+            passLink={"/forgot_password"}
+            miniLoader={miniLoader}
+            disabled={loading || loginSuccess}
+          />
+
+          <div className="mt-6 h-auto bg-gray-700/40 p-4 rounded-lg text-sm">
+            <p className="text-center text-gray-300">
+              Not a member?{" "}
+              <Link
+                to="/signup"
+                className={`text-blue-400 hover:text-blue-300 font-medium hover:underline ${
+                  loading || loginSuccess
+                    ? "pointer-events-none opacity-60"
+                    : ""
+                }`}
+              >
+                Sign up now
+              </Link>
+            </p>
+          </div>
         </div>
-      </div>
+      ) : (
+        <LoginOtpVerification
+          handleOtpSubmit={handleOtpSubmit}
+          setOtp={setOtp}
+          otp={otp}
+          loading={loading}
+        />
+      )}
     </div>
   );
 };

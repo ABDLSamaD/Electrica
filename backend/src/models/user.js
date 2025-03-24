@@ -46,6 +46,12 @@ const userSchema = new mongoose.Schema(
     termsAndCondition: { type: Boolean, default: false },
     loginAttempt: [loginAttemptSchema],
     logoutTime: { type: Number, default: 86400000 },
+    sessions: [
+      {
+        sessionId: { type: String, required: true },
+        loginTime: { type: Date, default: Date.now },
+      },
+    ],
     isVerified: { type: Boolean, default: false },
     otp: { type: String },
     otpExpires: { type: Date },

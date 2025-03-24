@@ -8,7 +8,7 @@ const { loginMail } = require("../utils/loginmail");
 const { sendEmail } = require("../utils/mail");
 const Project = require("../models/project");
 const mongoose = require("mongoose");
-const cron = require("node-cron");
+// const cron = require("node-cron");
 require("dotenv").config();
 
 const generateOTP = () => {
@@ -76,12 +76,10 @@ exports.signUp = async (req, res) => {
     const { name, email, password, termsAndCondition } = req.body;
 
     if (!termsAndCondition) {
-      return res
-        .status(400)
-        .json({
-          type: "error",
-          message: "You must accept the Terms and Conditions.",
-        });
+      return res.status(400).json({
+        type: "error",
+        message: "You must accept the Terms and Conditions.",
+      });
     }
 
     const userExists = await User.findOne({ email });
@@ -312,31 +310,25 @@ exports.resendOtp = async (req, res) => {
 // login an user using post
 exports.login = async (req, res) => {
   try {
-    const { email, password, rememberMe, ipAddress, deviceInfo } = req.body;
-
-    if (req.session.user) {
-      return res
-        .status(400)
-        .json({ type: "info", message: "User is already logged in." });
-    }
+    const { email, password, rememberMe, ipAddress, deviceInfo, otp } =
+      req.body;
 
     const users = await User.findOne({ email });
     if (!users) {
-      return res
-        .status(404)
-        .json({ type: "error", message: "User not found?" });
+      return res.status(404).json({ type: "error", message: "User not found" });
     }
 
     if (!users.isVerified) {
-      return res.status(400).json({ type: "error", message: "Verify first" });
+      return res
+        .status(400)
+        .json({ type: "error", message: "Verify your account first" });
     }
 
-    // Check if the user is blocked
     if (users.isBlocked) {
       return res.status(403).json({
-        message:
-          "Your account has been blocked. Please contact support for assistance.",
-        banDetails: users.banDetails, // Optional: Provide ban reason and imposed date
+        type: "error",
+        message: "Your account is blocked. Please contact support.",
+        banDetails: users.banDetails,
       });
     }
 
@@ -347,21 +339,113 @@ exports.login = async (req, res) => {
         .json({ type: "error", message: "Invalid credentials!" });
     }
 
-    // Step 1: Capture the IP address from the request
+    // 🟢 Step 1: First-time login (Allow without OTP)
+    if (users.sessions.length === 0) {
+      if (!users.sessions.some((s) => s.sessionId === req.sessionID)) {
+        users.sessions.push({
+          sessionId: req.sessionID,
+          loginTime: new Date(),
+        });
+      }
+
+      req.session.user = {
+        id: users.id,
+        name: users.name,
+        email: users.email,
+        role: "user",
+      };
+
+      await users.save();
+      // ✅ Session manually save karo (important step)
+      await new Promise((resolve, reject) => {
+        req.session.save((err) => {
+          if (err) {
+            console.error("Session save error:", err);
+            return reject(err);
+          }
+          resolve();
+        });
+      });
+      const data = { user: { id: users.id } };
+      const token = jwt.sign(data, process.env.JWT_SECRET, {
+        expiresIn: "1d",
+      });
+      req.session.token = token;
+
+      // ✅ Authentication cookie set karo
+      res.cookie("auth_token", token, {
+        httpOnly: true,
+        secure: process.env.NODE_ENV === "production",
+        sameSite: process.env.NODE_ENV === "production" ? "None" : "Strict",
+        maxAge: 24 * 60 * 60 * 1000, // 1 day
+      });
+      return res
+        .status(200)
+        .json({ type: "success", message: "Login successfull" });
+    }
+    await users.populate("sessions");
+    console.log("Current Session Data:", req.session);
+
+    // Check if session already exists (same device)
+    const existingSession = users.sessions.find(
+      (s) => s.sessionId === req.sessionID
+    );
+
+    // Check if user is already logged in from another device
+    if (!existingSession) {
+      if (!otp) {
+        const newOtp = generateOTP();
+        const otpExpires = Date.now() + 10 * 60 * 1000;
+        users.otp = newOtp;
+        users.otpExpires = otpExpires;
+        users.otpAttempts = 0;
+        await users.save();
+
+        sendEmail(
+          users.email,
+          "OTP VERIFICATION",
+          `${users.name} Your OTP code is ${newOtp}. It is valid for 10 minutes.`
+        );
+
+        return res.status(200).json({
+          type: "otp_required",
+          message: "OTP verification required. Check your email.",
+        });
+      }
+
+      // verify otp
+      if (users.otp !== otp && users.otpExpires > Date.now()) {
+        return res.status(400).json({
+          type: "error",
+          message: "Invalid or Expired OTP",
+        });
+      }
+
+      users.otp = null;
+      users.otpExpires = null;
+      users.otpAttempts = 0;
+    }
+
+    // ✅ Step 3: Add new session and allow login
+    if (!users.sessions.some((s) => s.sessionId === req.sessionID)) {
+      users.sessions.push({ sessionId: req.sessionID, loginTime: new Date() });
+    }
+    await users.save();
+
+    // Get IP Address
     const clientIp =
       ipAddress ||
-      req.headers["x-forwarded-for"] ||
+      req.headers["x-forwarded-for"]?.split(",")[0] || // Handles proxies
       req.connection.remoteAddress;
 
-    // Keep only login attempts within the last 30 days
+    // Maintain login attempt history (max 10, last 30 days)
     const now = Date.now();
     users.loginAttempt = users.loginAttempt.filter(
       (attempt) =>
         new Date(attempt.timestamp).getTime() > now - 30 * 24 * 60 * 60 * 1000
     );
 
-    // Maintain a maximum of 10 login attempts
-    if (users.loginAttempt.length > 10) {
+    if (users.loginAttempt.length >= 10) {
       users.loginAttempt.shift();
     }
 
@@ -371,32 +455,31 @@ exports.login = async (req, res) => {
       timestamp: new Date(),
     });
 
-    // Adjust token expiration based on rememberMe
+    // Generate JWT token (adjust expiration based on `rememberMe`)
     const tokenExpiry = rememberMe ? "30d" : "1d";
-    const data = {
-      user: {
-        id: users.id,
-      },
-    };
+    const data = { user: { id: users.id } };
     const token = jwt.sign(data, process.env.JWT_SECRET, {
       expiresIn: tokenExpiry,
     });
+
     users.token = token;
 
+    // Set session expiration
     const sessionMaxAge = rememberMe
       ? 30 * 24 * 60 * 60 * 1000 // 30 days
       : 24 * 60 * 60 * 1000; // 1 day
 
-    // Set session and token cookie
     req.session.cookie.maxAge = sessionMaxAge;
 
+    // ✅ Set authentication cookie
     res.cookie("auth_token", token, {
-      httpOnly: true, // Prevent access from JavaScript
-      secure: process.env.NODE_ENV === "production", // Use secure cookies in production
+      httpOnly: true,
+      secure: process.env.NODE_ENV === "production",
       sameSite: process.env.NODE_ENV === "production" ? "None" : "Strict",
       maxAge: sessionMaxAge,
     });
 
+    // ✅ Store user session data
     req.session.token = token;
     req.session.user = {
       id: users.id,
@@ -404,14 +487,13 @@ exports.login = async (req, res) => {
       email: users.email,
       role: "user",
     };
-
-    // Send login email notification (catch potential errors)
+    // ✅ Send login email notification
     await loginMail(users);
 
     await users.save();
-    res.status(200).json({ type: "success", message: "Login successfully" });
+    res.status(200).json({ type: "success", message: "Login successfull" });
   } catch (error) {
-    console.log(error.message);
+    console.error("[ERROR] Login failed:", error.message);
     res.status(500).json({ type: "error", message: "Internal server error" });
   }
 };
@@ -439,7 +521,7 @@ exports.checkAuthIfLoggedIn = (req, res) => {
     role: "user",
   });
 };
-
+// update first time user first time login
 exports.updateFirstTime = async (req, res) => {
   try {
     const userId = req.user.id;
@@ -460,6 +542,8 @@ exports.logout = async (req, res) => {
   try {
     const user = await User.findById(req.session.user.id);
     user.token = null;
+    // Remove only the current session (not all)
+    user.sessions = user.sessions.filter((s) => s.sessionId !== req.sessionID);
     await user.save();
     req.session.destroy((err) => {
       if (err) {

@@ -47,11 +47,8 @@ const Background = React.memo(({ children }) => {
     // Create and inject global styles properly
     const styleElement = document.createElement("style");
     styleElement.textContent = `
-      .scrolling .blur-md,
-      .scrolling .blur-lg,
-      .scrolling .blur-xl,
-      .scrolling .backdrop-blur-md {
-        /* Reduce blur during scroll for better performance */
+      .scrolling .background-orb {
+        /* Reduce blur only for background elements */
         filter: blur(4px) !important;
         backdrop-filter: blur(4px) !important;
         transition: filter 0.5s ease-out, backdrop-filter 0.5s ease-out;
@@ -113,7 +110,7 @@ const Background = React.memo(({ children }) => {
       <div className="absolute inset-0">
         {/* Top left orb */}
         <div
-          className="absolute left-[8%] top-[8%] rounded-full bg-blue-900/75 blur-md sm:blur-lg md:blur-xl"
+          className="background-orb absolute left-[8%] top-[8%] rounded-full bg-blue-900/75 blur-md sm:blur-lg md:blur-xl"
           style={{
             width: orbSize,
             height: orbSize,
@@ -123,7 +120,7 @@ const Background = React.memo(({ children }) => {
 
         {/* Top right orb */}
         <div
-          className="absolute right-[8%] top-[8%] rounded-full bg-green-900/75 blur-md sm:blur-lg md:blur-xl"
+          className="background-orb absolute right-[8%] top-[8%] rounded-full bg-green-900/75 blur-md sm:blur-lg md:blur-xl"
           style={{
             width: orbSize,
             height: orbSize,
@@ -133,7 +130,7 @@ const Background = React.memo(({ children }) => {
 
         {/* Bottom left orb */}
         <div
-          className="absolute bottom-[8%] left-[8%] rounded-full bg-purple-900/75 blur-md sm:blur-lg md:blur-xl"
+          className="background-orb absolute bottom-[8%] left-[8%] rounded-full bg-purple-900/75 blur-md sm:blur-lg md:blur-xl"
           style={{
             width: orbSize,
             height: orbSize,
@@ -143,7 +140,7 @@ const Background = React.memo(({ children }) => {
 
         {/* Bottom right orb */}
         <div
-          className="absolute bottom-[8%] right-[8%] rounded-full bg-cyan-900/75 blur-md sm:blur-lg md:blur-xl"
+          className="background-orb absolute bottom-[8%] right-[8%] rounded-full bg-cyan-900/75 blur-md sm:blur-lg md:blur-xl"
           style={{
             width: orbSize,
             height: orbSize,
