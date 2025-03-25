@@ -41,16 +41,17 @@ app.use(
   helmet({
     contentSecurityPolicy: {
       directives: {
-        defaultSrc: ["'self'"],
-        connectSrc: ["'self'", "<URL>"], // Allow external API requests
+        defaultSrc: ["'self'"], // Only allow same-origin
+        connectSrc: ["'self'"], // Allow API requests from same origin
         styleSrc: [
           "'self'",
           "'unsafe-inline'", // Allow inline styles
           "https://fonts.googleapis.com",
         ],
+        styleSrcElem: ["'self'", "https://fonts.googleapis.com"],
         fontSrc: ["'self'", "https://fonts.gstatic.com"],
-        scriptSrc: ["'self'", "'unsafe-inline'"], // Allow inline scripts
-        imgSrc: ["'self'", "data:"], // Allow base64 images
+        scriptSrc: ["'self'", "'unsafe-inline'"],
+        imgSrc: ["'self'", "data:"],
       },
     },
   })
