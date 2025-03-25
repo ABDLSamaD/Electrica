@@ -42,11 +42,15 @@ app.use(
     contentSecurityPolicy: {
       directives: {
         defaultSrc: ["'self'"],
-        scriptSrc: ["'self'", "'nonce-randomNonceValue'"],
-        styleSrc: ["'self'", "'unsafe-inline'", "https://fonts.googleapis.com"],
+        connectSrc: ["'self'", "<URL>"], // Allow external API requests
+        styleSrc: [
+          "'self'",
+          "'unsafe-inline'", // Allow inline styles
+          "https://fonts.googleapis.com",
+        ],
         fontSrc: ["'self'", "https://fonts.gstatic.com"],
-        imgSrc: ["'self'", "data:"],
-        connectSrc: ["'self'", "https://electricaapp.vercel.app"],
+        scriptSrc: ["'self'", "'unsafe-inline'"], // Allow inline scripts
+        imgSrc: ["'self'", "data:"], // Allow base64 images
       },
     },
   })
