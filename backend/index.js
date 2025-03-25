@@ -160,25 +160,36 @@ app.all("*", (req, res) => {
 });
 
 app.use((req, res, next) => {
+  // CORS Headers
   res.setHeader("Access-Control-Allow-Origin", process.env.FRONTEND_URL);
   res.setHeader(
     "Access-Control-Allow-Methods",
     "GET, POST, PUT, PATCH, DELETE"
   );
-  res.setHeader(
-    "Content-Security-Policy",
-    "default-src 'self'; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com;"
-  );
-
   res.setHeader("Access-Control-Allow-Headers", "Content-Type, Authorization");
   res.setHeader("Access-Control-Allow-Credentials", "true");
 
+  // Content Security Policy (CSP) Headers
+  res.setHeader(
+    "Content-Security-Policy",
+    "default-src 'self'; " +
+      "style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; " +
+      "style-src-elem 'self' https://fonts.googleapis.com; " +
+      "font-src 'self' https://fonts.gstatic.com; " +
+      "script-src 'self' 'unsafe-inline'; " +
+      "connect-src 'self' " +
+      process.env.FRONTEND_URL +
+      ";"
+  );
+
+  // Handle Preflight Requests
   if (req.method === "OPTIONS") {
-    return res.sendStatus(200);
+    return res.sendStatus(204);
   }
 
   next();
 });
+
 
 // port listen
 const port = process.env.PORT || 5120;
