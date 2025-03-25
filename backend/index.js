@@ -156,7 +156,7 @@ app.use("/api", (req, res, next) => {
 
 // Default catch-all route for Vercel
 app.all("*", (req, res) => {
-  res.status(404).send("Not Found");
+  res.status(404).send("Not Found,");
 });
 
 app.use((req, res, next) => {
