@@ -37,7 +37,7 @@ app.use(helmet());
 
 // cors cnfiguration
 const corsOptions = {
-  origin: process.env.FRONTEND_URL, // Ensure this is set correctly
+  // origin: process.env.FRONTEND_URL, // Ensure this is set correctly
   credentials: true, // Allow cookies to be sent
   methods: ["GET", "POST", "PUT", "PATCH", "DELETE"],
   allowedHeaders: ["Content-Type", "Authorization"],
@@ -53,9 +53,15 @@ app.use(cookieParser());
 app.use(bodyparser.json());
 
 // frontend path resolve config
-app.use(express.static(path.join(_dirname, "../frontend/dist")));
+const frontendPath = path.join(__dirname, "../frontend/dist");
+app.use(express.static(frontendPath));
+
 app.get("*", (req, res) => {
-  res.sendFile(path.resolve(_dirname, "../frontend/dist", "/index.html"));
+  res.sendFile(path.join(frontendPath, "index.html"), (err)=>{
+    if(err){
+      res.status(404).send("Frontend Not found")
+    }
+  });``
 });
 
 // express-session
