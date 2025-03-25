@@ -59,18 +59,22 @@ const corsOptions = {
 app.use(cors(corsOptions));
 
 // To block API requests from other sources while allowing your frontend to work
-app.use((req,res,next)=>{
+app.use("/api", (req, res, next) => {
   const allowedDomain = "https://electricaapp.vercel.app";
   const origin = req.headers.origin || req.headers.referer || "";
-  // ✅ Allow requests without an origin (e.g., direct browser visits)
+
+  // Allow requests without an origin (e.g., direct visits to frontend)
   if (!origin) return next();
 
-  // ✅ Allow your frontend but block other domains
+  // Allow requests from your frontend only
   if (!origin.startsWith(allowedDomain)) {
-    return res.status(403).json({ message: "Forbidden: Unauthorized access" });
+    return res
+      .status(403)
+      .json({ message: "Forbidden: Unauthorized API access" });
   }
+
   next();
-})  
+}); 
 
 // Content Security Policy (CSP) to Restrict Requests
 app.use((req,res,next)=>{
