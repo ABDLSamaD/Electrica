@@ -2,10 +2,12 @@
   "name": "electrica",
   "private": true,
   "scripts": {
-    "install": "npm install",
-    "build": "cd frontend && npm run build",
-    "dev": "concurrently \"cd backend && npm run dev\" \"cd frontend && npm run dev\"",
+    "dev": "npx nodemon backend/index.js",
     "start": "cd backend && npm start",
-    "vercel-build": "npm install && npm install --prefix frontend && npm run build --prefix frontend"
+    "build": "cd frontend && npm install && npm run build",
+    "vercel-build": "npm install --production && npm run build"
+  },
+  "dependencies": {
+    "nodemon": "^3.1.9"
   }
 }
