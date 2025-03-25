@@ -33,7 +33,21 @@ const limiter = rateLimit({
 // Apply the rate limiting middleware to all requests.
 app.use(limiter);
 // helmet cross origin secure
-app.use(helmet());
+app.use(
+  helmet({
+    contentSecurityPolicy: {
+      directives: {
+        defaultSrc: ["'self'"],
+        scriptSrc: ["'self'", "'unsafe-inline'", "'unsafe-eval'"],
+        styleSrc: ["'self'", "'unsafe-inline'"],
+        fontSrc: ["'self'", "data:"],
+        imgSrc: ["'self'", "data:", "https://electricaapp.vercel.app"],
+        connectSrc: ["'self'", "https://electricaapp.vercel.app"], // ✅ Allow API calls
+        frameSrc: ["'self'"],
+      },
+    },
+  })
+);
 
 // cors cnfiguration
 const corsOptions = {
@@ -43,6 +57,25 @@ const corsOptions = {
   allowedHeaders: ["Content-Type", "Authorization"],
 };
 app.use(cors(corsOptions));
+
+// To block API requests from other sources while allowing your frontend to work
+app.use((req,res,next)=>{
+  const allowedDomain = "https://electricaapp.vercel.app";
+  const origin = req.headers.origin || req.headers.referer || ""
+  if(origin && !origin.startsWith(allowedDomain)){
+    return res.status(403).json({ message: "Forbidden: Unauthorized access" });
+  }
+  next()
+})  
+
+// Content Security Policy (CSP) to Restrict Requests
+app.use((req,res,next)=>{
+  res.setHeader(
+    "Content-Security-Policy",
+    "default-src 'self'; connect-src 'self' https://electricaapp.vercel.app"
+  );
+  next()
+})
 
 const server = http.createServer(app);
 const io = socketIo(server, {
