@@ -5,10 +5,10 @@
     "type": "module",
     "scripts": {
       "dev": "vite",
-      "build": "vite build",
+      "build": "npx vite build",
       "lint": "eslint .",
       "preview": "vite preview",
-      "vercel-build": "npm install --force && npm run build"
+      "vercel-build": "npm ci && npx vite build"
     },
     "dependencies": {
       "@fortawesome/fontawesome-svg-core": "^6.6.0",
