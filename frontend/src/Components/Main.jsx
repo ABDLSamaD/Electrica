@@ -5,7 +5,7 @@ import { Routes, Route } from "react-router-dom";
 // import TopLoadingBar from "./OtherComponents/TopLoadingBar";
 
 // Website Pages Start
-const Home = React.lazy(() => import("./Pages/Home"));
+import Home from "./Pages/Home";
 const About = React.lazy(() => import("./Pages/About"));
 import ProjectDetails from "./Pages/ProjectsDetails";
 import ElectricalServicePage from "./Pages/ElectricalServicePage";
