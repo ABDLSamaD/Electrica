@@ -41,17 +41,10 @@ app.use(
   helmet({
     contentSecurityPolicy: {
       directives: {
-        defaultSrc: ["'self'"], // Only allow same-origin
-        connectSrc: ["'self'"], // Allow API requests from same origin
-        styleSrc: [
-          "'self'",
-          "'unsafe-inline'", // Allow inline styles
-          "https://fonts.googleapis.com",
-        ],
-        styleSrcElem: ["'self'", "https://fonts.googleapis.com"],
+        defaultSrc: ["'self'"],
+        styleSrc: ["'self'", "https://fonts.googleapis.com", "'unsafe-inline'"],
         fontSrc: ["'self'", "https://fonts.gstatic.com"],
-        scriptSrc: ["'self'", "'unsafe-inline'"],
-        imgSrc: ["'self'", "data:"],
+        connectSrc: ["'self'", "https://electrica-server.vercel.app"],
       },
     },
   })
