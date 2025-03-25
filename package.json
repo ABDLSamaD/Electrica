@@ -1,15 +1,11 @@
 {
   "name": "electrica",
   "private": true,
-  "workspaces": [
-    "frontend",
-    "backend"
-  ],
   "scripts": {
-    "install": "npm install --workspaces",
-    "build": "npm run build --workspace=backend && npm run build --workspace=frontend",
-    "dev": "concurrently \"npm run dev --workspace=backend\" \"npm run dev --workspace=frontend\"",
-    "start": "npm run start --workspace=backend",
+    "install": "npm install",
+    "build": "cd backend && npm install && npm run build && cd ../frontend && npm install && npm run build",
+    "dev": "concurrently \"cd backend && npm run dev\" \"cd frontend && npm run dev\"",
+    "start": "cd backend && npm start",
     "vercel-build": "npm install --force && npm run build"
   },
   "dependencies": {
