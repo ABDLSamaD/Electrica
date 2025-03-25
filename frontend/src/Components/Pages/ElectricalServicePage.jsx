@@ -12,6 +12,10 @@ import {
   ArrowRight,
 } from "lucide-react";
 import HeaderMain from "./HeaderMain";
+import ServiceImageOne from "../../assets/service_1.avif";
+import ServiceImageTwo from "../../assets/service_2.avif";
+import ServiceImageThree from "../../assets/service_3.avif";
+import ServiceImageFour from "../../assets/service_4.avif";
 
 const ServicesDetails = () => {
   const services = [
@@ -26,8 +30,7 @@ const ServicesDetails = () => {
         "Electrical panel upgrades",
         "Emergency power systems",
       ],
-      image:
-        "https://images.unsplash.com/photo-1621905252507-b35492cc74b4?w=800&auto=format&fit=crop&q=80",
+      image: ServiceImageOne,
     },
     {
       icon: <Home className="w-8 h-8" />,
@@ -40,8 +43,7 @@ const ServicesDetails = () => {
         "Security integration",
         "Voice-activated controls",
       ],
-      image:
-        "https://lh7-rt.googleusercontent.com/docsz/AD_4nXeVTUrFLvt9RcA6r-PNc8yRGrzwh7d_JfB6AjxDAlIKL5vmScIi9dNwj-UIQ3bq-yMiZBgLnG97iRjB9TBvZw0mDAbHSSIGdIv1Mw1Q-r-67p7Ql8seXBOFV_3dZBtGAIxqdkoa02SbEXavxWNIMbeBfXe4?key=2qoHpCtVeGkrIsOF-RzNgw",
+      image: ServiceImageTwo,
     },
     {
       icon: <Battery className="w-8 h-8" />,
@@ -54,8 +56,7 @@ const ServicesDetails = () => {
         "Renewable integration",
         "Cost optimization",
       ],
-      image:
-        "https://images.unsplash.com/photo-1473341304170-971dccb5ac1e?w=800&auto=format&fit=crop&q=80",
+      image: ServiceImageThree,
     },
     {
       icon: <Shield className="w-8 h-8" />,
@@ -68,8 +69,7 @@ const ServicesDetails = () => {
         "Safety certifications",
         "Risk assessment",
       ],
-      image:
-        "https://images.unsplash.com/photo-1581092918056-0c4c3acd3789?w=800&auto=format&fit=crop&q=80",
+      image: ServiceImageFour,
     },
   ];
 

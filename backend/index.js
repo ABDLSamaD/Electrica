@@ -10,7 +10,7 @@ const http = require("http");
 const socketIo = require("socket.io");
 const { rateLimit } = require("express-rate-limit");
 const helmet = require("helmet");
-// const path = require("path");
+const path = require("path");
 const routes = require("./src/routes/routes");
 const adminRoutes = require("./src/routes/route-admin");
 const connectionDatabase = require("./src/models/connection");
@@ -22,7 +22,7 @@ dotenv.config();
 connectionDatabase();
 
 // directory name vith resolve
-// const _dirname = path.resolve();
+const _dirname = path.resolve();
 
 const limiter = rateLimit({
   windowMs: 5 * 60 * 1000, // 15 minutes
@@ -53,7 +53,7 @@ app.use(cookieParser());
 app.use(bodyparser.json());
 
 // frontend path resolve config
-// app.use(express.static(path.join(_dirname, "/frontend/dist")));
+app.use(express.static(path.join(_dirname, "/frontend/dist")));
 
 // express-session
 const sessionConfig = {
@@ -90,16 +90,16 @@ io.on("connection", (socket) => {
 app.use("/api/auth", routes);
 app.use("/api/adminauth", adminRoutes);
 app.use("/api/reviews", controllerRoutes);
-app.get("/", (req, res) => {
-  res.send("Server electrica");
-});
+// app.get("/", (req, res) => {
+//   res.send("Server electrica");
+// });
 
 // Attach `io` to `app` for use in controllers
 app.set("io", io);
 
-// app.get("*", (_, res) => {
-//   res.sendFile(path.resolve(_dirname, "frontend", "dist", "index.html"));
-// });
+app.get("*", (_, res) => {
+  res.sendFile(path.resolve(_dirname, "frontend", "dist", "index.html"));
+});
 
 app.use((err, req, res, next) => {
   if (err instanceof SyntaxError && err.status === 400 && "body" in err) {

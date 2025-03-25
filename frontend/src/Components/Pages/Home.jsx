@@ -34,6 +34,12 @@ import HeaderMain from "./HeaderMain";
 import AdvancedFuturisticCards from "./AdvancedFuturisticCards";
 import Footer from "./Footer";
 import ContactCTA from "./ContactCTA";
+// images start
+import HomeImage from "../../assets/homeimage.avif";
+import ProjectImageOne from "../../assets/project_1.avif";
+import ProjectImageTwo from "../../assets/project_2.avif";
+import ProjectImageThree from "../../assets/project_3.avif";
+// images end
 
 const floatingAnimation = {
   animate: {
@@ -144,7 +150,7 @@ const Home = () => {
               {/* Right Content - Image & Floating Icons */}
               <motion.div style={{ opacity, scale }} className="relative">
                 <motion.img
-                  src="https://images.unsplash.com/photo-1621905251189-08b45d6a269e?w=800&auto=format&fit=crop&q=80"
+                src={HomeImage}
                   alt="Electrical Solutions"
                   loading="lazy"
                   className="rounded-2xl w-full object-cover shadow-2xl shadow-cyan-500/20"
@@ -411,8 +417,7 @@ const whyChooseUs = [
 
 const projects = [
   {
-    image:
-      "https://images.unsplash.com/photo-1497366811353-6870744d04b2?w=800&auto=format&fit=crop&q=80",
+    image: ProjectImageOne,
     icon: <Building2 className="w-4 h-4" />,
     category: "Commercial",
     title: "Office Tower Automation",
@@ -420,8 +425,7 @@ const projects = [
       "Complete electrical system upgrade and smart automation for a 20-story office building.",
   },
   {
-    image:
-      "https://images.unsplash.com/photo-1558449028-b53a39d100fc?w=800&auto=format&fit=crop&q=80",
+    image: ProjectImageTwo,
     icon: <Factory className="w-4 h-4" />,
     category: "Industrial",
     title: "Manufacturing Plant Retrofit",
@@ -429,8 +433,7 @@ const projects = [
       "Energy-efficient electrical system retrofit for a large manufacturing facility.",
   },
   {
-    image:
-      "https://images.unsplash.com/photo-1560518883-ce09059eeffa?w=800&auto=format&fit=crop&q=80",
+    image: ProjectImageThree,
     icon: <HomeIcon className="w-4 h-4" />,
     category: "Residential",
     title: "Smart Home Integration",
@@ -461,22 +464,22 @@ const certifications = [
 const stats = [
   {
     icon: <Users className="w-6 h-6" />,
-    value: "5,000+",
+    value: "1200+",
     label: "Satisfied Clients",
   },
   {
     icon: <Briefcase className="w-6 h-6" />,
-    value: "1,200+",
+    value: "800+",
     label: "Projects Completed",
   },
   {
     icon: <Tool className="w-6 h-6" />,
-    value: "150+",
+    value: "20+",
     label: "Expert Technicians",
   },
   {
     icon: <Clock3 className="w-6 h-6" />,
-    value: "25+",
+    value: "20+",
     label: "Years of Experience",
   },
 ];

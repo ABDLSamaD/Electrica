@@ -4,7 +4,7 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "start": "node backend/index.js",
+    "start": "npx nodemon backend/index.js",
     "dev": "npx nodemon backend/index.js",
     "build": "npm install && npm install --prefix frontend && npm run build --prefix frontend"
   },
@@ -28,6 +28,7 @@
     "jsonwebtoken": "^9.0.2",
     "mongoose": "^8.7.3",
     "nodemailer": "^6.9.16",
+    "nodemon": "^3.1.9",
     "path": "^0.12.7"
   }
 }
