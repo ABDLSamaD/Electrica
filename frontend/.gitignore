@@ -8,10 +8,6 @@ pnpm-debug.log*
 # Node modules
 node_modules/
 
-# Build Folder
-build/
-dist/
-
 
 # Environment variables
 .env
