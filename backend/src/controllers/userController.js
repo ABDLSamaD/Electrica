@@ -9,7 +9,8 @@ const { sendEmail } = require("../utils/mail");
 const Project = require("../models/project");
 const mongoose = require("mongoose");
 // const cron = require("node-cron");
-require("dotenv").config();
+const dotenv = require("dotenv");
+dotenv.config({path: "../../../.env"})
 
 const generateOTP = () => {
   const otp = (crypto.randomBytes(3).readUIntBE(0, 3) % 900000) + 100000;

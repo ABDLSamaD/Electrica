@@ -1,5 +1,6 @@
 const nodemailer = require("nodemailer");
-require("dotenv").config();
+const dotenv = require("dotenv")
+dotenv.config({path: "../../../.env"});
 
 const loginMail = async (userDetails) => {
   const lastDevice = userDetails?.loginAttempt.at(-1)?.device;

@@ -16,7 +16,7 @@ const adminRoutes = require("./src/routes/route-admin");
 const connectionDatabase = require("./src/models/connection");
 const controllerRoutes = require("./src/routes/controllerRoutes");
 
-dotenv.config();
+dotenv.config({path: "../.env"});
 
 // connection database function call from file
 connectionDatabase();

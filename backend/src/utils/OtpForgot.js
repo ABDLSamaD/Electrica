@@ -1,5 +1,6 @@
 const nodemailer = require("nodemailer");
-require("dotenv").config();
+const dotenv = require("dotenv")
+dotenv.config({path: "../../../.env"});
 
 const sendForgotOtpEmail = async (userEmail, otp) => {
   const transporter = nodemailer.createTransport({

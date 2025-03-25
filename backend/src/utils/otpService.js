@@ -1,7 +1,7 @@
 const crypto = require("crypto");
 const nodemailer = require("nodemailer");
 const dotenv = require("dotenv");
-dotenv.config();
+dotenv.config({ path: "../../../.env" });
 
 const generateOTP = () => crypto.randomInt(100000, 999999).toString();
 
