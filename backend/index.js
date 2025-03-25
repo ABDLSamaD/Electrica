@@ -16,7 +16,7 @@ const adminRoutes = require("./src/routes/route-admin");
 const connectionDatabase = require("./src/models/connection");
 const controllerRoutes = require("./src/routes/controllerRoutes");
 
-dotenv.config({path: "../.env"});
+dotenv.config({ path: "../.env" });
 
 // connection database function call from file
 connectionDatabase();
@@ -26,24 +26,27 @@ const _dirname = path.resolve();
 
 const limiter = rateLimit({
   windowMs: 5 * 60 * 1000, // 15 minutes
-  max: 100, // Limit each IP to 200 requests per `window` (here, per 5 minutes).
+  max: 200, // Limit each IP to 200 requests per `window` (here, per 5 minutes).
   standardHeaders: "draft-7", // draft-6: `RateLimit-*` headers; draft-7: combined `RateLimit` header
   message: "Too many requests, please try again after 5 minutes.",
 });
 // Apply the rate limiting middleware to all requests.
 app.use(limiter);
+
+app.use(cookieParser());
+app.use(bodyparser.json());
+
 // helmet cross origin secure
 app.use(
   helmet({
     contentSecurityPolicy: {
       directives: {
         defaultSrc: ["'self'"],
-        scriptSrc: ["'self'", "'unsafe-inline'", "'unsafe-eval'"],
-        styleSrc: ["'self'", "'unsafe-inline'"],
-        fontSrc: ["'self'", "data:"],
-        imgSrc: ["'self'", "data:", "https://electricaapp.vercel.app"],
-        connectSrc: ["'self'", "https://electricaapp.vercel.app"], // ✅ Allow API calls
-        frameSrc: ["'self'"],
+        scriptSrc: ["'self'", "'nonce-randomNonceValue'"],
+        styleSrc: ["'self'", "'unsafe-inline'", "https://fonts.googleapis.com"],
+        fontSrc: ["'self'", "https://fonts.gstatic.com"],
+        imgSrc: ["'self'", "data:"],
+        connectSrc: ["'self'", "https://electricaapp.vercel.app"],
       },
     },
   })
@@ -54,56 +57,8 @@ const corsOptions = {
   // origin: process.env.FRONTEND_URL, // Ensure this is set correctly
   credentials: true, // Allow cookies to be sent
   methods: ["GET", "POST", "PUT", "PATCH", "DELETE"],
-  allowedHeaders: ["Content-Type", "Authorization"],
 };
 app.use(cors(corsOptions));
-
-// To block API requests from other sources while allowing your frontend to work
-app.use("/api", (req, res, next) => {
-  const allowedDomain = "https://electricaapp.vercel.app";
-  const origin = req.headers.origin || req.headers.referer || "";
-
-  // Allow requests without an origin (e.g., direct visits to frontend)
-  if (!origin) return next();
-
-  // Allow requests from your frontend only
-  if (!origin.startsWith(allowedDomain)) {
-    return res
-      .status(403)
-      .json({ message: "Forbidden: Unauthorized API access" });
-  }
-
-  next();
-}); 
-
-// Content Security Policy (CSP) to Restrict Requests
-app.use((req,res,next)=>{
-  res.setHeader(
-    "Content-Security-Policy",
-    "default-src 'self'; connect-src 'self' https://electricaapp.vercel.app"
-  );
-  next()
-})
-
-const server = http.createServer(app);
-const io = socketIo(server, {
-  cors: corsOptions,
-});
-
-app.use(cookieParser());
-app.use(bodyparser.json());
-
-// frontend path resolve config
-const frontendPath = path.join(__dirname, "../frontend/dist");
-app.use(express.static(frontendPath));
-
-app.get("*", (req, res) => {
-  res.sendFile(path.join(frontendPath, "index.html"), (err)=>{
-    if(err){
-      res.status(404).send("Frontend Not found")
-    }
-  });``
-});
 
 // express-session
 const sessionConfig = {
@@ -126,7 +81,39 @@ const sessionConfig = {
 };
 app.use(session(sessionConfig));
 
-app.set("trust proxy", 1); // Trust the first proxy (for Vercel, Cloudflare, etc.)
+if (process.env.NODE_ENV === "production") {
+  app.set("trust proxy", 1);
+} // Trust the first proxy (for Vercel, Cloudflare, etc.)
+
+app.disable("x-powered-by");
+
+const server = http.createServer(app);
+const io = socketIo(server, {
+  cors: corsOptions,
+});
+
+// Content Security Policy (CSP) to Restrict Requests
+app.use((req, res, next) => {
+  res.setHeader(
+    "Content-Security-Policy",
+    "default-src 'self'; connect-src 'self' https://electricaapp.vercel.app"
+  );
+  next();
+});  
+
+// frontend path resolve config
+const frontendPath = path.join(__dirname, "../frontend/dist");
+app.use(express.static(frontendPath));
+
+app.get("*", (req, res) => {
+  res.sendFile(path.join(frontendPath, "index.html"), (err) => {
+    if (err) {
+      res.status(404).send("Frontend Not found");
+    }
+  });
+  ``;
+});
+
 
 io.on("connection", (socket) => {
   console.log("A user connected");
@@ -140,9 +127,6 @@ io.on("connection", (socket) => {
 app.use("/api/auth", routes);
 app.use("/api/adminauth", adminRoutes);
 app.use("/api/reviews", controllerRoutes);
-// app.get("/", (req, res) => {
-//   res.send("Server electrica");
-// });
 
 // Attach `io` to `app` for use in controllers
 app.set("io", io);
@@ -153,6 +137,25 @@ app.use((err, req, res, next) => {
   }
   next(err);
 });
+
+// To block API requests from other sources while allowing your frontend to work
+app.use("/api", (req, res, next) => {
+  const allowedDomain = "https://electricaapp.vercel.app";
+  const origin = req.headers.origin || req.headers.referer || "";
+
+  // Allow requests without an origin (e.g., direct visits to frontend)
+  if (!origin) return next();
+
+  // Allow requests from your frontend only
+  if (!origin.startsWith(allowedDomain)) {
+    return res
+      .status(403)
+      .json({ message: "Forbidden: Unauthorized API access" });
+  }
+
+  next();
+});
+
 // Default catch-all route for Vercel
 app.all("*", (req, res) => {
   res.status(404).send("Not Found");
