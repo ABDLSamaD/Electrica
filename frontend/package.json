@@ -8,7 +8,7 @@
       "build": "npx vite build",
       "lint": "eslint .",
       "preview": "vite preview",
-      "vercel-build": "npm ci && npx vite build"
+      "vercel-build": "npm install vite --save-dev && npm run build"
     },
     "dependencies": {
       "@fortawesome/fontawesome-svg-core": "^6.6.0",
