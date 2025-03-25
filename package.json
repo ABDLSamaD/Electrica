@@ -3,12 +3,9 @@
   "private": true,
   "scripts": {
     "install": "npm install",
-    "build": "cd backend && npm run build && cd ../frontend && npm run build",
+    "build": "cd frontend && npm run build",
     "dev": "concurrently \"cd backend && npm run dev\" \"cd frontend && npm run dev\"",
     "start": "cd backend && npm start",
-    "vercel-build": "cd backend && npm install --production && npm run build && cd ../frontend && npm install --production && npm run build"
-  },
-  "dependencies": {
-    "concurrently": "^8.2.2"
+    "vercel-build": "npm install && npm install --prefix frontend && npm run build --prefix frontend"
   }
 }
