@@ -53,7 +53,10 @@ app.use(cookieParser());
 app.use(bodyparser.json());
 
 // frontend path resolve config
-app.use(express.static(path.join(_dirname, "/frontend/dist")));
+app.use(express.static(path.join(_dirname, "../frontend/dist")));
+app.get("*", (req, res) => {
+  res.sendFile(path.resolve(_dirname, "../frontend/dist/index.html"));
+});
 
 // express-session
 const sessionConfig = {
@@ -96,10 +99,6 @@ app.use("/api/reviews", controllerRoutes);
 
 // Attach `io` to `app` for use in controllers
 app.set("io", io);
-
-app.get("*", (_, res) => {
-  res.sendFile(path.resolve(_dirname, "frontend", "dist", "index.html"));
-});
 
 app.use((err, req, res, next) => {
   if (err instanceof SyntaxError && err.status === 400 && "body" in err) {
