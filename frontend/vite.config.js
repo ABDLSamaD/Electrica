@@ -2,8 +2,10 @@
 import react from "@vitejs/plugin-react";
 
 export default defineConfig({
-  uild: { manifest: true, outDir: "./dist" },
-  base: "/",
-  root: "./src",
+  root: ".", // Ensure Vite uses the correct root
+  build: {
+    outDir: "dist", // Ensure output is in 'dist/'
+    emptyOutDir: true, // Clears old builds
+  },
   plugins: [react()],
 });
