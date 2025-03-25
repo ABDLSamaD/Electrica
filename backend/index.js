@@ -52,9 +52,10 @@ app.use(
 
 // cors cnfiguration
 const corsOptions = {
-  // origin: process.env.FRONTEND_URL, // Ensure this is set correctly
+  origin: true, // Ensure this is set correctly
   credentials: true, // Allow cookies to be sent
   methods: ["GET", "POST", "PUT", "PATCH", "DELETE"],
+  allowedHeaders: ["Content-Type", "Authorization"],
 };
 app.use(cors(corsOptions));
 
@@ -97,7 +98,7 @@ app.use((req, res, next) => {
     "default-src 'self'; connect-src 'self' https://electricaapp.vercel.app"
   );
   next();
-});  
+});
 
 // frontend path resolve config
 const frontendPath = path.join(__dirname, "../frontend/dist");
@@ -111,7 +112,6 @@ app.get("*", (req, res) => {
   });
   ``;
 });
-
 
 io.on("connection", (socket) => {
   console.log("A user connected");
@@ -160,12 +160,6 @@ app.all("*", (req, res) => {
 });
 
 app.use((req, res, next) => {
-  // CORS Headers
-  res.setHeader("Access-Control-Allow-Origin", process.env.FRONTEND_URL);
-  res.setHeader(
-    "Access-Control-Allow-Methods",
-    "GET, POST, PUT, PATCH, DELETE"
-  );
   res.setHeader("Access-Control-Allow-Headers", "Content-Type, Authorization");
   res.setHeader("Access-Control-Allow-Credentials", "true");
 
@@ -175,11 +169,7 @@ app.use((req, res, next) => {
     "default-src 'self'; " +
       "style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; " +
       "style-src-elem 'self' https://fonts.googleapis.com; " +
-      "font-src 'self' https://fonts.gstatic.com; " +
-      "script-src 'self' 'unsafe-inline'; " +
-      "connect-src 'self' " +
-      process.env.FRONTEND_URL +
-      ";"
+      "font-src 'self' https://fonts.gstatic.com;"
   );
 
   // Handle Preflight Requests
@@ -189,7 +179,6 @@ app.use((req, res, next) => {
 
   next();
 });
-
 
 // port listen
 const port = process.env.PORT || 5120;
