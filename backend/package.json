@@ -4,11 +4,10 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "build": "rm -rf dist && tsc || rmdir /s /q dist && tsc",
-    "start": "npx nodemon index.js",
+    "build": "rm -rf dist && tsc",
+    "start": "node index.js",
     "dev": "npx nodemon index.js",
-    "vercel": "npm run build && vercel --prod",
-    "ts.check": "tsc --project tsconfig.json"
+    "vercel-build": "npm install --force && npm run build"
   },
   "keywords": [],
   "author": "",
