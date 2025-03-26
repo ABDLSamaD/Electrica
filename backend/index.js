@@ -163,13 +163,15 @@ app.use((req, res, next) => {
   res.setHeader("Access-Control-Allow-Credentials", "true");
 
   // Content Security Policy (CSP) Headers
-  res.setHeader(
-    "Content-Security-Policy",
-    "default-src 'self'; " +
-      "style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; " +
-      "style-src-elem 'self' https://fonts.googleapis.com; " +
-      "font-src 'self' https://fonts.gstatic.com;"
-  );
+    res.setHeader(
+      "Content-Security-Policy",
+      "default-src 'self'; " +
+        "style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; " +
+        "style-src-elem 'self' https://fonts.googleapis.com; " +
+        "font-src 'self' https://fonts.gstatic.com; " +
+        "script-src 'self' 'unsafe-inline';"
+    );
+
 
   // Handle Preflight Requests
   if (req.method === "OPTIONS") {

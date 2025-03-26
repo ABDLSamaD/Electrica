@@ -8,4 +8,5 @@ export default defineConfig({
     emptyOutDir: true, // Clears old builds
   },
   plugins: [react()],
+  base: "./",
 });
