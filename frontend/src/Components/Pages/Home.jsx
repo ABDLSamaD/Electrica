@@ -228,7 +228,7 @@ const Home = () => {
             </div>
 
             <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-8">
-              {whyChooseUs.map((item, index) => (
+              {Array.isArray(whyChooseUs) && whyChooseUs.map((item, index) => (
                 <div
                   key={index}
                   className="bg-gray-800/40 backdrop-blur-sm p-6 rounded-xl border border-solid border-gray-700 hover:border-cyan-500/50 group"
@@ -439,25 +439,6 @@ const projects = [
     title: "Smart Home Integration",
     description:
       "Comprehensive smart home electrical system with voice control and energy monitoring.",
-  },
-];
-
-const certifications = [
-  {
-    icon: <CheckCircle2 className="w-4 h-4" />,
-    name: "ISO 9001",
-  },
-  {
-    icon: <CheckCircle2 className="w-4 h-4" />,
-    name: "IEEE Certified",
-  },
-  {
-    icon: <CheckCircle2 className="w-4 h-4" />,
-    name: "UL Listed",
-  },
-  {
-    icon: <CheckCircle2 className="w-4 h-4" />,
-    name: "Energy Star Partner",
   },
 ];
 

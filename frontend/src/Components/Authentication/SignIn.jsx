@@ -3,14 +3,13 @@
 import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import Alert from "../OtherComponents/Alert";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faArrowLeft } from "@fortawesome/free-solid-svg-icons";
 import axios from "axios";
 import InputForm from "./InputForm";
 import { UAParser } from "ua-parser-js";
 import LoaderAll from "../OtherComponents/LoaderAll";
 import Cookies from "js-cookie";
 import LoginOtpVerification from "./LoginOtpVerification";
+import { FaArrowLeft } from "react-icons/fa";
 
 const SignIn = () => {
   const navigate = useNavigate();
@@ -173,7 +172,7 @@ const SignIn = () => {
               className="inline-block text-blue-400 hover:text-blue-300 transition-colors"
               title="Go back"
             >
-              <FontAwesomeIcon icon={faArrowLeft} size="lg" />
+              <FaArrowLeft className="h-5 w-5 text-gray-400" />
             </Link>
           </div>
 

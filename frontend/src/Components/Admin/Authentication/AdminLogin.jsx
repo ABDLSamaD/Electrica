@@ -1,10 +1,9 @@
-import { faArrowLeft } from "@fortawesome/free-solid-svg-icons";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import React, { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import Alert from "../../OtherComponents/Alert";
 import axios from "axios";
 import InputForm from "../../OtherComponents/InputForm";
+import { FaArrowLeft } from "react-icons/fa";
 
 const AdminLogin = () => {
   const navigate = useNavigate();
@@ -74,7 +73,7 @@ const AdminLogin = () => {
         <div className="w-full max-w-md form_container rounded-xl p-6 sm:p-8">
           <div className="back relative w-full text-3xl transition-all">
             <Link to="/" className="mx-2" title="Go back">
-              <FontAwesomeIcon icon={faArrowLeft} size="2xs" color="gray" />
+              <FaArrowLeft className="h-5 w-5 text-gray-400" />
             </Link>
           </div>
           <InputForm

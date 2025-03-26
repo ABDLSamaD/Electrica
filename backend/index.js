@@ -37,18 +37,18 @@ app.use(cookieParser());
 app.use(bodyparser.json());
 
 // helmet cross origin secure
-app.use(
-  helmet({
-    contentSecurityPolicy: {
-      directives: {
-        defaultSrc: ["'self'"],
-        styleSrc: ["'self'", "https://fonts.googleapis.com", "'unsafe-inline'"],
-        fontSrc: ["'self'", "https://fonts.gstatic.com"],
-        connectSrc: ["'self'", "https://electrica-server.vercel.app"],
-      },
-    },
-  })
-);
+// app.use(
+//   helmet({
+//     contentSecurityPolicy: {
+    //   directives: {
+    //     defaultSrc: ["'self'"],
+    //     styleSrc: ["'self'", "'unsafe-inline'", "https://fonts.googleapis.com"],
+    //     fontSrc: ["'self'", "https://fonts.gstatic.com"],
+    //   },
+    // },
+//   })
+// );
+app.use(helmet());
 
 // cors cnfiguration
 const corsOptions = {
@@ -163,9 +163,10 @@ app.use((req, res, next) => {
   res.setHeader("Access-Control-Allow-Credentials", "true");
 
   // Content Security Policy (CSP) Headers
+  res.locals.cspNonce = Buffer.from(crypto.randomBytes(16)).toString("base64");
   res.setHeader(
     "Content-Security-Policy",
-    "default-src 'self'; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com;"
+    `default-src 'self'; style-src 'self' 'nonce-${res.locals.cspNonce}';`
   );
 
   // Handle Preflight Requests

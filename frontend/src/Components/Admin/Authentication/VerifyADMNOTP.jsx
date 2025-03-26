@@ -1,9 +1,9 @@
 import axios from "axios";
 import React, { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faArrowLeft, faEnvelope } from "@fortawesome/free-solid-svg-icons";
 import Alert from "../../OtherComponents/Alert";
+import { FaArrowLeft } from "react-icons/fa";
+import { Mail } from "lucide-react";
 
 const VerifyADMNOTP = () => {
   const navigate = useNavigate();
@@ -56,11 +56,7 @@ const VerifyADMNOTP = () => {
           <Alert type={type} message={message} onClose={() => setAlert(null)} />
         )}
         <div className="flex flex-col items-center justify-center space-y-4">
-          <FontAwesomeIcon
-            icon={faEnvelope}
-            size="2xl"
-            className="text-orange-500"
-          />
+          <Mail className="w-5 h-5 text-orange-600" />
           <h2 className="text-3xl font-bold text-orange-500">Verify OTP</h2>
           <p className="text-gray-300 text-center">
             We sent a code to{" "}
@@ -88,7 +84,7 @@ const VerifyADMNOTP = () => {
               to="/admn-sign"
               className="flex items-center text-gray-300 hover:text-orange-500 transition duration-300"
             >
-              <FontAwesomeIcon icon={faArrowLeft} size="sm" />
+              <FaArrowLeft className="h-5 w-5 text-gray-400" />
               <span className="ml-2">Back to Login</span>
             </Link>
           </div>

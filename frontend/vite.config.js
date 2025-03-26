@@ -7,6 +7,6 @@ export default defineConfig({
     outDir: "dist", // Ensure output is in 'dist/'
     emptyOutDir: true, // Clears old builds
   },
-  plugins: [react()],
+  plugins: [react({ babel: { plugins: ["babel-plugin-styled-components"] } })],
   base: "./",
 });

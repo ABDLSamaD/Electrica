@@ -12,48 +12,19 @@ const TestimonialSection = () => {
       const response = await axios.get(
         `${electricaURL}/api/reviews/get-reviews`
       );
-      if (response.status === 200) {
+      if (response.status === 200 && Array.isArray(response.data)) {
         setTestimonials(response.data);
       } else {
         setTestimonials([]);
       }
     } catch (error) {
+      setTestimonials([])
       console.error("Error fetching testimonials:", error);
     }
   };
   useEffect(() => {
     fetchTestimonials();
   }, []);
-
-  const handleLike = async (reviewId) => {
-    try {
-      const response = await axios.put(
-        `${electricaURL}/api/reviews/like-review/${reviewId}`,
-        {},
-        { withCredentials: true }
-      );
-
-      if (response.status === 200) {
-        // Update the testimonials state to reflect the new like/dislike count
-        fetchTestimonials();
-        setTestimonials(
-          testimonials.map((testimonial) => {
-            if (testimonial._id === reviewId) {
-              return {
-                ...testimonial,
-                likes: response.data.likes,
-              };
-            }
-            return testimonial;
-          })
-        );
-      } else {
-        console.log("Error updating like:");
-      }
-    } catch (error) {
-      console.error("Error updating like:", error);
-    }
-  };
 
   return (
     <section className="py-20">
@@ -69,54 +40,40 @@ const TestimonialSection = () => {
         </div>
 
         <div className="grid md:grid-cols-3 gap-8">
-          {testimonials.map((testimonial, index) => (
-            <div
-              key={index}
-              className="bg-gray-800/50 p-6 rounded-2xl backdrop-blur-sm border border-gray-700 hover:border-cyan-500/50"
-            >
-              <Quote className="text-cyan-400 w-10 h-10 mb-4" />
-              <p className="text-gray-300 mb-6">{testimonial.message}</p>
-              <div className="flex items-center gap-4">
-                <img
-                  src={testimonial.image}
-                  alt={testimonial.name}
-                  className="w-12 h-12 rounded-full object-cover"
-                />
-                <div>
-                  <h4 className="text-white font-semibold">
-                    {testimonial.name}
-                  </h4>
-                  <p className="text-gray-400 text-sm">
-                    {testimonial.occupation}
-                  </p>
-                </div>
-              </div>
-              <div className="flex gap-1 mt-4">
-                {[...Array(5)].map((_, i) => (
-                  <Star
-                    key={i}
-                    className="w-4 h-4 text-yellow-400 fill-yellow-400"
+          {Array.isArray(testimonials) &&
+            testimonials.map((testimonial, index) => (
+              <div
+                key={index}
+                className="bg-gray-800/50 p-6 rounded-2xl backdrop-blur-sm border border-gray-700 hover:border-cyan-500/50"
+              >
+                <Quote className="text-cyan-400 w-10 h-10 mb-4" />
+                <p className="text-gray-300 mb-6">{testimonial.message}</p>
+                <div className="flex items-center gap-4">
+                  <img
+                    src={testimonial.image}
+                    alt={testimonial.name}
+                    className="w-12 h-12 rounded-full object-cover"
                   />
-                ))}
+                  <div>
+                    <h4 className="text-white font-semibold">
+                      {testimonial.name}
+                    </h4>
+                    <p className="text-gray-400 text-sm">
+                      {testimonial.occupation}
+                    </p>
+                  </div>
+                </div>
+                <div className="flex gap-1 mt-4">
+                  {[...Array(5)].map((_, i) => (
+                    <Star
+                      key={i}
+                      className="w-4 h-4 text-yellow-400 fill-yellow-400"
+                    />
+                  ))}
+                </div>
+                {/* like option if want */}
               </div>
-              {/* like shown */}
-              <div className="flex items-center gap-4 mt-4">
-                <span className="text-gray-400 text-sm">
-                  {testimonial.likes || 0} likes
-                </span>
-              </div>
-              {/* like option */}
-              <div className="flex items-center gap-4 mt-4">
-                <button
-                  onClick={() => handleLike(testimonial._id)}
-                  className="flex items-center gap-2 text-gray-400 hover:text-cyan-400 transition-colors"
-                >
-                  <ThumbsUp className="w-5 h-5" />
-                  <span>{testimonial.likes || 0}</span>
-                </button>
-              </div>
-            </div>
-          ))}
+            ))}
         </div>
         {/* Add Review Button */}
         <div className="text-center mt-12">

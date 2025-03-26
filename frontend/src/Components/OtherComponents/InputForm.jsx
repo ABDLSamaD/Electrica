@@ -1,14 +1,7 @@
-import {
-  faEnvelope,
-  faEye,
-  faEyeSlash,
-  faLock,
-  faSignInAlt,
-} from "@fortawesome/free-solid-svg-icons";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import React, { useState } from "react";
 import { Link } from "react-router-dom";
 import LoginLoader from "./LoginLoader";
+import { Mail, Eye, EyeOff, Lock, LogIn } from "lucide-react";
 
 const InputForm = ({
   hanldeLogin,
@@ -52,10 +45,7 @@ const InputForm = ({
           required
           disabled={miniLoader}
         />
-        <FontAwesomeIcon
-          icon={faEnvelope}
-          className="absolute left-3 top-10 text-gray-950"
-        />
+        <Mail className="absolute left-3 top-10 text-gray-950 w-5 h-5" />
       </div>
       <div className="relative w-full mt-3">
         <label
@@ -75,18 +65,16 @@ const InputForm = ({
           required
           disabled={miniLoader}
         />
-        <FontAwesomeIcon
-          icon={faLock}
-          className="absolute left-3 top-10 text-gray-950"
-        />
+        <Lock className="absolute left-3 top-10 text-gray-950 w-5 h-5" />
         <div
           onClick={togglePasswordVisibility}
           className="show-pass absolute cursor-pointer"
         >
-          <FontAwesomeIcon
-            icon={isPasswordVisible ? faEyeSlash : faEye}
-            id={isPasswordVisible ? "hideeye" : "showeye"}
-          />
+          {isPasswordVisible ? (
+            <EyeOff className="w-5 h-5" />
+          ) : (
+            <Eye className="w-5 h-5" />
+          )}
         </div>
       </div>
       <div className="flex flex-col sm:flex-row justify-between items-center w-full text-sm">
@@ -125,9 +113,7 @@ const InputForm = ({
         disabled={miniLoader}
       >
         {miniLoader ? <LoginLoader /> : "Sign In"}
-        {!miniLoader && (
-          <FontAwesomeIcon icon={faSignInAlt} className="ml-2 text-gray-400" />
-        )}
+        {!miniLoader && <LogIn className="w-5 h-5" />}
       </button>
     </form>
   );
