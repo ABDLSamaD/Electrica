@@ -132,18 +132,18 @@ app.use("/api", (req, res, next) => {
 });
 
 // frontend path resolve config
-const frontendPath = path.join(__dirname, "../frontend/dist");
-app.use(express.static(frontendPath));
+// const frontendPath = path.join(__dirname, "../frontend/dist");
+// app.use(express.static(frontendPath));
 
 // ✅ Default route for frontend (always at the end)
-app.get("*", (req, res) => {
-  res.sendFile(path.join(frontendPath, "index.html"), (err) => {
-    if (err) {
-      res.status(404).send("Frontend Not found");
-    }
-  });
-  ``;
-});
+// app.get("*", (req, res) => {
+//   res.sendFile(path.join(frontendPath, "index.html"), (err) => {
+//     if (err) {
+//       res.status(404).send("Frontend Not found");
+//     }
+//   });
+//   ``;
+// });
 
 // Default catch-all route for Vercel
 app.all("*", (req, res) => {
