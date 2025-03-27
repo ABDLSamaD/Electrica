@@ -19,6 +19,11 @@
       "handle": "filesystem"
     },
     {
+      "src": "/assets/(.*)",
+      "headers": { "Content-Type": "application/javascript" },
+      "dest": "/frontend/dist/assets/$1"
+    },
+    {
       "src": "/(.*)",
       "dest": "/frontend/dist/index.html",
       "status": 200
