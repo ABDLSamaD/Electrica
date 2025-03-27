@@ -53,8 +53,8 @@ const CheckProjects = () => {
       setTimeout(() => {
         setLoading(false);
       }, 600);
-    }else{
-      setLoading(false)
+    } else {
+      setLoading(false);
     }
   }, [projects]);
 

@@ -2,6 +2,7 @@ const bcrypt = require("bcryptjs");
 const User = require("../models/user");
 const jwt = require("jsonwebtoken");
 const crypto = require("crypto");
+const CryptoJS = require("crypto-js");
 const { sendOtpEmail } = require("../utils/otpService");
 const { sendForgotOtpEmail } = require("../utils/OtpForgot");
 const { loginMail } = require("../utils/loginmail");
@@ -15,6 +16,19 @@ dotenv.config({ path: "../../../.env" });
 const generateOTP = () => {
   const otp = (crypto.randomBytes(3).readUIntBE(0, 3) % 900000) + 100000;
   return otp.toString(); // Generates a 6-digit OTP
+};
+
+const SECRET_KEY = CryptoJS.enc.Utf8.parse(process.env.SECRET_KEY);
+const IV = CryptoJS.enc.Utf8.parse(process.env.IV);
+// Function to encrypt user data
+const encryptData = (data) => {
+  const encrypted = CryptoJS.AES.encrypt(JSON.stringify(data), SECRET_KEY, {
+    iv: IV,
+    mode: CryptoJS.mode.CBC,
+    padding: CryptoJS.pad.Pkcs7,
+  });
+
+  return encrypted.toString();
 };
 
 // // function of delete user is  not verified
@@ -747,7 +761,7 @@ exports.getUserDetails = async (req, res) => {
       return res.status(401).json({ type: "error", message: "Unauthorized" });
     }
     const user = await User.findById(req.user.id).select(
-      "-password -resetToken -resetTokenExpires -otp -otpAttempts -otpExpires"
+      "-password -resetToken -resetTokenExpires -otp -otpAttempts -otpExpires loginAttempt activityLog"
     );
 
     if (!user) {
@@ -755,8 +769,13 @@ exports.getUserDetails = async (req, res) => {
         .status(401)
         .json({ type: "error", message: "User not found!" });
     }
+    // Encrypt user data sending to response
+    const encryptedUserData = encryptData({
+      ...user.toObject(),
+      isFirstTime: user.isFirstTime,
+    });
 
-    res.json({ ...user.toObject(), isFirstTime: user.isFirstTime });
+    res.json({ encryptedData: encryptedUserData });
   } catch (error) {
     console.error("getUserDetails error:", error.message);
     res.status(500).json({ type: "error", message: "Internal server error" });

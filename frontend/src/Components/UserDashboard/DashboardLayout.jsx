@@ -5,6 +5,7 @@ import Topbar from "./HeadersDashboard/Topbar";
 import { Outlet } from "react-router-dom";
 import axios from "axios";
 import FirstTimeInstruction from "../Pages/FirstTimeInstruction";
+import DecryptData from "./Setting/DecryptData";
 
 const DashboardLayout = () => {
   const [user, setUser] = useState({});
@@ -22,14 +23,17 @@ const DashboardLayout = () => {
       const response = await axios.get(`${electricaURL}/api/auth/user-info`, {
         withCredentials: true,
       });
-      if (response.status === 200) {
-        setUser(response.data);
-        setIsFirstTimeUser(response.data.isFirstTime);
+      if (response.status === 200 && response.data.encryptedData) {
+        const decryptedUser = DecryptData(response.data.encryptedData);
+        setUser(decryptedUser);
+        setIsFirstTimeUser(response.isFirstTime);
       } else {
         setUser({});
+        setIsFirstTimeUser(false);
       }
     } catch (error) {
       setUser({});
+      setIsFirstTimeUser(false);
     }
   };
 
