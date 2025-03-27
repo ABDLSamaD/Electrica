@@ -8,7 +8,7 @@ export default defineConfig({
     emptyOutDir: true, // Clears old builds
   },
   plugins: [react()],
-  base: "./",
+  base: "/",
   server: {
     headers: {
       "Content-Security-Policy": "style-src 'self' 'unsafe-inline';",
