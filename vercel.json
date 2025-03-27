@@ -23,6 +23,11 @@
       "dest": "/frontend/dist/assets/$1"
     },
     {
+      "src": "/(.*\\.css)",
+      "headers": { "Content-Type": "text/css" },
+      "dest": "/frontend/dist/$1"
+    },
+    {
       "src": "/(.*)",
       "dest": "/frontend/dist/index.html",
       "status": 200
