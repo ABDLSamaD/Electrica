@@ -6,6 +6,7 @@ export default defineConfig({
   build: {
     outDir: "dist", // Ensure output is in 'dist/'
     emptyOutDir: true, // Clears old builds
+    assetsDir: "assets",
   },
   plugins: [react()],
   base: "/",
