@@ -15,6 +15,9 @@ const PrivateRoute = () => {
           `${electricaURL}/api/auth/check-auth`,
           {
             withCredentials: true,
+            headers: {
+              "Cache-Control": "no-cache", // ✅ Prevent cached response
+            },
           }
         );
         if (response.status === 200 && response.data.isAuthenticated) {

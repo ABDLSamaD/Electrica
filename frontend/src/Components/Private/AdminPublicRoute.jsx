@@ -14,7 +14,12 @@ const AdminPublicRoute = ({ children }) => {
         // If cookie exists, verify session with the API
         const response = await axios.get(
           `${electricaURL}/api/adminauth/check-adminauth`,
-          { withCredentials: true }
+          {
+            withCredentials: true,
+            headers: {
+              "Cache-Control": "no-cache", // ✅ Prevent cached response
+            },
+          }
         );
 
         if (response.status === 200 && response.data.isAuthenticated) {

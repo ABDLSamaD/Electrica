@@ -68,8 +68,8 @@ const sessionConfig = {
   cookie: {
     maxAge: 24 * 60 * 60 * 1000, // 1 day
     httpOnly: true,
-    secure: process.env.NODE_ENV === "production", // Set to true in production with HTTPS
-    sameSite: process.env.NODE_ENV === "production" ? "None" : "Lax",
+    secure: true, // Set to true in production with HTTPS
+    sameSite: "None",
   },
   store: MongoStore.create({
     mongoUrl: process.env.MONGO_URL,
@@ -88,28 +88,6 @@ app.disable("x-powered-by");
 const server = http.createServer(app);
 const io = socketIo(server, {
   cors: corsOptions,
-});
-
-// Content Security Policy (CSP) to Restrict Requests
-app.use((req, res, next) => {
-  res.setHeader(
-    "Content-Security-Policy",
-    "default-src 'self'; connect-src 'self' https://electricaapp.vercel.app"
-  );
-  next();
-});
-
-// frontend path resolve config
-const frontendPath = path.join(__dirname, "../frontend/dist");
-app.use(express.static(frontendPath));
-
-app.get("*", (req, res) => {
-  res.sendFile(path.join(frontendPath, "index.html"), (err) => {
-    if (err) {
-      res.status(404).send("Frontend Not found");
-    }
-  });
-  ``;
 });
 
 io.on("connection", (socket) => {
@@ -153,14 +131,38 @@ app.use("/api", (req, res, next) => {
   next();
 });
 
+// frontend path resolve config
+const frontendPath = path.join(__dirname, "../frontend/dist");
+app.use(express.static(frontendPath));
+
+// ✅ Default route for frontend (always at the end)
+app.get("*", (req, res) => {
+  res.sendFile(path.join(frontendPath, "index.html"), (err) => {
+    if (err) {
+      res.status(404).send("Frontend Not found");
+    }
+  });
+  ``;
+});
+
 // Default catch-all route for Vercel
 app.all("*", (req, res) => {
   res.status(404).send("Not Found,");
 });
 
 app.use((req, res, next) => {
+  res.setHeader(
+    "Content-Security-Policy",
+    "default-src 'self'; connect-src 'self' https://electricaapp.vercel.app"
+  );
   res.setHeader("Access-Control-Allow-Headers", "Content-Type, Authorization");
   res.setHeader("Access-Control-Allow-Credentials", "true");
+  res.setHeader(
+    "Cache-Control",
+    "no-store, no-cache, must-revalidate, proxy-revalidate"
+  );
+  res.setHeader("Pragma", "no-cache");
+  res.setHeader("Expires", "0");
 
   // ✅ Remove the early `next()` call
   if (req.method === "OPTIONS") {
