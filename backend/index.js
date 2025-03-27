@@ -21,9 +21,6 @@ dotenv.config({ path: "../.env" });
 // connection database function call from file
 connectionDatabase();
 
-// directory name vith resolve
-const _dirname = path.resolve();
-
 const limiter = rateLimit({
   windowMs: 5 * 60 * 1000, // 15 minutes
   max: 200, // Limit each IP to 200 requests per `window` (here, per 5 minutes).
@@ -37,22 +34,23 @@ app.use(cookieParser());
 app.use(bodyparser.json());
 
 // helmet cross origin secure
-// app.use(
-//   helmet({
-//     contentSecurityPolicy: {
-//       directives: {
-//         defaultSrc: ["'self'"],
-//         styleSrc: ["'self'", "'unsafe-inline'", "https://fonts.googleapis.com"],
-//         fontSrc: ["'self'", "https://fonts.gstatic.com"],
-//       },
-//     },
-//   })
-// );
-app.use(helmet());
+app.use(
+  helmet({
+    contentSecurityPolicy: {
+      directives: {
+        defaultSrc: ["'self'"],
+        styleSrc: ["'self'", "'unsafe-inline'", "https://fonts.googleapis.com"],
+        fontSrc: ["'self'", "https://fonts.gstatic.com"],
+        connectSrc: ["'self'", "https://electricaapp.vercel.app"],
+      },
+    },
+  })
+);
+// app.use(helmet());
 
 // cors cnfiguration
 const corsOptions = {
-  // origin: true, // Ensure this is set correctly
+  origin: "https://electricaapp.vercel.app", // Ensure this is set correctly
   credentials: true, // Allow cookies to be sent
   methods: ["GET", "POST", "PUT", "PATCH", "DELETE"],
 };
