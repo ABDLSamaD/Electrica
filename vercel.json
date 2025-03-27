@@ -20,6 +20,7 @@
     },
     {
       "src": "/assets/(.*)",
+      "headers": { "Cache-Control": "public, max-age=31536000, immutable" },
       "dest": "/frontend/dist/assets/$1"
     },
     {
