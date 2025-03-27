@@ -52,7 +52,9 @@ const CheckProjects = () => {
     if (projects && projects.length > 0) {
       setTimeout(() => {
         setLoading(false);
-      }, 1500);
+      }, 600);
+    }else{
+      setLoading(false)
     }
   }, [projects]);
 
