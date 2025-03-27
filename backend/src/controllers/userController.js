@@ -10,7 +10,7 @@ const Project = require("../models/project");
 const mongoose = require("mongoose");
 // const cron = require("node-cron");
 const dotenv = require("dotenv");
-dotenv.config({path: "../../../.env"})
+dotenv.config({ path: "../../../.env" });
 
 const generateOTP = () => {
   const otp = (crypto.randomBytes(3).readUIntBE(0, 3) % 900000) + 100000;
@@ -49,27 +49,29 @@ const generateOTP = () => {
 //     deleteUnverifiedUsers();
 //   });
 // };
+const userDeletionTimers = new Map(); // Har user ke liye timer track karne ke liye
 
 const handleNewUserSignup = async (userId) => {
-  setTimeout(async () => {
+  if (userDeletionTimers.has(userId)) {
+    clearTimeout(userDeletionTimers.get(userId)); // Pehle se existing timer remove karo
+  }
+  const timer = setTimeout(async () => {
     try {
       const user = await User.findById(userId);
 
-      if (!user) {
-        console.log(`[DEBUG] User ${userId} not found, skipping deletion.`);
-        return;
-      }
+      if (!user) return console.log(`[DEBUG] User ${userId} not found.`);
 
       if (!user.isVerified) {
         await User.deleteOne({ _id: userId });
         console.log(`[DEBUG] Unverified user ${userId} deleted.`);
       } else {
-        console.log(`[DEBUG] User ${userId} is verified, not deleting.`);
+        console.log(`[DEBUG] User ${userId} is verified, skipping deletion.`);
       }
     } catch (error) {
       console.error(`[ERROR] Failed to delete user ${userId}:`, error);
     }
   }, 24 * 60 * 60 * 1000);
+  userDeletionTimers.set(userId, timer)
 };
 
 exports.signUp = async (req, res) => {
@@ -232,6 +234,13 @@ exports.verifyOtp = async (req, res) => {
     user.otpExpires = undefined;
     user.otpAttempts = 0;
     await user.save();
+
+    // ✅ Timer ko remove karo taake delete na ho
+    if(userDeletionTimers.has(user._id.toString())){
+      clearTimeout(userDeletionTimers.get(user._id.toString()));
+      userDeletionTimers.delete(user._id.toString());
+      console.log(`[DEBUG] Timer cancelled for verified user ${user._id}`);
+    }
 
     sendEmail(user.email, "Account Verified", "Your account has been verified");
 
