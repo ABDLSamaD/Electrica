@@ -20,8 +20,17 @@
     },
     {
       "src": "/assets/(.*)",
-      "headers": { "Content-Type": "application/javascript" },
       "dest": "/frontend/dist/assets/$1"
+    },
+    {
+      "src": "/(.*\\.css)",
+      "headers": { "Content-Type": "text/css" },
+      "dest": "/frontend/dist/$1"
+    },
+    {
+      "src": "/(.*\\.js)",
+      "headers": { "Content-Type": "application/javascript" },
+      "dest": "/frontend/dist/$1"
     },
     {
       "src": "/(.*)",
