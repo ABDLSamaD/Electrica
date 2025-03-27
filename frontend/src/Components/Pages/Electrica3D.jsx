@@ -2,6 +2,7 @@ import React, { useState, useRef } from "react";
 import { Canvas, useFrame } from "@react-three/fiber";
 import { OrbitControls, Box } from "@react-three/drei";
 import * as THREE from "three";
+import "../../styles.css"
 
 const Electrica3D = () => {
   const [votes, setVotes] = useState(0);
@@ -48,7 +49,7 @@ const Electrica3D = () => {
       </Canvas>
 
       {/* Vote Button */}
-      <div style={{ position: "absolute", top: "10px", left: "10px" }}>
+      <div className="vote-button">
         <button onClick={handleVote} className="vote-btn">
           Cast Vote
         </button>

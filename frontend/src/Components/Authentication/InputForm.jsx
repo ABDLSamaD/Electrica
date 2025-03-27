@@ -1,11 +1,7 @@
 import { Link } from "react-router-dom";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import {
-  faEnvelope,
-  faLock,
-  faRightToBracket,
-} from "@fortawesome/free-solid-svg-icons";
 import MiniLoader from "../OtherComponents/Miniloader";
+import {FiMail} from "react-icons/fi"
+import { FaLock, FaSignInAlt} from "react-icons/fa";
 
 const InputForm = ({
   hanldeLogin,
@@ -22,10 +18,7 @@ const InputForm = ({
           Email
         </label>
         <div className="relative">
-          <FontAwesomeIcon
-            icon={faEnvelope}
-            className="absolute top-1/2 left-3 transform -translate-y-1/2 text-gray-500"
-          />
+          <FiMail className="absolute top-1/2 left-3 transform -translate-y-1/2 text-gray-500" />
           <input
             type="email"
             id="email"
@@ -55,10 +48,7 @@ const InputForm = ({
           </Link>
         </div>
         <div className="relative">
-          <FontAwesomeIcon
-            icon={faLock}
-            className="absolute top-1/2 left-3 transform -translate-y-1/2 text-gray-500"
-          />
+          <FaLock className="absolute top-1/2 left-3 transform -translate-y-1/2 text-gray-500" />
           <input
             type="password"
             id="password"
@@ -91,7 +81,7 @@ const InputForm = ({
       <button
         type="submit"
         disabled={disabled}
-        className="w-full mt-4 bg-blue-600 hover:bg-blue-700 text-white font-semibold p-3 rounded-lg transition-all transform hover:scale-105 focus:scale-105 disabled:opacity-70 disabled:cursor-not-allowed disabled:hover:scale-100"
+        className="w-full mt-4 flex items-center justify-center gap-2 bg-blue-600 hover:bg-blue-700 text-white font-semibold p-3 rounded-lg transition-all transform hover:scale-105 focus:scale-105 disabled:opacity-70 disabled:cursor-not-allowed disabled:hover:scale-100"
       >
         {miniLoader ? (
           <div className="flex items-center justify-center">
@@ -100,7 +90,7 @@ const InputForm = ({
         ) : (
           <>
             Sign In
-            <FontAwesomeIcon icon={faRightToBracket} className="ml-2" />
+            <FaSignInAlt className="ml-2" />
           </>
         )}
       </button>

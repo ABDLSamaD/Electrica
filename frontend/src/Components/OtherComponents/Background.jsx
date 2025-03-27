@@ -1,162 +1,83 @@
-"use client";
-
 import React, { useEffect, useRef, useState } from "react";
+import "./extracss.css";
 
 const Background = React.memo(({ children }) => {
   const backgroundRef = useRef(null);
-  const [windowWidth, setWindowWidth] = useState(
-    typeof window !== "undefined" ? window.innerWidth : 0
-  );
+  const [windowWidth, setWindowWidth] = useState(0);
 
-  // Handle responsive sizing
   useEffect(() => {
-    const handleResize = () => {
-      setWindowWidth(window.innerWidth);
-    };
+    if (typeof window === "undefined") return;
 
-    // Set initial width
-    setWindowWidth(window.innerWidth);
-
-    // Add resize listener
+    const handleResize = () => setWindowWidth(window.innerWidth);
+    handleResize();
     window.addEventListener("resize", handleResize);
 
-    return () => {
-      window.removeEventListener("resize", handleResize);
-    };
+    return () => window.removeEventListener("resize", handleResize);
   }, []);
 
-  // Get sizes based on screen width
-  const getOrbSize = () => {
-    if (windowWidth >= 768) return "14rem";
-    if (windowWidth >= 640) return "8rem";
-    return "6rem";
-  };
+  const getOrbSize = () =>
+    windowWidth >= 768 ? "14rem" : windowWidth >= 640 ? "8rem" : "6rem";
+  const getDividerWidth = () =>
+    windowWidth >= 1024
+      ? "12rem"
+      : windowWidth >= 768
+      ? "9rem"
+      : windowWidth >= 640
+      ? "6rem"
+      : "3rem";
 
-  const getDividerWidth = () => {
-    if (windowWidth >= 1024) return "12rem";
-    if (windowWidth >= 768) return "9rem";
-    if (windowWidth >= 640) return "6rem";
-    return "3rem";
-  };
-
-  // Use effect to optimize rendering and handle scrolling
   useEffect(() => {
-    // Add a solid background color to the body to prevent white flashes
+    if (typeof window === "undefined") return;
+
     document.body.style.backgroundColor = "#000";
 
-    // Create and inject global styles properly
-    const styleElement = document.createElement("style");
-    styleElement.textContent = `
-      .scrolling .background-orb {
-        /* Reduce blur only for background elements */
-        filter: blur(4px) !important;
-        backdrop-filter: blur(4px) !important;
-        transition: filter 0.5s ease-out, backdrop-filter 0.5s ease-out;
-      }
-      
-      /* Ensure body has a dark background to prevent white flashes */
-      body {
-        background-color: #000;
-      }
-    `;
-    document.head.appendChild(styleElement);
-
-    // Optional: Reduce animations during scroll for better performance
     let scrollTimer = null;
     const handleScroll = () => {
       if (!backgroundRef.current) return;
-
-      // Add a class to reduce animations during scroll
       backgroundRef.current.classList.add("scrolling");
 
-      // Clear previous timeout
       if (scrollTimer) clearTimeout(scrollTimer);
-
-      // Remove the class after scrolling stops
       scrollTimer = setTimeout(() => {
-        if (backgroundRef.current) {
+        if (backgroundRef.current)
           backgroundRef.current.classList.remove("scrolling");
-        }
       }, 150);
     };
 
     window.addEventListener("scroll", handleScroll, { passive: true });
 
-    // Cleanup function
     return () => {
       window.removeEventListener("scroll", handleScroll);
       if (scrollTimer) clearTimeout(scrollTimer);
-      if (styleElement && document.head.contains(styleElement)) {
-        document.head.removeChild(styleElement);
-      }
     };
   }, []);
-
-  // Get current sizes
-  const orbSize = getOrbSize();
-  const dividerWidth = getDividerWidth();
 
   return (
     <div
       ref={backgroundRef}
-      className="relative min-h-screen w-full overflow-hidden bg-black"
-      style={{
-        // Hardware-accelerated background gradient
-        backgroundImage:
-          "radial-gradient(circle, rgba(10,25,47,0.9), rgba(0,0,0,1))",
-      }}
+      className="background-container relative min-h-screen w-full overflow-hidden bg-black"
     >
-      {/* Animated blurred orbs with improved performance */}
+      {/* Animated blurred orbs */}
       <div className="absolute inset-0">
-        {/* Top left orb */}
         <div
-          className="background-orb absolute left-[8%] top-[8%] rounded-full bg-blue-900/75 blur-md sm:blur-lg md:blur-xl"
-          style={{
-            width: orbSize,
-            height: orbSize,
-            transform: "translate3d(0,0,0)",
-          }}
+          className="background-orb left-[8%] top-[8%] bg-blue-900/75 sm:blur-lg md:blur-xl"
+          style={{ width: getOrbSize(), height: getOrbSize() }}
         />
-
-        {/* Top right orb */}
         <div
-          className="background-orb absolute right-[8%] top-[8%] rounded-full bg-green-900/75 blur-md sm:blur-lg md:blur-xl"
-          style={{
-            width: orbSize,
-            height: orbSize,
-            transform: "translate3d(0,0,0)",
-          }}
+          className="background-orb right-[8%] top-[8%] bg-green-900/75 sm:blur-lg md:blur-xl"
+          style={{ width: getOrbSize(), height: getOrbSize() }}
         />
-
-        {/* Bottom left orb */}
         <div
-          className="background-orb absolute bottom-[8%] left-[8%] rounded-full bg-purple-900/75 blur-md sm:blur-lg md:blur-xl"
-          style={{
-            width: orbSize,
-            height: orbSize,
-            transform: "translate3d(0,0,0)",
-          }}
+          className="background-orb bottom-[8%] left-[8%] bg-purple-900/75 sm:blur-lg md:blur-xl"
+          style={{ width: getOrbSize(), height: getOrbSize() }}
         />
-
-        {/* Bottom right orb */}
         <div
-          className="background-orb absolute bottom-[8%] right-[8%] rounded-full bg-cyan-900/75 blur-md sm:blur-lg md:blur-xl"
-          style={{
-            width: orbSize,
-            height: orbSize,
-            transform: "translate3d(0,0,0)",
-          }}
+          className="background-orb bottom-[8%] right-[8%] bg-cyan-900/75 sm:blur-lg md:blur-xl"
+          style={{ width: getOrbSize(), height: getOrbSize() }}
         />
       </div>
 
-      {/* Center divider with blur effect - optimized with transform */}
-      <div
-        className="absolute left-1/2 h-full bg-black/25 sm:bg-black/50 md:bg-black/75 shadow-[inset_0_0_20px_rgba(255,255,255,0.1)] backdrop-blur-md"
-        style={{
-          width: dividerWidth,
-          transform: "translate3d(-50%, 0, 0)",
-        }}
-      />
+      {/* Center divider */}
+      <div className="center-divider" style={{ width: getDividerWidth() }} />
 
       {/* Content container */}
       <div className="relative z-10">{children}</div>

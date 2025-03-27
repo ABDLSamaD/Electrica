@@ -36,6 +36,36 @@ const GlobalVerificationEmail = ({
     }
   }, []);
 
+  useEffect(() => {
+    if (typeof document !== "undefined") {
+      const style = document.createElement("style");
+      style.textContent = `
+      @keyframes fade-in {
+        from { opacity: 0; transform: translateY(10px); }
+        to { opacity: 1; transform: translateY(0); }
+      }
+      .animate-fade-in {
+        animation: fade-in 0.3s ease-out forwards;
+      }
+      @keyframes pulse {
+        0%, 100% { opacity: 0.2; }
+        50% { opacity: 0.3; }
+      }
+      .animate-pulse {
+        animation: pulse 4s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+      }
+    `;
+      document.head.appendChild(style);
+
+      return () => {
+        if (document.head.contains(style)) {
+          document.head.removeChild(style);
+        }
+      };
+    }
+  }, []);
+
+
   return (
     <div className="min-h-screen flex items-center justify-center relative overflow-hidden p-4">
       {/* Alert notification */}
@@ -130,25 +160,5 @@ const GlobalVerificationEmail = ({
     </div>
   );
 };
-
-// Add keyframes for fade-in animation
-const style = document.createElement("style");
-style.textContent = `
-  @keyframes fade-in {
-    from { opacity: 0; transform: translateY(10px); }
-    to { opacity: 1; transform: translateY(0); }
-  }
-  .animate-fade-in {
-    animation: fade-in 0.3s ease-out forwards;
-  }
-  @keyframes pulse {
-    0%, 100% { opacity: 0.2; }
-    50% { opacity: 0.3; }
-  }
-  .animate-pulse {
-    animation: pulse 4s cubic-bezier(0.4, 0, 0.6, 1) infinite;
-  }
-`;
-document.head.appendChild(style);
 
 export default GlobalVerificationEmail;

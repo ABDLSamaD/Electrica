@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import "../../index.css";
+import "../../styles.css";
 import { AlertCircle, CheckCircle, Info, XCircle, X } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 

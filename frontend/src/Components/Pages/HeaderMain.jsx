@@ -1,7 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { Link, NavLink } from "react-router-dom";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faBars } from "@fortawesome/free-solid-svg-icons";
+import { FiMenu } from "react-icons/fi";
 import axios from "axios";
 
 const HeaderMain = () => {
@@ -109,7 +108,7 @@ const HeaderMain = () => {
         </div>
         <div className="md:hidden">
           <button onClick={toggleNav} className="text-gray-200">
-            <FontAwesomeIcon icon={faBars} className="text-2xl" />
+            <FiMenu className="text-2xl text-gray-400" />
           </button>
         </div>
         {!isNavOpen && (
@@ -140,7 +139,7 @@ const HeaderMain = () => {
         } transition-transform duration-300 ease-in-out`}
       >
         <button onClick={toggleNav} className="absolute top-4 right-4">
-          <FontAwesomeIcon icon={faBars} className="text-white text-2xl" />
+          <FiMenu className="text-white text-2xl" />
         </button>
         <div className="logo pt-10 pl-3">
           <h2 className="text-gray-200 text-2xl hover:text-gray-300 transition-all">

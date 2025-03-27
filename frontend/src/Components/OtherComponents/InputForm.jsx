@@ -29,7 +29,7 @@ const InputForm = ({
       <div className="relative mt-3 w-full">
         <label
           htmlFor="email"
-          className="block text-sm font-medium text-gray-500"
+          className="block text-sm font-medium text-gray-300"
         >
           Email
         </label>
@@ -50,7 +50,7 @@ const InputForm = ({
       <div className="relative w-full mt-3">
         <label
           htmlFor="password"
-          className="block text-sm font-medium text-gray-400 traking-wider"
+          className="block text-sm font-medium text-gray-300 traking-wider"
         >
           Password
         </label>
@@ -105,7 +105,7 @@ const InputForm = ({
       </div>
       <button
         type="submit"
-        className={`w-full p-3 tracking-wider rounded-md text-white font-bold transition-all duration-300 ${
+        className={`w-full p-3 tracking-wider flex items-center justify-center gap-2 rounded-md text-white font-bold transition-all duration-300 ${
           miniLoader
             ? "bg-gray-500 cursor-not-allowed"
             : "bg-gray-950 hover:bg-gray-800"

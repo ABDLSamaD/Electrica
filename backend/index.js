@@ -40,19 +40,19 @@ app.use(bodyparser.json());
 // app.use(
 //   helmet({
 //     contentSecurityPolicy: {
-    //   directives: {
-    //     defaultSrc: ["'self'"],
-    //     styleSrc: ["'self'", "'unsafe-inline'", "https://fonts.googleapis.com"],
-    //     fontSrc: ["'self'", "https://fonts.gstatic.com"],
-    //   },
-    // },
+//       directives: {
+//         defaultSrc: ["'self'"],
+//         styleSrc: ["'self'", "'unsafe-inline'", "https://fonts.googleapis.com"],
+//         fontSrc: ["'self'", "https://fonts.gstatic.com"],
+//       },
+//     },
 //   })
 // );
 app.use(helmet());
 
 // cors cnfiguration
 const corsOptions = {
-  origin: true, // Ensure this is set correctly
+  // origin: true, // Ensure this is set correctly
   credentials: true, // Allow cookies to be sent
   methods: ["GET", "POST", "PUT", "PATCH", "DELETE"],
 };
@@ -162,14 +162,7 @@ app.use((req, res, next) => {
   res.setHeader("Access-Control-Allow-Headers", "Content-Type, Authorization");
   res.setHeader("Access-Control-Allow-Credentials", "true");
 
-  // Content Security Policy (CSP) Headers
-  res.locals.cspNonce = Buffer.from(crypto.randomBytes(16)).toString("base64");
-  res.setHeader(
-    "Content-Security-Policy",
-    `default-src 'self'; style-src 'self' 'nonce-${res.locals.cspNonce}';`
-  );
-
-  // Handle Preflight Requests
+  // ✅ Remove the early `next()` call
   if (req.method === "OPTIONS") {
     return res.sendStatus(204);
   }

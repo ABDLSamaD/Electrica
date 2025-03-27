@@ -60,7 +60,7 @@ const SignIn = () => {
         { email, password, rememberMe, ipAddress, deviceInfo },
         { withCredentials: true }
       );
-
+      
       if (response.status === 200) {
         if (response.data.type === "otp_required") {
           setPasswords(password);
@@ -72,10 +72,7 @@ const SignIn = () => {
         } else {
           setMiniLoader(false);
           setLoginSuccess(true);
-          setAlert({
-            type: response.data.type,
-            message: response.data.message,
-          });
+          setAlert({ type: response.data.type, message: response.data.message });
 
           setTimeout(() => {
             navigate("/db-au-user");
@@ -211,12 +208,7 @@ const SignIn = () => {
           </div>
         </div>
       ) : (
-        <LoginOtpVerification
-          handleOtpSubmit={handleOtpSubmit}
-          setOtp={setOtp}
-          otp={otp}
-          loading={loading}
-        />
+        <LoginOtpVerification handleOtpSubmit={handleOtpSubmit} setOtp={setOtp} otp={otp} loading={loading} />
       )}
     </div>
   );
