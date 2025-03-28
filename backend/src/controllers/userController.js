@@ -761,7 +761,7 @@ exports.getUserDetails = async (req, res) => {
       return res.status(401).json({ type: "error", message: "Unauthorized" });
     }
     const user = await User.findById(req.user.id).select(
-      "-password -resetToken -resetTokenExpires -otp -otpAttempts -otpExpires loginAttempt activityLog"
+      "-password -resetToken -resetTokenExpires -otp -otpAttempts -otpExpires -loginAttempt -activityLog"
     );
 
     if (!user) {
