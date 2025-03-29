@@ -1,6 +1,4 @@
-"use client";
-
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import Alert from "../OtherComponents/Alert";
 import axios from "axios";
@@ -38,10 +36,21 @@ const SignIn = () => {
     }));
   };
 
+  useEffect(() => {
+    if (errors.email || errors.password) {
+      const timer = setTimeout(() => {
+        setErrors({ email: "", password: "" });
+      }, 5000);
+
+      return () => clearTimeout(timer);
+    }
+  }, [errors]);
+
   const handleSignin = async (e) => {
     e.preventDefault();
     setMiniLoader(true);
     setLoading(true);
+    setErrors({ email: "", password: "" });
 
     const { email, password, rememberMe } = credentials;
 
