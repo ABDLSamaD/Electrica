@@ -68,24 +68,33 @@ const userDeletionTimers = new Map(); // Har user ke liye timer track karne ke l
 const handleNewUserSignup = async (userId) => {
   if (userDeletionTimers.has(userId)) {
     clearTimeout(userDeletionTimers.get(userId)); // Pehle se existing timer remove karo
+    userDeletionTimers.delete(userId);
   }
   const timer = setTimeout(async () => {
     try {
       const user = await User.findById(userId);
 
-      if (!user) return console.log(`[DEBUG] User ${userId} not found.`);
+      if (!user) {
+        console.log(`[DEBUG] User ${userId} not found.`);
+        return;
+      }
 
       if (!user.isVerified) {
         await User.deleteOne({ _id: userId });
         console.log(`[DEBUG] Unverified user ${userId} deleted.`);
       } else {
         console.log(`[DEBUG] User ${userId} is verified, skipping deletion.`);
+        if (userDeletionTimers.has(userId)) {
+          clearTimeout(userDeletionTimers.get(userId));
+          userDeletionTimers.delete(userId);
+          console.log(`[DEBUG] Timer cancelled for verified user ${userId}`);
+        }
       }
     } catch (error) {
       console.error(`[ERROR] Failed to delete user ${userId}:`, error);
     }
-  }, 24 * 60 * 60 * 1000);
-  userDeletionTimers.set(userId, timer)
+  }, 60 * 1000);
+  userDeletionTimers.set(userId, timer);
 };
 
 exports.signUp = async (req, res) => {
@@ -250,7 +259,7 @@ exports.verifyOtp = async (req, res) => {
     await user.save();
 
     // ✅ Timer ko remove karo taake delete na ho
-    if(userDeletionTimers.has(user._id.toString())){
+    if (userDeletionTimers.has(user._id.toString())) {
       clearTimeout(userDeletionTimers.get(user._id.toString()));
       userDeletionTimers.delete(user._id.toString());
       console.log(`[DEBUG] Timer cancelled for verified user ${user._id}`);
@@ -339,7 +348,9 @@ exports.login = async (req, res) => {
 
     const users = await User.findOne({ email });
     if (!users) {
-      return res.status(404).json({ type: "error", message: "User not found" });
+      return res
+        .status(404)
+        .json({ type: "error", message: "User not found", field: "email" });
     }
 
     if (!users.isVerified) {
@@ -360,7 +371,11 @@ exports.login = async (req, res) => {
     if (!isMatch) {
       return res
         .status(400)
-        .json({ type: "error", message: "Invalid credentials!" });
+        .json({
+          type: "error",
+          message: "Invalid credentials",
+          field: "password",
+        });
     }
 
     // 🟢 Step 1: First-time login (Allow without OTP)
@@ -408,7 +423,6 @@ exports.login = async (req, res) => {
         .json({ type: "success", message: "Login successfull" });
     }
     await users.populate("sessions");
-    console.log("Current Session Data:", req.session);
 
     // Check if session already exists (same device)
     const existingSession = users.sessions.find(
@@ -772,10 +786,12 @@ exports.getUserDetails = async (req, res) => {
     // Encrypt user data sending to response
     const encryptedUserData = encryptData({
       ...user.toObject(),
-      isFirstTime: user.isFirstTime,
     });
 
-    res.json({ encryptedData: encryptedUserData });
+    res.json({
+      encryptedData: encryptedUserData,
+      isFirstTime: user.isFirstTime,
+    });
   } catch (error) {
     console.error("getUserDetails error:", error.message);
     res.status(500).json({ type: "error", message: "Internal server error" });

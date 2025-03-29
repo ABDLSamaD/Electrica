@@ -1,7 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { motion } from "framer-motion";
 import Topbar from "./HeadersDashboard/Topbar";
-// import { Outlet, useNavigate } from "react-router-dom";
 import { Outlet } from "react-router-dom";
 import axios from "axios";
 import FirstTimeInstruction from "../Pages/FirstTimeInstruction";
@@ -26,7 +25,7 @@ const DashboardLayout = () => {
       if (response.status === 200 && response.data.encryptedData) {
         const decryptedUser = DecryptData(response.data.encryptedData);
         setUser(decryptedUser);
-        setIsFirstTimeUser(response.isFirstTime);
+        setIsFirstTimeUser(response.data.isFirstTime);
       } else {
         setUser({});
         setIsFirstTimeUser(false);

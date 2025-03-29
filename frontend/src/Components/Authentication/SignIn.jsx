@@ -28,6 +28,7 @@ const SignIn = () => {
   const [loginSuccess, setLoginSuccess] = useState(false);
   const [otpRequired, setOtpRequired] = useState(false); // Show OTP field if needed
   const [otp, setOtp] = useState(["", "", "", "", "", ""]);
+  const [errors, setErrors] = useState({ email: "", password: "" });
 
   const onChange = (e) => {
     const { name, value, type, checked } = e.target;
@@ -60,7 +61,7 @@ const SignIn = () => {
         { email, password, rememberMe, ipAddress, deviceInfo },
         { withCredentials: true }
       );
-      
+
       if (response.status === 200) {
         if (response.data.type === "otp_required") {
           setPasswords(password);
@@ -72,7 +73,10 @@ const SignIn = () => {
         } else {
           setMiniLoader(false);
           setLoginSuccess(true);
-          setAlert({ type: response.data.type, message: response.data.message });
+          setAlert({
+            type: response.data.type,
+            message: response.data.message,
+          });
 
           setTimeout(() => {
             navigate("/db-au-user");
@@ -88,10 +92,30 @@ const SignIn = () => {
     } catch (err) {
       setLoading(false);
       setMiniLoader(false);
-      setAlert({
-        type: err.response?.data?.type || "error",
-        message: err.response?.data?.message || "Network Error",
-      });
+      if (err.response) {
+        const { message, field } = err.response.data;
+        if (err.response.status === 400 || err.response.status === 404) {
+          setErrors((prevErrors) => ({
+            ...prevErrors,
+            [field]: message,
+          }));
+
+          setAlert({
+            type: "error",
+            message: message || "Invalid credentials",
+          });
+        } else {
+          setAlert({
+            type: "error",
+            message: err.response.data?.message || "An error occurred",
+          });
+        }
+      } else {
+        setAlert({
+          type: "error",
+          message: "Network Error",
+        });
+      }
     }
   };
 
@@ -189,6 +213,7 @@ const SignIn = () => {
             passLink={"/forgot_password"}
             miniLoader={miniLoader}
             disabled={loading || loginSuccess}
+            errors={errors}
           />
 
           <div className="mt-6 h-auto bg-gray-700/40 p-4 rounded-lg text-sm">
@@ -208,7 +233,12 @@ const SignIn = () => {
           </div>
         </div>
       ) : (
-        <LoginOtpVerification handleOtpSubmit={handleOtpSubmit} setOtp={setOtp} otp={otp} loading={loading} />
+        <LoginOtpVerification
+          handleOtpSubmit={handleOtpSubmit}
+          setOtp={setOtp}
+          otp={otp}
+          loading={loading}
+        />
       )}
     </div>
   );
