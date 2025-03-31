@@ -100,6 +100,11 @@ exports.project = async (req, res) => {
     });
 
     await project.save();
+    await addNotification(
+      user._id,
+      `${user.name} you have submitted your project ${projectName}, the contractor will contact you soon.`,
+      "success"
+    );
 
     let text = `${user.name} your project ${projectName} submited successfully. plesae wait for an admin to approve your project. `;
     sendEmail(user.email, "Project Submission ", text);
@@ -152,6 +157,11 @@ exports.removeProject = async (req, res) => {
         user.name
       } removed his project and reason ${reason} at ${new Date().toLocaleDateString()}`
     );
+    await addNotification(
+      user._id,
+      `${user.name} you have remove your project ${project.projectName}`,
+      "success"
+    );
 
     res
       .status(200)
@@ -166,7 +176,7 @@ exports.getProjectDetails = async (req, res) => {
   try {
     let userId = req.user.id; // Extracted from middleware
     const user = await User.findById(userId);
-    if (!userId) {
+    if (!user) {
       return res.status(400).json({ type: "error", message: "User not found" });
     }
     const project = await Project.find();
@@ -317,7 +327,7 @@ exports.clientConfirmStageCompletion = async (req, res) => {
       await sendEmail(
         admin.email,
         "Client approved stage material bill",
-        `${user.name} approved materials bills and coming tomorrow for stage: ${stageName}`
+        `${user.name} approved materials bills list, so ${admin.username} coming tomorrow for stage: ${stageName}`
       );
     } catch (error) {
       return res
@@ -425,6 +435,11 @@ exports.approveMaterials = async (req, res) => {
         "Client approved stage material bill",
         `${user.name} approved materials list. now you come from tomorrow for work: ${stageName}`
       );
+      await addNotification(
+        user._id,
+        `${user.name} you have aproved materials bill list of ${projectName} of ${stage.name}`,
+        "success"
+      );
     } catch (error) {
       return res
         .status(500)
@@ -496,6 +511,11 @@ exports.setPaymentMethod = async (req, res) => {
           .status(400)
           .json({ message: "Payment date is required for cash on hand" });
       project.payment.cashOnHandDetails.payDate = payDate;
+      await addNotification(
+        user._id,
+        `${user.name} you have selected (cash_on_hand) payment method of project name: ${projectName} paying date is your ${payDate}`,
+        "success"
+      );
     }
 
     const admin = await Admin.findOne();

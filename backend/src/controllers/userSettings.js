@@ -1,7 +1,8 @@
 const bcrypt = require("bcryptjs");
 const User = require("../models/user");
 const dotenv = require("dotenv");
-dotenv.config({path: "../../../.env"});
+dotenv.config({ path: "../../../.env" });
+const addNotification = require("./addNotification");
 
 // Add Some User Details
 exports.userDetail = async (req, res) => {
@@ -22,6 +23,11 @@ exports.userDetail = async (req, res) => {
     user.city = city;
 
     await user.save();
+    await addNotification(
+      user._id,
+      `${user.name} you can submitted your details so check it.`,
+      "success"
+    );
 
     res.status(200).json({
       type: "success",
@@ -65,6 +71,11 @@ exports.changepassword = async (req, res) => {
     user.password = hashedPassword;
 
     await user.save();
+    await addNotification(
+      user._id,
+      `${user.name} you have change your password`,
+      "success"
+    );
 
     res
       .status(200)
@@ -98,7 +109,11 @@ exports.updateUserDetails = async (req, res) => {
     user.city = city || user.city;
 
     await user.save();
-
+    await addNotification(
+      user._id,
+      `${user.name} you can submitted your details so check it.`,
+      "success"
+    );
     res
       .status(200)
       .json({ type: "success", message: "Update user details successfully" });
@@ -124,6 +139,11 @@ exports.profileImage = async (req, res) => {
     }
     user.profileImg = profileImg;
     await user.save();
+    await addNotification(
+      user._id,
+      `${user.name} you have change your profile image so check it.`,
+      "success"
+    );
     res.status(200).json({ type: "success", message: "Image has been saved" });
   } catch (error) {
     console.error(error.message);
