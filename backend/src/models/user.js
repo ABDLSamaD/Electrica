@@ -10,6 +10,13 @@ const loginAttemptSchema = new mongoose.Schema({
   }, // Optional: location info if available
 });
 
+const notificationSchema = new mongoose.Schema({
+  message: { type: String, required: true },
+  type: { type: String, default: "info" }, // can be 'info', 'warning', etc.
+  isRead: { type: Boolean, default: false },
+  createdAt: { type: Date, default: Date.now },
+});
+
 const userSchema = new mongoose.Schema(
   {
     name: { type: String, required: true },
@@ -53,6 +60,7 @@ const userSchema = new mongoose.Schema(
       },
     ],
     isVerified: { type: Boolean, default: false },
+    notifications: [notificationSchema],
     otp: { type: String },
     otpExpires: { type: Date },
     otpAttempts: { type: Number, default: 0 },
