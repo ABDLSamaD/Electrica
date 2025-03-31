@@ -121,7 +121,7 @@ export default function LoginOtpVerification({
                 ref={(el) => (inputRefs.current[index] = el)}
                 type="text"
                 maxLength={1}
-                className="w-12 h-12 text-center text-xl font-bold p-2 text-white bg-gray-700/50 border border-gray-600 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200"
+                className="sm:w-12 w-8 h-12 text-center text-xl font-bold p-2 text-white bg-gray-700/50 border border-gray-600 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200"
                 value={digit}
                 onChange={(e) => handleChange(index, e.target.value)}
                 onKeyDown={(e) => handleKeyDown(index, e)}
