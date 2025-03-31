@@ -9,8 +9,9 @@ const { loginMail } = require("../utils/loginmail");
 const { sendEmail } = require("../utils/mail");
 const Project = require("../models/project");
 const mongoose = require("mongoose");
-// const cron = require("node-cron");
+const cron = require("node-cron");
 const dotenv = require("dotenv");
+const addNotification = require("./addNotification");
 dotenv.config({ path: "../../../.env" });
 
 const generateOTP = () => {
@@ -63,39 +64,25 @@ const encryptData = (data) => {
 //     deleteUnverifiedUsers();
 //   });
 // };
-const userDeletionTimers = new Map(); // Har user ke liye timer track karne ke liye
 
-const handleNewUserSignup = async (userId) => {
-  if (userDeletionTimers.has(userId)) {
-    clearTimeout(userDeletionTimers.get(userId)); // Pehle se existing timer remove karo
-    userDeletionTimers.delete(userId);
-  }
-  const timer = setTimeout(async () => {
-    try {
-      const user = await User.findById(userId);
+cron.schedule("0 * * * *", async () => {
+  try {
+    const expiredUsers = await User.find({
+      isVerified: false,
+      createdAt: { $lte: new Date(Date.now() - 24 * 60 * 60 * 1000) },
+    });
 
-      if (!user) {
-        console.log(`[DEBUG] User ${userId} not found.`);
-        return;
-      }
+    if (expiredUsers.length > 0) {
+      await User.deleteMany({
+        _id: { $in: expiredUsers.map((user) => user._id) },
+      });
 
-      if (!user.isVerified) {
-        await User.deleteOne({ _id: userId });
-        console.log(`[DEBUG] Unverified user ${userId} deleted.`);
-      } else {
-        console.log(`[DEBUG] User ${userId} is verified, skipping deletion.`);
-        if (userDeletionTimers.has(userId)) {
-          clearTimeout(userDeletionTimers.get(userId));
-          userDeletionTimers.delete(userId);
-          console.log(`[DEBUG] Timer cancelled for verified user ${userId}`);
-        }
-      }
-    } catch (error) {
-      console.error(`[ERROR] Failed to delete user ${userId}:`, error);
+      console.log(`[DEBUG] Deleted ${expiredUsers.length} unverified users.`);
     }
-  }, 60 * 1000);
-  userDeletionTimers.set(userId, timer);
-};
+  } catch (error) {
+    console.error("[ERROR] Failed to delete unverified users:", error);
+  }
+});
 
 exports.signUp = async (req, res) => {
   try {
@@ -147,8 +134,11 @@ exports.signUp = async (req, res) => {
     const token = jwt.sign(data, process.env.JWT_SECRET, { expiresIn: "1h" });
     user.token = token;
 
-    // ✅ Schedule deletion check after 24 hours
-    handleNewUserSignup(user._id);
+    await addNotification(
+      user._id,
+      `Welcome! ${user.name} Your account has been created.`,
+      "success"
+    );
 
     await user.save();
 
@@ -257,13 +247,7 @@ exports.verifyOtp = async (req, res) => {
     user.otpExpires = undefined;
     user.otpAttempts = 0;
     await user.save();
-
-    // ✅ Timer ko remove karo taake delete na ho
-    if (userDeletionTimers.has(user._id.toString())) {
-      clearTimeout(userDeletionTimers.get(user._id.toString()));
-      userDeletionTimers.delete(user._id.toString());
-      console.log(`[DEBUG] Timer cancelled for verified user ${user._id}`);
-    }
+    await addNotification(user._id, "Verifying OTP successfully.", "success");
 
     sendEmail(user.email, "Account Verified", "Your account has been verified");
 
@@ -369,13 +353,11 @@ exports.login = async (req, res) => {
 
     const isMatch = await bcrypt.compare(password, users.password);
     if (!isMatch) {
-      return res
-        .status(400)
-        .json({
-          type: "error",
-          message: "Invalid credentials",
-          field: "password",
-        });
+      return res.status(400).json({
+        type: "error",
+        message: "Invalid credentials",
+        field: "password",
+      });
     }
 
     // 🟢 Step 1: First-time login (Allow without OTP)
@@ -418,6 +400,10 @@ exports.login = async (req, res) => {
         sameSite: process.env.NODE_ENV === "production" ? "None" : "Strict",
         maxAge: 24 * 60 * 60 * 1000, // 1 day
       });
+      await addNotification(
+        users._id,
+        `${users.name}You sign in successfully.`
+      );
       return res
         .status(200)
         .json({ type: "success", message: "Login successfull" });
@@ -438,6 +424,11 @@ exports.login = async (req, res) => {
         users.otpExpires = otpExpires;
         users.otpAttempts = 0;
         await users.save();
+        await addNotification(
+          users._id,
+          `${users.name} you signed in successfully, from another platform and your ip is: ${ipAddress}`,
+          "success"
+        );
 
         sendEmail(
           users.email,
@@ -795,6 +786,53 @@ exports.getUserDetails = async (req, res) => {
   } catch (error) {
     console.error("getUserDetails error:", error.message);
     res.status(500).json({ type: "error", message: "Internal server error" });
+  }
+};
+
+// Controller Notification
+exports.markAsRead = async (req, res) => {
+  const userId = req.user.id;
+  const { notificationId } = req.params;
+
+  try {
+    const user = await User.findById(userId);
+    const notification = user.notifications.id(notificationId);
+    if (!notification)
+      return res.status(404).json({ error: "Notification not found" });
+
+    notification.isRead = true;
+    await user.save();
+
+    res.status(200).json({ message: "Notification marked as read" });
+  } catch (error) {
+    res.status(500).json({ error: "Server error" });
+  }
+};
+exports.deleteNotification = async (req, res) => {
+  const userId = req.user.id;
+  const { notificationId } = req.params;
+
+  try {
+    const user = await User.findById(userId);
+    user.notifications = user.notifications.filter(
+      (notif) => notif._id.toString() !== notificationId
+    );
+    await user.save();
+
+    res.status(200).json({ message: "Notification deleted" });
+  } catch (error) {
+    res.status(500).json({ error: "Server error" });
+  }
+};
+exports.getNotification = async (req, res) => {
+  try {
+    const userId = req.user.id;
+    if (!userId) return res.status(401).json({ error: "Unauthorized" });
+
+    const user = await User.findById(userId).select("notifications");
+    res.status(200).json(user.notifications);
+  } catch (error) {
+    res.status(500).json({ error: "Failed to fetch notifications" });
   }
 };
 

@@ -17,6 +17,9 @@ const {
   updateFirstTime,
   checkAuthIfLoggedIn,
   checkDatabaseAndSession,
+  getNotification,
+  deleteNotification,
+  markAsRead,
 } = require("../controllers/userController"); // user controller
 const {
   someProtectedController,
@@ -109,6 +112,17 @@ routes.put("/updateuser-details", decodedToken, updateUserDetails);
 routes.post("/adduser-profileImg", decodedToken, profileImage);
 routes.post("/change-password", decodedToken, changepassword);
 routes.get("/user-info", decodedToken, getUserDetails);
+
+// Notification routes start
+routes.get("/get-notification", decodedToken, getNotification);
+routes.delete(
+  "/delete-notification/:notificationId",
+  decodedToken,
+  deleteNotification
+);
+routes.post("/read-notification/:notificationId", decodedToken, markAsRead);
+// Notification routes end
+
 routes.post("/project", decodedToken, upload.array("projectPics", 5), project); //add project details
 routes.post("/remove-project", decodedToken, removeProject); //add project details
 routes.get("/project-details", decodedToken, getProjectDetails); // get project details from admin add
