@@ -21,8 +21,6 @@ import LoaderAll from "../../OtherComponents/LoaderAll";
 import { motion, AnimatePresence } from "framer-motion";
 import { LazyLoadImage } from "react-lazy-load-image-component";
 import "react-lazy-load-image-component/src/effects/blur.css";
-import { Bell } from "lucide-react";
-import NotificationPanel from "./NotificationPanel";
 import NotificationIcon from "./NotificationIcon";
 
 const Topbar = ({ user, electricaURL }) => {
@@ -34,7 +32,6 @@ const Topbar = ({ user, electricaURL }) => {
   const [logout, setLogout] = useState(false);
   const [modal, setModal] = useState(false);
   const [showMobileNav, setShowMobileNav] = useState(false);
-  const [showNotifications, setShowNotifications] = useState(false);
   // states end
 
   const dropdownRef = useRef(null);
@@ -46,8 +43,6 @@ const Topbar = ({ user, electricaURL }) => {
   const toggleDropdown = () => {
     setIsDropdownOpen(!isDropdownOpen);
   };
-
-  const toggleNotifications = () => setShowNotifications((prev) => !prev);
 
   const handleClickOutside = (event) => {
     if (dropdownRef.current && !dropdownRef.current.contains(event.target)) {

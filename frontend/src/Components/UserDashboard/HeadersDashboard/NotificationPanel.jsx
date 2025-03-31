@@ -19,9 +19,11 @@ const NotificationPanel = ({
       );
 
       setNotifications((prev) =>
-        prev.map((notif) =>
-          notif._id === notificationId ? { ...notif, isRead: true } : notif
-        )
+        Array.isArray(prev)
+          ? prev.map((notif) =>
+              notif._id === notificationId ? { ...notif, isRead: true } : notif
+            )
+          : []
       );
     } catch (error) {
       console.error("Error marking notification as read:", error);
@@ -40,7 +42,9 @@ const NotificationPanel = ({
         );
 
         setNotifications((prev) =>
-          prev.filter((notif) => notif._id !== notificationId)
+          Array.isArray(prev)
+            ? prev.filter((notif) => notif._id !== notificationId)
+            : []
         );
       } catch (error) {
         console.error("Error removing notification:", error);

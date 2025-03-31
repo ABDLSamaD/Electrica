@@ -17,9 +17,10 @@ const NotificationIcon = ({ electricaURL }) => {
         `${electricaURL}/api/auth/get-notification`,
         { withCredentials: true }
       );
-      setNotifications(response.data);
+      setNotifications(Array.isArray(response.data) ? response.data : []);
     } catch (error) {
       console.error("Error fetching notifications:", error);
+      setNotifications([]);
     }
   };
 
