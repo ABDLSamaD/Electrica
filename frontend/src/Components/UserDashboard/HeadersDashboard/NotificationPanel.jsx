@@ -53,7 +53,7 @@ const NotificationPanel = ({
   };
 
   return (
-    <div className="absolute right-2 top-14 w-96 bg-gray-950/90 backdrop-blur-xl border border-gray-200/20 shadow-xl rounded-xl text-white p-4">
+    <div className="absolute -right-6 top-14 md:w-96 w-72 bg-gray-700/90 backdrop-blur-xl border border-solid border-gray-200/20 shadow-xl rounded-xl text-white p-4">
       <div className="flex justify-between items-center border-b border-gray-700 pb-2">
         <h2 className="text-lg font-semibold">Notifications</h2>
       </div>
