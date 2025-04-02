@@ -9,7 +9,7 @@ const { loginMail } = require("../utils/loginmail");
 const { sendEmail } = require("../utils/mail");
 const Project = require("../models/project");
 const mongoose = require("mongoose");
-const cron = require("node-cron");
+// const cron = require("node-cron");
 const dotenv = require("dotenv");
 const addNotification = require("./addNotification");
 dotenv.config({ path: "../../../.env" });
@@ -32,57 +32,24 @@ const encryptData = (data) => {
   return encrypted.toString();
 };
 
-// // function of delete user is  not verified
-// const deleteUnverifiedUsers = async () => {
+// cron.schedule("0 * * * *", async () => {
 //   try {
-//     // Find users who match the criteria before deleting them
-//     const usersToDelete = await User.find({
+//     const expiredUsers = await User.find({
 //       isVerified: false,
-//       createdAt: { $lte: new Date(Date.now() - 60 * 1000) }, // Older than 24 hours
+//       createdAt: { $lte: new Date(Date.now() - 24 * 60 * 60 * 1000) },
 //     });
 
-//     if (usersToDelete.length > 0) {
-//       const deletedUser = await User.deleteMany({
-//         $and: [
-//           { isVerified: false },
-//           { createdAt: { $lte: new Date(Date.now() - 60 * 1000) } },
-//         ],
+//     if (expiredUsers.length > 0) {
+//       await User.deleteMany({
+//         _id: { $in: expiredUsers.map((user) => user._id) },
 //       });
 
-//       console.log(`${deletedUser.deletedCount} unverified users deleted`);
-//     } else {
-//       console.log("No unverified users found for deletion.");
+//       console.log(`[DEBUG] Deleted ${expiredUsers.length} unverified users.`);
 //     }
 //   } catch (error) {
-//     console.error("Error deleting unverified users:", error);
+//     console.error("[ERROR] Failed to delete unverified users:", error);
 //   }
-// };
-
-// // Call this function every time a new user signs up
-// const handleNewUserSignup = () => {
-//   cron.schedule("* * * * *", () => {
-//     deleteUnverifiedUsers();
-//   });
-// };
-
-cron.schedule("0 * * * *", async () => {
-  try {
-    const expiredUsers = await User.find({
-      isVerified: false,
-      createdAt: { $lte: new Date(Date.now() - 24 * 60 * 60 * 1000) },
-    });
-
-    if (expiredUsers.length > 0) {
-      await User.deleteMany({
-        _id: { $in: expiredUsers.map((user) => user._id) },
-      });
-
-      console.log(`[DEBUG] Deleted ${expiredUsers.length} unverified users.`);
-    }
-  } catch (error) {
-    console.error("[ERROR] Failed to delete unverified users:", error);
-  }
-});
+// });
 
 exports.signUp = async (req, res) => {
   try {
