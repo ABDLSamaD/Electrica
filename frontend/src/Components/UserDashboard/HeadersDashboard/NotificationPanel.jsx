@@ -53,7 +53,7 @@ const NotificationPanel = ({
   };
 
   return (
-    <div className="absolute -right-6 top-14 md:w-96 w-72 bg-gray-700/90 backdrop-blur-xl border border-solid border-gray-200/20 shadow-xl rounded-xl text-white p-4">
+    <div className="absolute -right-6 top-14 md:w-96 w-72 bg-gray-950/90 backdrop-blur-xl border border-solid border-gray-200/20 shadow-xl rounded-xl text-white p-4">
       <div className="flex justify-between items-center border-b border-gray-700 pb-2">
         <h2 className="text-lg font-semibold">Notifications</h2>
       </div>
@@ -68,7 +68,7 @@ const NotificationPanel = ({
               className={`p-3 flex justify-between items-center rounded-lg transition-all duration-300 cursor-pointer ${
                 notif.isRead
                   ? "bg-transparent"
-                  : "bg-white/10 border border-white/20"
+                  : "bg-white/10 border border-solid border-white/20"
               } hover:bg-white/20 ${
                 removing === notif._id ? "translate-x-32 opacity-0" : ""
               }`}

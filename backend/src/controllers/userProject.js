@@ -2,6 +2,7 @@ const User = require("../models/user");
 const { sendEmail } = require("../utils/mail");
 const Admin = require("../models/admin");
 const Project = require("../models/project");
+const encryptData = require("../validators/encryptData");
 
 // create user project controller
 exports.project = async (req, res) => {
@@ -180,7 +181,10 @@ exports.getProjectDetails = async (req, res) => {
       return res.status(400).json({ type: "error", message: "User not found" });
     }
     const project = await Project.find();
-    res.status(200).json(project);
+    const encryptedUserData = encryptData({
+      project,
+    });
+    res.status(200).json({ encryptedData: encryptedUserData });
   } catch (error) {
     res.status(500).json({ type: "error", message: "Internal server error" });
   }

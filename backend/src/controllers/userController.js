@@ -2,7 +2,6 @@ const bcrypt = require("bcryptjs");
 const User = require("../models/user");
 const jwt = require("jsonwebtoken");
 const crypto = require("crypto");
-const CryptoJS = require("crypto-js");
 const { sendOtpEmail } = require("../utils/otpService");
 const { sendForgotOtpEmail } = require("../utils/OtpForgot");
 const { loginMail } = require("../utils/loginmail");
@@ -12,24 +11,12 @@ const mongoose = require("mongoose");
 // const cron = require("node-cron");
 const dotenv = require("dotenv");
 const addNotification = require("./addNotification");
+const encryptData = require("../validators/encryptData");
 dotenv.config({ path: "../../../.env" });
 
 const generateOTP = () => {
   const otp = (crypto.randomBytes(3).readUIntBE(0, 3) % 900000) + 100000;
   return otp.toString(); // Generates a 6-digit OTP
-};
-
-const SECRET_KEY = CryptoJS.enc.Utf8.parse(process.env.SECRET_KEY);
-const IV = CryptoJS.enc.Utf8.parse(process.env.IV);
-// Function to encrypt user data
-const encryptData = (data) => {
-  const encrypted = CryptoJS.AES.encrypt(JSON.stringify(data), SECRET_KEY, {
-    iv: IV,
-    mode: CryptoJS.mode.CBC,
-    padding: CryptoJS.pad.Pkcs7,
-  });
-
-  return encrypted.toString();
 };
 
 // cron.schedule("0 * * * *", async () => {

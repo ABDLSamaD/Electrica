@@ -42,8 +42,9 @@ const DashboardLayout = () => {
         `${electricaURL}/api/auth/project-details`,
         { withCredentials: true }
       );
-      if (response.status === 200) {
-        setProjects(response.data);
+      if (response.status === 200 && response.data.encryptedData) {
+        const decryptedUser = DecryptData(response.data.encryptedData);
+        setProjects(decryptedUser);
       } else {
         setProjects([]);
       }
