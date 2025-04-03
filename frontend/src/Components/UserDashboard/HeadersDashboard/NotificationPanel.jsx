@@ -1,6 +1,66 @@
-import React, { useState } from "react";
-import { X, CheckCircle } from "lucide-react";
+"use client";
+
+import { useState } from "react";
+import { X } from "lucide-react";
 import axios from "axios";
+import "./css.css";
+
+// Custom Card components to replace shadcn components
+const Card = ({ className, children }) => (
+  <div
+    className={`bg-white dark:bg-gray-900 rounded-xl shadow-xl ${className}`}
+  >
+    {children}
+  </div>
+);
+
+const CardHeader = ({ className, children }) => (
+  <div
+    className={`px-4 py-3 border-b border-gray-200 dark:border-gray-800 ${className}`}
+  >
+    {children}
+  </div>
+);
+
+const CardTitle = ({ className, children }) => (
+  <h3 className={`text-lg font-semibold ${className} text-blue-400`}>
+    {children}
+  </h3>
+);
+
+const CardContent = ({ className, children }) => (
+  <div className={className}>{children}</div>
+);
+
+// Button component
+const Button = ({ variant, size, className, onClick, children }) => {
+  const getVariantClasses = () => {
+    switch (variant) {
+      case "ghost":
+        return "bg-transparent hover:bg-gray-100 dark:hover:bg-gray-800";
+      default:
+        return "bg-blue-500 text-white hover:bg-blue-600";
+    }
+  };
+
+  const getSizeClasses = () => {
+    switch (size) {
+      case "icon":
+        return "p-1";
+      default:
+        return "px-4 py-2";
+    }
+  };
+
+  return (
+    <button
+      className={`rounded-md transition-colors ${getVariantClasses()} ${getSizeClasses()} ${className}`}
+      onClick={onClick}
+    >
+      {children}
+    </button>
+  );
+};
 
 const NotificationPanel = ({
   electricaURL,
@@ -19,11 +79,9 @@ const NotificationPanel = ({
       );
 
       setNotifications((prev) =>
-        Array.isArray(prev)
-          ? prev.map((notif) =>
-              notif._id === notificationId ? { ...notif, isRead: true } : notif
-            )
-          : []
+        prev.map((notif) =>
+          notif._id === notificationId ? { ...notif, isRead: true } : notif
+        )
       );
     } catch (error) {
       console.error("Error marking notification as read:", error);
@@ -42,9 +100,7 @@ const NotificationPanel = ({
         );
 
         setNotifications((prev) =>
-          Array.isArray(prev)
-            ? prev.filter((notif) => notif._id !== notificationId)
-            : []
+          prev.filter((notif) => notif._id !== notificationId)
         );
       } catch (error) {
         console.error("Error removing notification:", error);
@@ -53,48 +109,59 @@ const NotificationPanel = ({
   };
 
   return (
-    <div className="absolute -right-6 top-14 md:w-96 w-72 bg-gray-950/90 backdrop-blur-xl border border-solid border-gray-200/20 shadow-xl rounded-xl text-white p-4">
-      <div className="flex justify-between items-center border-b border-gray-700 pb-2">
-        <h2 className="text-lg font-semibold">Notifications</h2>
-      </div>
-
-      {notifications.length === 0 ? (
-        <p className="text-center text-gray-400 py-4">No new notifications</p>
-      ) : (
-        <ul className="mt-3 space-y-2">
-          {notifications.map((notif) => (
-            <li
-              key={notif._id}
-              className={`p-3 flex justify-between items-center rounded-lg transition-all duration-300 cursor-pointer ${
-                notif.isRead
-                  ? "bg-transparent"
-                  : "bg-white/10 border border-solid border-white/20"
-              } hover:bg-white/20 ${
-                removing === notif._id ? "translate-x-32 opacity-0" : ""
-              }`}
-            >
-              <div className="flex items-center space-x-2">
-                {!notif.isRead && (
-                  <span className="w-2 h-2 bg-blue-500 rounded-full animate-pulse"></span>
-                )}
-                <div onClick={() => markAsRead(notif._id)}>
-                  <p className="text-sm font-medium">{notif.message}</p>
-                  <span className="text-xs text-gray-400">
-                    {new Date(notif.createdAt).toLocaleString()}
-                  </span>
-                </div>
-              </div>
-              <button
-                onClick={() => removeNotification(notif._id)}
-                className="p-1 bg-red-500/30 hover:bg-red-500/50 rounded-full transition-all duration-300"
-              >
-                <X className="w-4 h-4 text-red-400" />
-              </button>
-            </li>
-          ))}
-        </ul>
-      )}
-    </div>
+    <Card className="absolute sm:right-0 -right-20 top-14 w-[320px] sm:w-[380px] md:w-[420px] border border-solid border-gray-200 dark:border-gray-800 bg-white/95 dark:bg-gray-950 z-auto">
+      <CardHeader>
+        <CardTitle>Notifications</CardTitle>
+      </CardHeader>
+      <CardContent className="p-0">
+        {notifications.length === 0 ? (
+          <div className="py-8 text-center text-gray-500 dark:text-gray-400">
+            No new notifications
+          </div>
+        ) : (
+          <div className="max-h-[350px] overflow-auto custom-scrollbar">
+            <ul className="py-2 px-2">
+              {notifications.map((notif) => (
+                <li
+                  key={notif._id}
+                  className={`mb-2 p-3 flex justify-between items-start rounded-lg transition-all duration-300 ${
+                    notif.isRead
+                      ? "bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-800"
+                      : "bg-gray-100 dark:bg-gray-800/50 border border-gray-300 dark:border-gray-700"
+                  } ${
+                    removing === notif._id ? "translate-x-32 opacity-0" : ""
+                  }`}
+                >
+                  <div
+                    className="flex items-start space-x-2 cursor-pointer"
+                    onClick={() => markAsRead(notif._id)}
+                  >
+                    {!notif.isRead && (
+                      <span className="mt-1.5 flex-shrink-0 w-2 h-2 bg-blue-500 rounded-full animate-pulse" />
+                    )}
+                    <div className="flex-1">
+                      <p className="text-sm font-medium">{notif.message}</p>
+                      <span className="text-xs text-gray-500 dark:text-gray-400">
+                        {new Date(notif.createdAt).toLocaleString()}
+                      </span>
+                    </div>
+                  </div>
+                  <Button
+                    variant="ghost"
+                    size="icon"
+                    className="h-6 w-6 rounded-full hover:bg-red-100 hover:text-red-500 dark:hover:bg-red-900/20 dark:hover:text-red-400 flex-shrink-0 -mt-1"
+                    onClick={() => removeNotification(notif._id)}
+                  >
+                    <X className="h-3.5 w-3.5" />
+                    <span className="sr-only">Remove notification</span>
+                  </Button>
+                </li>
+              ))}
+            </ul>
+          </div>
+        )}
+      </CardContent>
+    </Card>
   );
 };
 

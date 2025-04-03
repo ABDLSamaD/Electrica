@@ -2,6 +2,8 @@ import React, { useEffect, useState } from "react";
 import { Bell } from "lucide-react";
 import axios from "axios";
 import NotificationPanel from "./NotificationPanel";
+import DecryptData from "../Setting/DecryptData";
+import "./css.css";
 
 const NotificationIcon = ({ electricaURL }) => {
   const [showNotifications, setShowNotifications] = useState(false);
@@ -17,9 +19,13 @@ const NotificationIcon = ({ electricaURL }) => {
         `${electricaURL}/api/auth/get-notification`,
         { withCredentials: true }
       );
-      setNotifications(Array.isArray(response.data) ? response.data : []);
+      if (response.status === 200 && response.data.encryptedData) {
+        const decryptedUser = DecryptData(response.data.encryptedData);
+        setNotifications(decryptedUser);
+      } else {
+        setNotifications([]);
+      }
     } catch (error) {
-      console.error("Error fetching notifications:", error);
       setNotifications([]);
     }
   };

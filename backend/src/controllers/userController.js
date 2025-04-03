@@ -784,7 +784,8 @@ exports.getNotification = async (req, res) => {
     if (!userId) return res.status(401).json({ error: "Unauthorized" });
 
     const user = await User.findById(userId).select("notifications");
-    res.status(200).json(user.notifications);
+    const encryptedUserData = encryptData(user.notifications);
+    res.status(200).json({ encryptedData: encryptedUserData });
   } catch (error) {
     res.status(500).json({ error: "Failed to fetch notifications" });
   }

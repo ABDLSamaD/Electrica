@@ -181,9 +181,7 @@ exports.getProjectDetails = async (req, res) => {
       return res.status(400).json({ type: "error", message: "User not found" });
     }
     const project = await Project.find();
-    const encryptedUserData = encryptData({
-      project,
-    });
+    const encryptedUserData = encryptData(project);
     res.status(200).json({ encryptedData: encryptedUserData });
   } catch (error) {
     res.status(500).json({ type: "error", message: "Internal server error" });

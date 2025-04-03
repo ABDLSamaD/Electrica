@@ -192,7 +192,7 @@ const DashboardHome = () => {
       color: "green",
     },
     { icon: Users, label: "Team Members", value: "0", color: "purple" },
-    { icon: Activity, label: "Progress Rate", value: "8%", color: "pink" },
+    { icon: Activity, label: "Progress Rate", value: "0%", color: "pink" },
   ];
 
   const recentActivities = [
@@ -259,12 +259,12 @@ const DashboardHome = () => {
           className="flex sm:items-center items-start sm:gap-0 gap-3 justify-between sm:flex-row flex-col mb-12"
         >
           <div>
-            <div className="flex items-center gap-4 mb-3">
+            <div className="flex items-start sm:items-center sm:flex-row flex-col gap-4 mb-3">
               <h1 className="text-5xl font-bold gradient-text flex items-center gap-3">
                 Welcome {data?.name}!{" "}
-                <Sparkles className="text-yellow-400" size={32} />
               </h1>
-              <span className="px-4 py-1 bg-purple-500/20 text-purple-400 rounded-full text-sm font-medium">
+              <Sparkles className="text-yellow-400" size={32} />
+              <span className="px-4 py-1 bg-purple-500/30 text-purple-300 rounded-full text-sm font-medium mr-0 sm:mr-5">
                 {user.role}
               </span>
             </div>
