@@ -3,40 +3,20 @@ const User = require("../models/user");
 const jwt = require("jsonwebtoken");
 const crypto = require("crypto");
 const { sendOtpEmail } = require("../utils/otpService");
-const { sendForgotOtpEmail } = require("../utils/OtpForgot");
 const { loginMail } = require("../utils/loginmail");
 const { sendEmail } = require("../utils/mail");
 const Project = require("../models/project");
 const mongoose = require("mongoose");
 // const cron = require("node-cron");
-const dotenv = require("dotenv");
 const addNotification = require("./addNotification");
 const encryptData = require("../validators/encryptData");
-dotenv.config({ path: "../../../.env" });
+require("dotenv").config();
 
+// otp generator
 const generateOTP = () => {
   const otp = (crypto.randomBytes(3).readUIntBE(0, 3) % 900000) + 100000;
   return otp.toString(); // Generates a 6-digit OTP
 };
-
-// cron.schedule("0 * * * *", async () => {
-//   try {
-//     const expiredUsers = await User.find({
-//       isVerified: false,
-//       createdAt: { $lte: new Date(Date.now() - 24 * 60 * 60 * 1000) },
-//     });
-
-//     if (expiredUsers.length > 0) {
-//       await User.deleteMany({
-//         _id: { $in: expiredUsers.map((user) => user._id) },
-//       });
-
-//       console.log(`[DEBUG] Deleted ${expiredUsers.length} unverified users.`);
-//     }
-//   } catch (error) {
-//     console.error("[ERROR] Failed to delete unverified users:", error);
-//   }
-// });
 
 exports.signUp = async (req, res) => {
   try {
@@ -88,13 +68,13 @@ exports.signUp = async (req, res) => {
     const token = jwt.sign(data, process.env.JWT_SECRET, { expiresIn: "1h" });
     user.token = token;
 
+    await user.save();
+
     await addNotification(
       user._id,
       `Welcome! ${user.name} Your account has been created.`,
       "success"
     );
-
-    await user.save();
 
     res.status(200).json({
       type: "success",
@@ -309,10 +289,29 @@ exports.login = async (req, res) => {
     if (!isMatch) {
       return res.status(400).json({
         type: "error",
-        message: "Invalid credentials",
+        message: "Invalid credentials!",
         field: "password",
       });
     }
+
+    // Helper function of loginAttempt saved
+    const saveLoginAttempt = (users, deviceInfo, ipAddress) => {
+      const now = Date.now();
+      users.loginAttempt = users.loginAttempt.filter(
+        (attempt) =>
+          new Date(attempt.timestamp).getTime() > now - 30 * 24 * 60 * 60 * 1000
+      );
+
+      if (users.loginAttempt.length >= 10) {
+        users.loginAttempt.shift();
+      }
+
+      users.loginAttempt.push({
+        device: deviceInfo,
+        ipAddress,
+        timestamp: new Date(),
+      });
+    };
 
     // 🟢 Step 1: First-time login (Allow without OTP)
     if (users.sessions.length === 0) {
@@ -322,6 +321,13 @@ exports.login = async (req, res) => {
           loginTime: new Date(),
         });
       }
+
+      const clientIp =
+        ipAddress ||
+        req.headers["x-forwarded-for"]?.split(",")[0] ||
+        req.connection.remoteAddress;
+
+      saveLoginAttempt(users, deviceInfo, clientIp);
 
       req.session.user = {
         id: users.id,
@@ -347,16 +353,23 @@ exports.login = async (req, res) => {
       });
       req.session.token = token;
 
+      // Set session expiration
+      const sessionMaxAge = rememberMe
+        ? 30 * 24 * 60 * 60 * 1000 // 30 days
+        : 24 * 60 * 60 * 1000; // 1 day
+
+      req.session.cookie.maxAge = sessionMaxAge;
+
       // ✅ Authentication cookie set karo
       res.cookie("auth_token", token, {
         httpOnly: true,
         secure: process.env.NODE_ENV === "production",
         sameSite: process.env.NODE_ENV === "production" ? "None" : "Strict",
-        maxAge: 24 * 60 * 60 * 1000, // 1 day
+        maxAge: sessionMaxAge, // 1 day
       });
       await addNotification(
         users._id,
-        `${users.name}You sign in successfully.`
+        `${users.name} You sign in successfully.`
       );
       return res
         .status(200)
@@ -377,6 +390,13 @@ exports.login = async (req, res) => {
         users.otp = newOtp;
         users.otpExpires = otpExpires;
         users.otpAttempts = 0;
+
+        const clientIp =
+          ipAddress ||
+          req.headers["x-forwarded-for"]?.split(",")[0] ||
+          req.connection.remoteAddress;
+        saveLoginAttempt(users, deviceInfo, clientIp);
+
         await users.save();
         await addNotification(
           users._id,
@@ -415,29 +435,6 @@ exports.login = async (req, res) => {
     }
     await users.save();
 
-    // Get IP Address
-    const clientIp =
-      ipAddress ||
-      req.headers["x-forwarded-for"]?.split(",")[0] || // Handles proxies
-      req.connection.remoteAddress;
-
-    // Maintain login attempt history (max 10, last 30 days)
-    const now = Date.now();
-    users.loginAttempt = users.loginAttempt.filter(
-      (attempt) =>
-        new Date(attempt.timestamp).getTime() > now - 30 * 24 * 60 * 60 * 1000
-    );
-
-    if (users.loginAttempt.length >= 10) {
-      users.loginAttempt.shift();
-    }
-
-    users.loginAttempt.push({
-      device: deviceInfo,
-      ipAddress: clientIp,
-      timestamp: new Date(),
-    });
-
     // Generate JWT token (adjust expiration based on `rememberMe`)
     const tokenExpiry = rememberMe ? "30d" : "1d";
     const data = { user: { id: users.id } };
@@ -474,7 +471,7 @@ exports.login = async (req, res) => {
     await loginMail(users);
 
     await users.save();
-    res.status(200).json({ type: "success", message: "Login successfull" });
+    res.status(200).json({ type: "success", message: "Login successful" });
   } catch (error) {
     console.error("[ERROR] Login failed:", error.message);
     res.status(500).json({ type: "error", message: "Internal server error" });
@@ -536,8 +533,16 @@ exports.logout = async (req, res) => {
       }
 
       // Optionally, clear the cookie
-      res.clearCookie("auth_token"); // This is the default cookie name for express-session
-      res.clearCookie("electrica"); // This is the default cookie name for express-session
+      res.clearCookie("auth_token", {
+        httpOnly: true,
+        secure: process.env.NODE_ENV === "production",
+        sameSite: "Strict",
+      });
+      res.clearCookie("electrica", {
+        httpOnly: true,
+        secure: process.env.NODE_ENV === "production",
+        sameSite: "Strict",
+      });
 
       // Return a success message
       res
@@ -545,6 +550,7 @@ exports.logout = async (req, res) => {
         .json({ type: "success", message: "Logged out successfully" });
     });
   } catch (error) {
+    console.error("Error during logout:", error.message);
     return res
       .status(500)
       .json({ type: "error", message: "Internal server error" });
@@ -600,7 +606,7 @@ exports.forgotPassword = async (req, res) => {
     user.resetToken = resetToken;
     user.resetTokenExpires = Date.now() + 10 * 60 * 1000;
 
-    await sendForgotOtpEmail(user.email, otp);
+    await sendEmail(user.email, "Forgot OTP", `your forgot otp is: ${otp}`);
     await user.save();
 
     res.status(200).json({
@@ -703,6 +709,11 @@ exports.resetPassword = async (req, res) => {
     user.resetToken = undefined;
     user.resetTokenExpires = undefined;
 
+    sendEmail(
+      user.email,
+      "Password Reset",
+      `${user.name} you changed your password.`
+    );
     await user.save();
 
     res.status(200).json({
@@ -720,7 +731,7 @@ exports.getUserDetails = async (req, res) => {
       return res.status(401).json({ type: "error", message: "Unauthorized" });
     }
     const user = await User.findById(req.user.id).select(
-      "-password -resetToken -resetTokenExpires -otp -otpAttempts -otpExpires -loginAttempt -activityLog"
+      "-password -resetToken -resetTokenExpires -otp -otpAttempts -otpExpires"
     );
 
     if (!user) {
