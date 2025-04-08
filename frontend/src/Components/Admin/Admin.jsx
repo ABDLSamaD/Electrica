@@ -2,6 +2,7 @@ import React, { useEffect, useState } from "react";
 import Sidebar from "./Headers/Sidebars";
 import { Outlet } from "react-router-dom";
 import axios from "axios";
+import DecryptData from "../UserDashboard/Setting/DecryptData";
 
 const Admin = () => {
   const electricaURL = import.meta.env.VITE_ELECTRICA_API_URL;
@@ -20,9 +21,10 @@ const Admin = () => {
           withCredentials: true,
         }
       );
-      if (response.status === 200) {
+      if (response.status === 200 && response.data.encryptedData) {
+        const decryptedUser = DecryptData(response.data.encryptedData);
         setTimeout(() => {
-          setAdmin(response.data);
+          setAdmin(decryptedUser);
         }, 1080);
       } else {
         setAdmin("");
@@ -40,9 +42,10 @@ const Admin = () => {
         `${electricaURL}/api/adminAuth/get_all_users`,
         { withCredentials: true }
       );
-      if (response.status === 200) {
+      if (response.status === 200 && response.data.encryptedData) {
+        const decryptedUser = DecryptData(response.data.encryptedData);
         setTimeout(() => {
-          setUsers(response.data);
+          setUsers(decryptedUser);
         }, 1001);
       } else {
         setUsers([]);
@@ -58,9 +61,10 @@ const Admin = () => {
         `${electricaURL}/api/adminauth/project-details`,
         { withCredentials: true }
       );
-      if (response.status === 200) {
+      if (response.status === 200 && response.data.encryptedData) {
+        const decryptedUser = DecryptData(response.data.encryptedData);
         setTimeout(() => {
-          setProjects(response.data);
+          setProjects(decryptedUser);
         }, 1001);
       } else {
         setUsers([]);

@@ -4,6 +4,7 @@ const crypto = require("crypto");
 const Admin = require("../models/admin");
 const { sendEmail } = require("../utils/mail");
 const User = require("../models/user");
+const encryptData = require("../validators/encryptData");
 
 exports.registerAdmin = async (req, res) => {
   try {
@@ -318,7 +319,8 @@ exports.getAdmin = async (req, res) => {
       return res
         .status(401)
         .json({ type: "error", message: "admin not found!" });
-    res.json(admin);
+    const encryptedUserData = encryptData(admin);
+    res.status(200).json({ encryptedData: encryptedUserData });
   } catch (error) {
     res.status(500).json({ type: "error", message: "Internal server error" });
   }
@@ -331,7 +333,8 @@ exports.getAllUser = async (req, res) => {
       {},
       "name email profileImg activityLog isBlocked createdAt isVerified loginAttempt project totalCost contractorMessageOfBill contractorBill contractorBillDiscount discountAppliedDate address city phone fullName token"
     );
-    res.status(200).json(users);
+    const encryptedUserData = encryptData(users);
+    res.status(200).json({ encryptedData: encryptedUserData });
   } catch (error) {
     res.status(500).json({ type: "error", message: "Internal server error" });
   }

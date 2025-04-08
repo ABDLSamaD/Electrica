@@ -3,6 +3,8 @@ const BanReasons = require("../models/banReason");
 const { sendEmail } = require("../utils/mail");
 const Admin = require("../models/admin");
 const Project = require("../models/project");
+const addNotification = require("./addNotification");
+const encryptData = require("../validators/encryptData");
 
 // Controller_1: get ban reasons
 exports.getBanReasons = async (req, res) => {
@@ -147,6 +149,11 @@ exports.updateProjectStatus = async (req, res) => {
         "Pending",
         "Your request of project has pending please wait..."
       );
+      await addNotification(
+        user._id,
+        `${user.name} Your request of project has pending please wait....`,
+        "success"
+      );
       return res.status(200).json({
         type: "info",
         message: "Your request of project has pending please wait..",
@@ -159,6 +166,11 @@ exports.updateProjectStatus = async (req, res) => {
         "Rejected",
         "Your request of project has rejected please try another project"
       );
+      await addNotification(
+        user._id,
+        `${user.name} Your request of project has rejected please try another project`,
+        "success"
+      );
       return res.status(200).json({
         type: "info",
         message: "Rejected your request and removed the project.",
@@ -170,6 +182,11 @@ exports.updateProjectStatus = async (req, res) => {
       user.email,
       "Project Accepted",
       `Your request for the project has been accepted, & Contractor visit your site tommorrow ${user.name}`
+    );
+    await addNotification(
+      user._id,
+      `${user.name} Your request for the project has been accepted, & Contractor visit your site tommorrow `,
+      "success"
     );
 
     res.status(200).json({
@@ -264,6 +281,11 @@ exports.startStaged = async (req, res) => {
     project.startStageMessage = startMessage;
     sendEmail(user.email, "Project starts", `${user.name} ${startMessage}`);
     await project.save();
+    await addNotification(
+      user._id,
+      `${user.name} admin has start  the project.`,
+      "success"
+    );
 
     res
       .status(200)
@@ -345,6 +367,11 @@ exports.addStageMaterials = async (req, res) => {
     await project.save();
 
     sendEmail(user.email, "Stage Materials Added", materials);
+    await addNotification(
+      user._id,
+      "Stage Materials Added check you contract status",
+      "success"
+    );
     res.status(200).json({
       type: "success",
       message: "Material added successfully. Client has been notified",
@@ -527,6 +554,11 @@ exports.addDailyUpdate = async (req, res) => {
 
     // Send email notification
     sendEmail(user.email, "Daily Update", responseObject);
+    await addNotification(
+      user._id,
+      `${user.name} admin update your contract daily details`,
+      "success"
+    );
 
     // Respond with success message
     res.status(200).json({
@@ -555,7 +587,8 @@ exports.getProjectDetails = async (req, res) => {
         .json({ type: "error", message: "admin not found" });
     }
     const project = await Project.find();
-    res.status(200).json(project);
+    const encryptedUserData = encryptData(project);
+    res.status(200).json({ encryptedData: encryptedUserData });
   } catch (error) {
     res.status(500).json({ type: "error", message: "Internal sevrer error" });
   }
@@ -677,7 +710,12 @@ exports.completeStage = async (req, res) => {
     sendEmail(
       user.email,
       "Stage Completed",
-      `Your project "${project.clientName}" has successfully completed stage "${stageName}". You can now proceed to the next stage.`
+      `Your project "${project.clientName}" has successfully completed of stage "${stageName}". You can now proceed to the next stage.`
+    );
+    await addNotification(
+      user._id,
+      `${user.name} Your project has successfully completed of stage "${stageName}". You can now proceed to the next stage`,
+      "success"
     );
 
     res.status(200).json({
@@ -767,6 +805,11 @@ exports.notifyClient = async (req, res) => {
       user.email,
       "Inform Stage",
       `Client notified for stage ${stageName}. then our work is complete in stage${stageName}. ${message}`
+    );
+    await addNotification(
+      user._id,
+      `Client notified for stage ${stageName}. then our work is complete in stage${stageName}. ${message}`,
+      "success"
     );
 
     res.send({ message: `Client notified for stage ${stageIndex}` });
