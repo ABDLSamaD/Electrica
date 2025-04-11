@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { Link, NavLink } from "react-router-dom";
-import { FiMenu } from "react-icons/fi";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faBars } from "@fortawesome/free-solid-svg-icons";
 import axios from "axios";
 
 const HeaderMain = () => {
@@ -11,20 +12,18 @@ const HeaderMain = () => {
   // Function to check user authentication based on cookies
   const checkAuth = async () => {
     try {
-      // Make an API request to check user authentication status
-      const response = await axios.get(`${electricaURL}/api/auth/check-auth`, {
-        withCredentials: true,
-      });
+      const response = await axios.get(
+        `${electricaURL}/api/auth/check-userlogin`,
+        {
+          withCredentials: true,
+        }
+      );
 
       if (response.status === 200) {
         setIsAuthenticatedUser(response.data.isAuthenticated);
       }
     } catch (error) {
-      if (error.response?.status === 401) {
-        setIsAuthenticatedUser(false);
-      } else {
-        setIsAuthenticatedUser(false);
-      }
+      setIsAuthenticatedUser(false);
     }
   };
 
@@ -82,7 +81,7 @@ const HeaderMain = () => {
                   : "text-gray-300 hover:text-indigo-400"
               }
             >
-              Project
+              Contract
             </NavLink>
             <NavLink
               to="/service"
@@ -108,7 +107,7 @@ const HeaderMain = () => {
         </div>
         <div className="md:hidden">
           <button onClick={toggleNav} className="text-gray-200">
-            <FiMenu className="text-2xl text-gray-400" />
+            <FontAwesomeIcon icon={faBars} className="text-2xl" />
           </button>
         </div>
         {!isNavOpen && (
@@ -139,7 +138,7 @@ const HeaderMain = () => {
         } transition-transform duration-300 ease-in-out`}
       >
         <button onClick={toggleNav} className="absolute top-4 right-4">
-          <FiMenu className="text-white text-2xl" />
+          <FontAwesomeIcon icon={faBars} className="text-white text-2xl" />
         </button>
         <div className="logo pt-10 pl-3">
           <h2 className="text-gray-200 text-2xl hover:text-gray-300 transition-all">
@@ -189,7 +188,7 @@ const HeaderMain = () => {
                   : "text-gray-300 hover:text-indigo-400"
               }
             >
-              Project
+              Contract
             </NavLink>
           </li>
           <li>

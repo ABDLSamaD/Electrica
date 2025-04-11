@@ -98,7 +98,7 @@ routes.post(
 ); // signin
 routes.get("/check-auth", sessionAuth, checkAuth); // check auth
 routes.get("/check-db-session", checkDatabaseAndSession); // check database and session
-routes.get("/check-userlogin", sessionAuth, checkAuthIfLoggedIn); // check user login
+routes.get("/check-userlogin", checkAuthIfLoggedIn); // check user login
 routes.post("/updateFirstTime", decodedToken, updateFirstTime); // update first time
 routes.get("/protected-endpoint", sessionAuth, someProtectedController); // protected endpoint
 routes.post("/logout", sessionAuth, logout); // logout
@@ -143,6 +143,7 @@ routes.post("/user_activity", decodedToken, activityLog);
 
 // Complain Routes Start
 routes.post("/createcomplain", createComplain);
+routes.post("/contact-form", contactForm);
 routes.get("/:id", getComplaintById);
 routes.put("/:id/status", updateComplaintStatus);
 routes.delete("/:id", deleteComplaint);

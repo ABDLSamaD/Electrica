@@ -81,7 +81,7 @@ const AnimatedFooter = () => {
               Quick Links
             </h4>
             <ul className="space-y-3">
-              {["About", "Services", "Projects", "Contact"].map(
+              {["About", "Service", "Project-Details", "Contact"].map(
                 (item) => (
                   <li key={item}>
                     <Link

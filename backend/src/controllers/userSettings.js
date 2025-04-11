@@ -1,8 +1,8 @@
 const bcrypt = require("bcryptjs");
 const User = require("../models/user");
+const Contact = require("../models/contact");
 const dotenv = require("dotenv");
-dotenv.config({ path: "../../../.env" });
-const addNotification = require("./addNotification");
+dotenv.config();
 
 // Add Some User Details
 exports.userDetail = async (req, res) => {
@@ -23,11 +23,6 @@ exports.userDetail = async (req, res) => {
     user.city = city;
 
     await user.save();
-    await addNotification(
-      user._id,
-      `${user.name} you can submitted your details so check it.`,
-      "success"
-    );
 
     res.status(200).json({
       type: "success",
@@ -71,11 +66,6 @@ exports.changepassword = async (req, res) => {
     user.password = hashedPassword;
 
     await user.save();
-    await addNotification(
-      user._id,
-      `${user.name} you have change your password`,
-      "success"
-    );
 
     res
       .status(200)
@@ -109,11 +99,7 @@ exports.updateUserDetails = async (req, res) => {
     user.city = city || user.city;
 
     await user.save();
-    await addNotification(
-      user._id,
-      `${user.name} you can submitted your details so check it.`,
-      "success"
-    );
+
     res
       .status(200)
       .json({ type: "success", message: "Update user details successfully" });
@@ -139,11 +125,6 @@ exports.profileImage = async (req, res) => {
     }
     user.profileImg = profileImg;
     await user.save();
-    await addNotification(
-      user._id,
-      `${user.name} you have change your profile image so check it.`,
-      "success"
-    );
     res.status(200).json({ type: "success", message: "Image has been saved" });
   } catch (error) {
     console.error(error.message);
@@ -169,5 +150,33 @@ exports.activityLog = async (req, res) => {
   } catch (error) {
     console.error(error.message);
     res.status(500).json({ type: "error", message: "Internal Server Error" });
+  }
+};
+
+// Contact form
+exports.contactForm = async (req, res) => {
+  try {
+    const { firstName, lastName, email, phone, message } = req.body;
+
+    if (![firstName, lastName, email, phone, message].every(Boolean)) {
+      return res.status(400).json({
+        type: "warning",
+        message: "Please fill all required fields.",
+      });
+    }
+    const contact = await Contact.create({
+      firstName,
+      lastName,
+      email,
+      phone,
+      message,
+    });
+
+    return res.status(200).json({
+      type: "success",
+      message: "Your message has been submitted successfully.",
+    });
+  } catch (error) {
+    res.status(500).json({ type: "error", message: error.message });
   }
 };
