@@ -254,3 +254,46 @@ const SignIn = () => {
 };
 
 export default SignIn;
+
+// {
+//   "version": 2,
+//   "builds": [
+//     {
+//       "src": "backend/index.js",
+//       "use": "@vercel/node"
+//     },
+//     {
+//       "src": "frontend/dist/**",
+//       "use": "@vercel/static"
+//     }
+//   ],
+//   "routes": [
+//     {
+//       "src": "/api/(.*)",
+//       "dest": "backend/index.js"
+//     },
+//     {
+//       "handle": "filesystem"
+//     },
+//     {
+//       "src": "/assets/(.*)",
+//       "headers": { "Cache-Control": "public, max-age=31536000, immutable" },
+//       "dest": "/frontend/dist/assets/$1"
+//     },
+//     {
+//       "src": "/(.*\\.css)",
+//       "headers": { "Content-Type": "text/css" },
+//       "dest": "/frontend/dist/$1"
+//     },
+//     {
+//       "src": "/(.*\\.js)",
+//       "headers": { "Content-Type": "application/javascript" },
+//       "dest": "/frontend/dist/$1"
+//     },
+//     {
+//       "src": "/(.*)",
+//       "dest": "/frontend/dist/index.html",
+//       "status": 200
+//     }
+//   ]
+// }
