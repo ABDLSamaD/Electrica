@@ -6,8 +6,11 @@ yarn-debug.log*
 pnpm-debug.log*
 
 # Node modules
-node_modules/
+node_modules
 
+#dist
+dist/
+build/
 
 # Environment variables
 .env

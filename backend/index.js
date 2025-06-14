@@ -31,6 +31,8 @@ if (cluster.isPrimary) {
   }
   cluster.on("exit", (worker, code, signal) => {
     console.log(`worker ${worker.process.pid} died`);
+    worker = cluster.fork();
+    console.log(`worker ${worker.process.pid} restarted`);
   });
 } else {
   // connection database function call from file
@@ -38,7 +40,7 @@ if (cluster.isPrimary) {
 
   const limiter = rateLimit({
     windowMs: 5 * 60 * 1000, // 15 minutes
-    max: 200, // Limit each IP to 200 requests per `window` (here, per 5 minutes).
+    max: 100, // Limit each IP to 200 requests per `window` (here, per 5 minutes).
     standardHeaders: "draft-7", // draft-6: `RateLimit-*` headers; draft-7: combined `RateLimit` header
     message: "Too many requests, please try again after 5 minutes.",
   });
