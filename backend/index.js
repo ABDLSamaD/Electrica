@@ -96,7 +96,7 @@ if (cluster.isPrimary) {
       maxAge: 24 * 60 * 60 * 1000, // 1 day
       httpOnly: true,
       secure: process.env.NODE_ENV === "production", // Set to true in production with HTTPS
-      sameSite: process.env.NODE_ENV === "production" ? "none" : "lax", // Use 'none' for cross-site cookies in production
+      sameSite: process.env.NODE_ENV === "production" ? "None" : "Lax", // Use 'none' for cross-site cookies in production
     },
     store: MongoStore.create({
       mongoUrl: process.env.MONGO_URL,
@@ -199,8 +199,5 @@ if (cluster.isPrimary) {
   });
 
   // port listen
-  const port = process.env.PORT || 5120;
-  server.listen(port, () => {
-    console.log(`Server Listenning at port ${port}`);
-  });
+  module.exports = app;
 }
