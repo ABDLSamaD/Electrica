@@ -21,6 +21,11 @@ const connectionDatabase = require("./src/models/connection");
 const controllerRoutes = require("./src/routes/controllerRoutes");
 
 dotenv.config({ path: "../.env" });
+
+if (process.env.NODE_ENV === "production") {
+  app.set("trust proxy", 1);
+} // Trust the first proxy (for Vercel, Cloudflare, etc.)
+
 const numCPUs = os.availableParallelism
   ? os.availableParallelism()
   : os.cpus().length;
@@ -90,8 +95,8 @@ if (cluster.isPrimary) {
     cookie: {
       maxAge: 24 * 60 * 60 * 1000, // 1 day
       httpOnly: true,
-      secure: true, // Set to true in production with HTTPS
-      sameSite: "None",
+      secure: process.env.NODE_ENV === "production", // Set to true in production with HTTPS
+      sameSite: process.env.NODE_ENV === "production" ? "none" : "lax", // Use 'none' for cross-site cookies in production
     },
     store: MongoStore.create({
       mongoUrl: process.env.MONGO_URL,
@@ -100,10 +105,6 @@ if (cluster.isPrimary) {
     }),
   };
   app.use(session(sessionConfig));
-
-  if (process.env.NODE_ENV === "production") {
-    app.set("trust proxy", 1);
-  } // Trust the first proxy (for Vercel, Cloudflare, etc.)
 
   app.disable("x-powered-by");
 
