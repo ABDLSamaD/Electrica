@@ -4,7 +4,7 @@
   "scripts": {
     "dev": "npx nodemon backend/index.js",
     "start": "cd backend && npm start",
-    "build": "cd frontend && npm install && npm run build",
+    "build": "cd frontend && npm run build",
     "vercel-build": "npm ci --include=dev && cd frontend && npm ci --include=dev && npm run build"
   },
   "dependencies": {
