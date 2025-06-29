@@ -6,8 +6,8 @@ const bodyparser = require("body-parser");
 const cookieParser = require("cookie-parser");
 const session = require("express-session");
 const MongoStore = require("connect-mongo");
-const os = require("os");
-const cluster = require("cluster");
+// const os = require("os");
+// const cluster = require("cluster");
 const mongoSanitize = require("express-mongo-sanitize");
 const xss = require("xss-clean");
 const http = require("http");
@@ -26,179 +26,173 @@ if (process.env.NODE_ENV === "production") {
   app.set("trust proxy", 1);
 } // Trust the first proxy (for Vercel, Cloudflare, etc.)
 
-const numCPUs = os.availableParallelism
-  ? os.availableParallelism()
-  : os.cpus().length;
+// const numCPUs = os.availableParallelism
+//   ? os.availableParallelism()
+//   : os.cpus().length;
 
-if (cluster.isPrimary) {
-  for (let i = 0; i < numCPUs; i++) {
-    cluster.fork();
-  }
-  cluster.on("exit", (worker, code, signal) => {
-    console.log(`worker ${worker.process.pid} died`);
-    worker = cluster.fork();
-  });
-} else {
-  // connection database function call from file
-  connectionDatabase();
+// if (cluster.isPrimary) {
+//   for (let i = 0; i < numCPUs; i++) {
+//     cluster.fork();
+//   }
+//   cluster.on("exit", (worker, code, signal) => {
+//     console.log(`worker ${worker.process.pid} died`);
+//     worker = cluster.fork();
+//   });
+// } else {
+// connection database function call from file
+connectionDatabase();
 
-  const limiter = rateLimit({
-    windowMs: 5 * 60 * 1000, // 15 minutes
-    max: 100, // Limit each IP to 200 requests per `window` (here, per 5 minutes).
-    standardHeaders: "draft-7", // draft-6: `RateLimit-*` headers; draft-7: combined `RateLimit` header
-    message: "Too many requests, please try again after 5 minutes.",
-  });
-  // Apply the rate limiting middleware to all requests.
-  app.use(limiter);
+const limiter = rateLimit({
+  windowMs: 5 * 60 * 1000, // 15 minutes
+  max: 100, // Limit each IP to 200 requests per `window` (here, per 5 minutes).
+  standardHeaders: "draft-7", // draft-6: `RateLimit-*` headers; draft-7: combined `RateLimit` header
+  message: "Too many requests, please try again after 5 minutes.",
+});
+// Apply the rate limiting middleware to all requests.
+app.use(limiter);
 
-  app.use(cookieParser());
-  app.use(bodyparser.json());
+app.use(cookieParser());
+app.use(bodyparser.json());
 
-  app.use(mongoSanitize());
-  app.use(xss());
+app.use(mongoSanitize());
+app.use(xss());
 
-  // helmet cross origin secure
-  app.use(
-    helmet({
-      contentSecurityPolicy: {
-        directives: {
-          defaultSrc: ["'self'"],
-          styleSrc: [
-            "'self'",
-            "'unsafe-inline'",
-            "https://fonts.googleapis.com",
-          ],
-          fontSrc: ["'self'", "https://fonts.gstatic.com"],
-          connectSrc: ["'self'", "https://electricaapp.vercel.app"],
-        },
+// helmet cross origin secure
+app.use(
+  helmet({
+    contentSecurityPolicy: {
+      directives: {
+        defaultSrc: ["'self'"],
+        styleSrc: ["'self'", "'unsafe-inline'", "https://fonts.googleapis.com"],
+        fontSrc: ["'self'", "https://fonts.gstatic.com"],
+        connectSrc: ["'self'", "https://electricaapp.vercel.app"],
       },
-    })
-  );
-  // app.use(helmet());
-
-  // cors cnfiguration
-  const corsOptions = {
-    origin: "https://electricaapp.vercel.app", // Ensure this is set correctly
-    credentials: true, // Allow cookies to be sent
-    methods: ["GET", "POST", "PUT", "PATCH", "DELETE"],
-  };
-  app.use(cors(corsOptions));
-
-  // express-session
-  const sessionConfig = {
-    name: "electrica",
-    resave: false,
-    saveUninitialized: true,
-    secret: process.env.SESSION_SECRET, // A common session secret for both user and admin
-    proxy: true,
-    cookie: {
-      maxAge: 24 * 60 * 60 * 1000, // 1 day
-      httpOnly: true,
-      secure: process.env.NODE_ENV === "production", // Set to true in production with HTTPS
-      sameSite: process.env.NODE_ENV === "production" ? "None" : "Lax", // Use 'none' for cross-site cookies in production
     },
-    store: MongoStore.create({
-      mongoUrl: process.env.MONGO_URL,
-      collectionName: "sessions", // Common session collection
-      autoRemove: "native",
-    }),
-  };
-  app.use(session(sessionConfig));
+  })
+);
+// app.use(helmet());
 
-  app.disable("x-powered-by");
+// cors cnfiguration
+const corsOptions = {
+  origin: "https://electricaapp.vercel.app", // Ensure this is set correctly
+  credentials: true, // Allow cookies to be sent
+  methods: ["GET", "POST", "PUT", "PATCH", "DELETE"],
+};
+app.use(cors(corsOptions));
 
-  const server = http.createServer(app);
-  const io = socketIo(server, {
-    cors: corsOptions,
+// express-session
+const sessionConfig = {
+  name: "electrica",
+  resave: false,
+  saveUninitialized: true,
+  secret: process.env.SESSION_SECRET, // A common session secret for both user and admin
+  proxy: true,
+  cookie: {
+    maxAge: 24 * 60 * 60 * 1000, // 1 day
+    httpOnly: true,
+    secure: process.env.NODE_ENV === "production", // Set to true in production with HTTPS
+    sameSite: process.env.NODE_ENV === "production" ? "None" : "Lax", // Use 'none' for cross-site cookies in production
+  },
+  store: MongoStore.create({
+    mongoUrl: process.env.MONGO_URL,
+    collectionName: "sessions", // Common session collection
+    autoRemove: "native",
+  }),
+};
+app.use(session(sessionConfig));
+
+app.disable("x-powered-by");
+
+const server = http.createServer(app);
+const io = socketIo(server, {
+  cors: corsOptions,
+});
+
+io.on("connection", (socket) => {
+  console.log("A user connected");
+
+  socket.on("disconnect", () => {
+    console.log("A user disconnected");
   });
+});
 
-  io.on("connection", (socket) => {
-    console.log("A user connected");
+// routes call
+app.use("/api/auth", routes);
+app.use("/api/adminauth", adminRoutes);
+app.use("/api/reviews", controllerRoutes);
 
-    socket.on("disconnect", () => {
-      console.log("A user disconnected");
-    });
-  });
+// Attach `io` to `app` for use in controllers
+app.set("io", io);
 
-  // routes call
-  app.use("/api/auth", routes);
-  app.use("/api/adminauth", adminRoutes);
-  app.use("/api/reviews", controllerRoutes);
+app.use((err, req, res, next) => {
+  if (err instanceof SyntaxError && err.status === 400 && "body" in err) {
+    return res.status(400).json({ message: "Invalid JSON payload" });
+  }
+  next(err);
+});
 
-  // Attach `io` to `app` for use in controllers
-  app.set("io", io);
+// To block API requests from other sources while allowing your frontend to work
+app.use("/api", (req, res, next) => {
+  const allowedDomain = "https://electricaapp.vercel.app";
+  const origin = req.headers.origin || req.headers.referer || "";
 
-  app.use((err, req, res, next) => {
-    if (err instanceof SyntaxError && err.status === 400 && "body" in err) {
-      return res.status(400).json({ message: "Invalid JSON payload" });
-    }
-    next(err);
-  });
+  // Allow requests without an origin (e.g., direct visits to frontend)
+  if (!origin) return next();
 
-  // To block API requests from other sources while allowing your frontend to work
-  app.use("/api", (req, res, next) => {
-    const allowedDomain = "https://electricaapp.vercel.app";
-    const origin = req.headers.origin || req.headers.referer || "";
+  // Allow requests from your frontend only
+  if (!origin.startsWith(allowedDomain)) {
+    return res
+      .status(403)
+      .json({ message: "Forbidden: Unauthorized API access" });
+  }
 
-    // Allow requests without an origin (e.g., direct visits to frontend)
-    if (!origin) return next();
+  next();
+});
 
-    // Allow requests from your frontend only
-    if (!origin.startsWith(allowedDomain)) {
-      return res
-        .status(403)
-        .json({ message: "Forbidden: Unauthorized API access" });
-    }
+// frontend path resolve config
+// const frontendPath = path.join(__dirname, "../frontend/dist");
+// app.use(express.static(frontendPath));
 
-    next();
-  });
+// ✅ Default route for frontend (always at the end)
+// app.get("*", (req, res) => {
+//   res.sendFile(path.join(frontendPath, "index.html"), (err) => {
+//     if (err) {
+//       res.status(404).send("Frontend Not found");
+//     }
+//   });
+//   ``;
+// });
 
-  // frontend path resolve config
-  // const frontendPath = path.join(__dirname, "../frontend/dist");
-  // app.use(express.static(frontendPath));
+// Default catch-all route for Vercel
+app.all("*", (req, res) => {
+  res.status(404).send("Not Found,");
+});
 
-  // ✅ Default route for frontend (always at the end)
-  // app.get("*", (req, res) => {
-  //   res.sendFile(path.join(frontendPath, "index.html"), (err) => {
-  //     if (err) {
-  //       res.status(404).send("Frontend Not found");
-  //     }
-  //   });
-  //   ``;
-  // });
+app.use((req, res, next) => {
+  res.setHeader(
+    "Content-Security-Policy",
+    "default-src 'self'; connect-src 'self' https://electricaapp.vercel.app"
+  );
+  res.setHeader("Access-Control-Allow-Headers", "Content-Type, Authorization");
+  res.setHeader("Access-Control-Allow-Credentials", "true");
+  res.setHeader(
+    "Cache-Control",
+    "no-store, no-cache, must-revalidate, proxy-revalidate"
+  );
+  res.setHeader("Pragma", "no-cache");
+  res.setHeader("Expires", "0");
 
-  // Default catch-all route for Vercel
-  app.all("*", (req, res) => {
-    res.status(404).send("Not Found,");
-  });
+  // ✅ Remove the early `next()` call
+  if (req.method === "OPTIONS") {
+    return res.sendStatus(204);
+  }
 
-  app.use((req, res, next) => {
-    res.setHeader(
-      "Content-Security-Policy",
-      "default-src 'self'; connect-src 'self' https://electricaapp.vercel.app"
-    );
-    res.setHeader(
-      "Access-Control-Allow-Headers",
-      "Content-Type, Authorization"
-    );
-    res.setHeader("Access-Control-Allow-Credentials", "true");
-    res.setHeader(
-      "Cache-Control",
-      "no-store, no-cache, must-revalidate, proxy-revalidate"
-    );
-    res.setHeader("Pragma", "no-cache");
-    res.setHeader("Expires", "0");
+  next();
+});
 
-    // ✅ Remove the early `next()` call
-    if (req.method === "OPTIONS") {
-      return res.sendStatus(204);
-    }
-
-    next();
-  });
-
-  // port listen
-  app.listen(process.env.PORT || 5000, () => {
-    console.log(`Server is running on port ${process.env.PORT || 5000}`);
-  });
-}
+// port listen
+// app.listen(process.env.PORT || 5000, () => {
+//   console.log(`Server is running on port ${process.env.PORT || 5000}`);
+// });
+module.exports = app;
+// }
