@@ -37,7 +37,6 @@ if (cluster.isPrimary) {
   cluster.on("exit", (worker, code, signal) => {
     console.log(`worker ${worker.process.pid} died`);
     worker = cluster.fork();
-    console.log(`worker ${worker.process.pid} restarted`);
   });
 } else {
   // connection database function call from file
@@ -199,5 +198,7 @@ if (cluster.isPrimary) {
   });
 
   // port listen
-  module.exports = app;
+  app.listen(process.env.PORT || 5000, () => {
+    console.log(`Server is running on port ${process.env.PORT || 5000}`);
+  });
 }
