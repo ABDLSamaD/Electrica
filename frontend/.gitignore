@@ -9,8 +9,8 @@ pnpm-debug.log*
 node_modules
 
 #dist
-dist/
-build/
+# dist/
+# build/
 
 # Environment variables
 .env
