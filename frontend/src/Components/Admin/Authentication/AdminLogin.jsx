@@ -70,7 +70,7 @@ const AdminLogin = () => {
             onClose={() => setAlert(null)}
           />
         )}
-        <div className="w-full max-w-md form_container rounded-xl p-6 sm:p-8 bg-gray-900/80 shadow">
+        <div className="w-max form_container rounded-xl p-6 sm:p-8 bg-gray-900/80 shadow">
           <div className="back relative w-full text-3xl transition-all">
             <Link to="/" className="mx-2" title="Go back">
               <FaArrowLeft className="h-5 w-5 text-gray-400" />
