@@ -86,7 +86,7 @@ const Admin = () => {
       <Sidebar connection={electricaURL} admin={admin} />
 
       {/* Main Content */}
-      <main className="flex-1 p-1 lg:p-2 mt-16">
+      <main className="flex-1 p-1 lg:p-2 mt-8">
         {" "}
         {/* mt-16 to account for the height of the TopBar */}
         <div className="max-w-full mx-auto">
