@@ -79,6 +79,9 @@ import ScrollToTop from "./Pages/ScrollToTop";
 import Contact from "./Pages/Contact";
 // Other COmponent End
 
+// useAlert component
+import { AlertProvider } from "./OtherComponents/AlertProvider";
+
 const Main = () => {
   // const location = useLocation();
   // const [isLoading, setIsLoading] = useState(false);
@@ -112,140 +115,142 @@ const Main = () => {
         }
       >
         <Background>
-          <CheckSignupProgress />
-          <ScrollToTop />
-          <Routes>
-            <Route path="/" element={<Home />} />
-            <Route path="/about" element={<About />} />
-            <Route path="/contact" element={<Contact />} />
-            <Route path="/project-details" element={<ProjectDetails />} />
-            <Route path="/service" element={<ElectricalServicePage />} />
-            <Route path="/terms" element={<TermsAndPolicy />} />
-            <Route path="/privacy-policy" element={<PrivacyPolicy />} />
-            <Route path="/cookies" element={<CookiesAndPolicy />} />
-            <Route path="/complain" element={<Complain />} />
-            <Route path="/review" element={<ReviewPage />} />
-            <Route
-              path="/signin"
-              element={
-                <UserPublicRoute>
-                  <SignIn />
-                </UserPublicRoute>
-              }
-            />
-            <Route
-              path="/signup"
-              element={
-                <UserPublicRoute>
-                  <Signup />
-                </UserPublicRoute>
-              }
-            />
-            {/* User forgot password */}
-            <Route path="/forgot_password" element={<Forgot />} />
-            <Route path="*" element={<Errornotfound />} />
+          <AlertProvider>
+            <CheckSignupProgress />
+            <ScrollToTop />
+            <Routes>
+              <Route path="/" element={<Home />} />
+              <Route path="/about" element={<About />} />
+              <Route path="/contact" element={<Contact />} />
+              <Route path="/project-details" element={<ProjectDetails />} />
+              <Route path="/service" element={<ElectricalServicePage />} />
+              <Route path="/terms" element={<TermsAndPolicy />} />
+              <Route path="/privacy-policy" element={<PrivacyPolicy />} />
+              <Route path="/cookies" element={<CookiesAndPolicy />} />
+              <Route path="/complain" element={<Complain />} />
+              <Route path="/review" element={<ReviewPage />} />
+              <Route
+                path="/signin"
+                element={
+                  <UserPublicRoute>
+                    <SignIn />
+                  </UserPublicRoute>
+                }
+              />
+              <Route
+                path="/signup"
+                element={
+                  <UserPublicRoute>
+                    <Signup />
+                  </UserPublicRoute>
+                }
+              />
+              {/* User forgot password */}
+              <Route path="/forgot_password" element={<Forgot />} />
+              <Route path="*" element={<Errornotfound />} />
 
-            {/* Admin Authentication signin Routes */}
-            <Route
-              path="/admn-sign"
-              element={
-                <AdminPublicRoute>
-                  <AdminLogin />
-                </AdminPublicRoute>
-              }
-            />
-            <Route
-              path="/admn-forgot_pswrd"
-              element={<ForgotAdminPassword />}
-            />
-            <Route
-              path="/verifyOTPADMIN"
-              element={
-                <PrivateAdmnRoute>
-                  <VerifyADMNOTP />
-                </PrivateAdmnRoute>
-              }
-            />
-            <Route
-              path="/reset_adminPssWord"
-              element={
-                <PrivateAdmnRoute>
-                  <ResetAdminPassword />
-                </PrivateAdmnRoute>
-              }
-            />
+              {/* Admin Authentication signin Routes */}
+              <Route
+                path="/admn-sign"
+                element={
+                  <AdminPublicRoute>
+                    <AdminLogin />
+                  </AdminPublicRoute>
+                }
+              />
+              <Route
+                path="/admn-forgot_pswrd"
+                element={<ForgotAdminPassword />}
+              />
+              <Route
+                path="/verifyOTPADMIN"
+                element={
+                  <PrivateAdmnRoute>
+                    <VerifyADMNOTP />
+                  </PrivateAdmnRoute>
+                }
+              />
+              <Route
+                path="/reset_adminPssWord"
+                element={
+                  <PrivateAdmnRoute>
+                    <ResetAdminPassword />
+                  </PrivateAdmnRoute>
+                }
+              />
 
-            {/* User Forgot Password */}
-            <Route
-              path="/veify_forgot_otp"
-              element={
-                <PrivateRouteResetPass>
-                  <VerifyForgotOtp />
-                </PrivateRouteResetPass>
-              }
-            />
-            <Route
-              path="/reset-password"
-              element={
-                <PrivateRouteResetPass>
-                  <ResetPassword />
-                </PrivateRouteResetPass>
-              }
-            />
-            <Route path="/otpverify" element={<EmailVerification />} />
+              {/* User Forgot Password */}
+              <Route
+                path="/veify_forgot_otp"
+                element={
+                  <PrivateRouteResetPass>
+                    <VerifyForgotOtp />
+                  </PrivateRouteResetPass>
+                }
+              />
+              <Route
+                path="/reset-password"
+                element={
+                  <PrivateRouteResetPass>
+                    <ResetPassword />
+                  </PrivateRouteResetPass>
+                }
+              />
+              <Route path="/otpverify" element={<EmailVerification />} />
 
-            {/* User Dashboard Routes */}
-            <Route element={<PrivateRoute />}>
-              <Route path="/db-au-user" element={<DashboardLayout />}>
-                <Route index element={<DashboardHome />} />
-                <Route path="dbauabout" element={<DashboardAbout />} />
-                <Route path="project" element={<ProjectDoc />} />
-                <Route path="checkstatus" element={<CheckProjects />} />
-                <Route
-                  path="checkstatus/projectreview-1-9&/:projectId"
-                  element={<StageManagement />}
-                />
-                <Route
-                  path="checkstatus/complete/prj/:projectId"
-                  element={<NextProcess />}
-                />
-                <Route path="project/prjfrom" element={<AddProjectForm />} />
-                <Route path="db-au-profile" element={<Profile />} />
-                <Route path="db-au-setting" element={<Setting />} />
+              {/* User Dashboard Routes */}
+              <Route element={<PrivateRoute />}>
+                <Route path="/db-au-user" element={<DashboardLayout />}>
+                  <Route index element={<DashboardHome />} />
+                  <Route path="dbauabout" element={<DashboardAbout />} />
+                  <Route path="project" element={<ProjectDoc />} />
+                  <Route path="checkstatus" element={<CheckProjects />} />
+                  <Route
+                    path="checkstatus/projectreview-1-9&/:projectId"
+                    element={<StageManagement />}
+                  />
+                  <Route
+                    path="checkstatus/complete/prj/:projectId"
+                    element={<NextProcess />}
+                  />
+                  <Route path="project/prjfrom" element={<AddProjectForm />} />
+                  <Route path="db-au-profile" element={<Profile />} />
+                  <Route path="db-au-setting" element={<Setting />} />
+                </Route>
               </Route>
-            </Route>
 
-            {/* Admin Dashboard Routes */}
-            <Route element={<AdminPrivateRoute />}>
-              <Route path="/db_au_admn" element={<Admin />}>
-                <Route index element={<AdminHome />} />
-                <Route path="admn-setting" element={<AdminSettings />} />
-                <Route path="userprofile" element={<UserProfile />} />
-                <Route path="projectusers" element={<ProjectsUser />} />
-                <Route
-                  path="projectusers/stageone/:projectId"
-                  element={<Stepone />}
-                />
-                <Route
-                  path="projectusers/bill/:projectId"
-                  element={<CreatingBill />}
-                />
-                <Route
-                  path="projectusers/stageone/:projectId/addmaterial/:stageName/notify-client"
-                  element={<NotifyClientModal />}
-                />
-                <Route
-                  path="projectusers/stageone/:projectId/addmaterial/:stageName"
-                  element={<AddMaterial />}
-                />
-                <Route
-                  path="userprofile/:userId/projectreview/:projectId"
-                  element={<ProjectReview />}
-                />
-                <Route path="userprofile/:userId" element={<EachProfile />} />
+              {/* Admin Dashboard Routes */}
+              <Route element={<AdminPrivateRoute />}>
+                <Route path="/db_au_admn" element={<Admin />}>
+                  <Route index element={<AdminHome />} />
+                  <Route path="admn-setting" element={<AdminSettings />} />
+                  <Route path="userprofile" element={<UserProfile />} />
+                  <Route path="projectusers" element={<ProjectsUser />} />
+                  <Route
+                    path="projectusers/stageone/:projectId"
+                    element={<Stepone />}
+                  />
+                  <Route
+                    path="projectusers/bill/:projectId"
+                    element={<CreatingBill />}
+                  />
+                  <Route
+                    path="projectusers/stageone/:projectId/addmaterial/:stageName/notify-client"
+                    element={<NotifyClientModal />}
+                  />
+                  <Route
+                    path="projectusers/stageone/:projectId/addmaterial/:stageName"
+                    element={<AddMaterial />}
+                  />
+                  <Route
+                    path="userprofile/:userId/projectreview/:projectId"
+                    element={<ProjectReview />}
+                  />
+                  <Route path="userprofile/:userId" element={<EachProfile />} />
+                </Route>
               </Route>
-            </Route>
-          </Routes>
+            </Routes>
+          </AlertProvider>
         </Background>
       </Suspense>
       {/* </CSSTransition>

@@ -3,6 +3,7 @@ const { sendEmail } = require("../utils/mail");
 const Admin = require("../models/admin");
 const Project = require("../models/project");
 const encryptData = require("../validators/encryptData");
+const addNotification = require("./addNotification");
 
 // create user project controller
 exports.project = async (req, res) => {

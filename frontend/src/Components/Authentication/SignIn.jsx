@@ -1,6 +1,5 @@
 import { useEffect, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
-import Alert from "../OtherComponents/Alert";
 import axios from "axios";
 import InputForm from "./InputForm";
 import { UAParser } from "ua-parser-js";
@@ -8,13 +7,14 @@ import LoaderAll from "../OtherComponents/LoaderAll";
 import Cookies from "js-cookie";
 import LoginOtpVerification from "./LoginOtpVerification";
 import { FaArrowLeft } from "react-icons/fa";
+import { useAlert } from "../OtherComponents/AlertProvider";
 
 const SignIn = () => {
   const navigate = useNavigate();
   const electricaURL = import.meta.env.VITE_ELECTRICA_API_URL;
+  const { success, error, warning } = useAlert();
 
   // States
-  const [alert, setAlert] = useState(null);
   const [credentials, setCredentials] = useState({
     email: "",
     password: "",
@@ -77,15 +77,12 @@ const SignIn = () => {
           setOtpRequired(true);
           setLoading(false);
           setMiniLoader(false);
-          setAlert({ type: "success", message: response.data.message });
+          success(response.data.message);
           Cookies.set("ez-em-01e", JSON.stringify(email), { expires: 1 / 144 });
         } else {
           setMiniLoader(false);
           setLoginSuccess(true);
-          setAlert({
-            type: response.data.type,
-            message: response.data.message,
-          });
+          warning(response.data.message);
 
           setTimeout(() => {
             navigate("/db-au-user");
@@ -96,7 +93,7 @@ const SignIn = () => {
       } else {
         setLoading(false);
         setMiniLoader(false);
-        setAlert({ type: response.data.type, message: response.data.message });
+        error(response.data.message);
       }
     } catch (err) {
       setLoading(false);
@@ -109,21 +106,15 @@ const SignIn = () => {
             [field]: message,
           }));
 
-          setAlert({
-            type: "error",
-            message: message || "Invalid credentials",
-          });
+          error(message);
         } else {
-          setAlert({
-            type: "error",
-            message: err.response.data?.message || "An error occurred",
-          });
+          error(
+            err.response?.data?.message ||
+              "Something went wrong. Please try again."
+          );
         }
       } else {
-        setAlert({
-          type: "error",
-          message: "Network Error",
-        });
+        error("Network Error. Please check your connection.");
       }
     }
   };
@@ -145,7 +136,7 @@ const SignIn = () => {
       if (response.status === 200) {
         setMiniLoader(false);
         setLoginSuccess(true);
-        setAlert({ type: response.data.type, message: response.data.message });
+        success(response.data.message);
         Cookies.remove("ez-em-01e");
         setTimeout(() => {
           navigate("/db-au-user");
@@ -154,18 +145,12 @@ const SignIn = () => {
       } else {
         setLoading(false);
         setMiniLoader(false);
-        setAlert({
-          type: response.data.type,
-          message: response.data.message,
-        });
+        warning(response.data.message);
       }
     } catch (err) {
       setLoading(false);
       setMiniLoader(false);
-      setAlert({
-        type: err.response?.data?.type || "error",
-        message: err.response?.data?.message || "Network Error",
-      });
+      error(err.response?.data?.message);
     }
   };
 
@@ -179,15 +164,6 @@ const SignIn = () => {
         <div className="fixed inset-0 flex items-start pt-[20%] justify-center z-50 backdrop-blur-md">
           <LoaderAll />
         </div>
-      )}
-
-      {/* Alert notification */}
-      {alert && (
-        <Alert
-          type={alert.type}
-          message={alert.message}
-          onClose={() => setAlert(null)}
-        />
       )}
 
       {!otpRequired ? (
