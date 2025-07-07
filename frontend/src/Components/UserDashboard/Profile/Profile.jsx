@@ -28,12 +28,13 @@ import {
   Info,
   X,
 } from "lucide-react";
-import Alert from "../../OtherComponents/Alert";
 import axios from "axios";
+import { useAlert } from "../../OtherComponents/AlertProvider";
 
 const Profile = () => {
   const navigate = useNavigate();
   const { user, fetchUser, electricaURL } = useOutletContext();
+  const { success, warning, error } = useAlert();
 
   // States
   const [profileImg, setProfileImg] = useState(
@@ -45,7 +46,6 @@ const Profile = () => {
   const [imageLoading, setImageLoading] = useState(false);
   const [type, setType] = useState("");
   const [message, setMessage] = useState("");
-  const [alert, setALert] = useState(null);
   const [picMessage, setPicMessage] = useState(null);
   const [showImagePreview, setShowImagePreview] = useState(false);
   const [credentials, setCredentials] = useState({
@@ -82,17 +82,14 @@ const Profile = () => {
         }
       );
       if (response.status === 200) {
-        setALert({ type: response.data.type, message: response.data.message });
+        success(response.data.message);
         setIsEditable(false);
         fetchUser();
       } else {
-        setALert({ type: response.data.type, message: response.data.message });
+        warning(response.data.message);
       }
     } catch (err) {
-      setALert({
-        type: err.response?.data?.type,
-        message: err.response?.data?.message,
-      });
+      error(err.response?.data?.message || "Something went wrong!");
     } finally {
       setLoading(false);
     }
@@ -149,11 +146,14 @@ const Profile = () => {
       if (response.status === 200) {
         setIsImageSaved(true);
         setMessage(response.data.message);
+        success(response.data.message);
         fetchUser();
       }
       setMessage(response.data.message);
+      Info(response.data.message);
     } catch (err) {
       setMessage(err.response?.data?.message);
+      error(err.response?.data?.message);
     } finally {
       setImageLoading(false);
     }
@@ -264,21 +264,6 @@ const Profile = () => {
                 <Info className="w-5 h-5 text-blue-400" />
                 <p className="text-blue-300 font-medium">{message}</p>
               </div>
-            </motion.div>
-          )}
-
-          {alert && (
-            <motion.div
-              className="mb-6"
-              initial={{ opacity: 0, y: -20 }}
-              animate={{ opacity: 1, y: 0 }}
-              exit={{ opacity: 0, y: -20 }}
-            >
-              <Alert
-                type={alert.type}
-                message={alert.message}
-                onClose={() => setALert(null)}
-              />
             </motion.div>
           )}
         </AnimatePresence>

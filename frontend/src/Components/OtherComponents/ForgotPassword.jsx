@@ -2,15 +2,12 @@ import React, { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
 import { motion, AnimatePresence } from "framer-motion";
 import { ArrowLeft, Loader2, Mail, ShieldQuestion } from "lucide-react";
-import Alert from "./Alert";
 
 const ForgotPassword = ({
-  alert,
   handleForgotPassword,
   linkprevious,
   email,
   setEmail,
-  setAlert,
   loading,
 }) => {
   const [focusedInput, setFocusedInput] = useState(false);
@@ -74,16 +71,6 @@ const ForgotPassword = ({
         transition={{ duration: 0.5 }}
         className="w-full max-w-md z-10"
       >
-        <AnimatePresence>
-          {alert && (
-            <Alert
-              type={alert.type}
-              message={alert.message}
-              onClose={() => setAlert(null)}
-            />
-          )}
-        </AnimatePresence>
-
         <motion.div
           className="bg-white/5 backdrop-blur-xl shadow-2xl rounded-2xl p-8 relative overflow-hidden border border-white/10"
           initial={{ scale: 0.95, opacity: 0 }}

@@ -3,12 +3,13 @@ import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import GlobalVerificationEmail from "../../OtherComponents/GlobalVerificationEmail";
 import Loader from "../../OtherComponents/Loader";
+import { useAlert } from "../../OtherComponents/AlertProvider";
 
 const VerifyForgotOtp = () => {
   const navigate = useNavigate();
+  const { success, error, warning } = useAlert();
 
   const [otp, setOtp] = useState(["", "", "", "", "", ""]);
-  const [alert, setAlert] = useState(null);
   const [loading, setLoading] = useState(false);
 
   // local storage
@@ -43,27 +44,18 @@ const VerifyForgotOtp = () => {
         { otp: otpString, resetToken, email: emailForgot }
       );
       if (response.status === 200) {
-        setAlert({
-          type: response.data.type,
-          message: response.data.message,
-        });
+        success(response.data.message);
         setLoading(false);
         setTimeout(() => {
           navigate("/reset-password");
         }, 1200);
       } else {
-        setAlert({
-          type: response.data.type,
-          message: response.data.message,
-        });
+        warning(response.data.message);
         setLoading(false);
       }
     } catch (err) {
       setLoading(false);
-      setAlert({
-        type: err.response?.data?.type,
-        message: err.response?.data?.message,
-      });
+      error(err.response?.data?.message || "Something went wrong!");
     }
   };
   const resendOtp = async () => {
@@ -74,24 +66,15 @@ const VerifyForgotOtp = () => {
         { email: emailForgot }
       );
       if (response.status === 200) {
-        setAlert({
-          type: response.data.type,
-          message: response.data.message,
-        });
+        success(response.data.message);
         setLoading(false);
       } else {
-        setAlert({
-          type: response.data.type,
-          message: response.data.message,
-        });
+        warning(response.data.message);
         setLoading(false);
       }
     } catch (error) {
       setLoading(false);
-      setAlert({
-        type: err.response?.data?.type,
-        message: err.response?.data?.message,
-      });
+      error(err.response?.data?.message);
     }
   };
 
@@ -99,8 +82,6 @@ const VerifyForgotOtp = () => {
     <>
       {loading && <Loader />}
       <GlobalVerificationEmail
-        alert={alert}
-        setAlert={setAlert}
         handleOtpForm={handleVerifyOtp}
         otp={otp}
         handleChange={handleChange}

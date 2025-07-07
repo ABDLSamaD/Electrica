@@ -12,6 +12,7 @@ import {
 } from "react-icons/fi";
 import DeleteAccount from "./DeleteAccount";
 import { useOutletContext } from "react-router-dom";
+import { useAlert } from "../../OtherComponents/AlertProvider";
 
 const ToggleSwitch = ({ checked, label }) => (
   <label className="flex items-center justify-between cursor-pointer group">
@@ -82,6 +83,7 @@ const AnimatedInput = ({
 const Setting = () => {
   const { user } = useOutletContext();
   const electricaURL = import.meta.env.VITE_ELECTRICA_API_URL;
+  const { success, error } = useAlert();
   // State for notifications
   const [emailNotifications, setEmailNotifications] = useState({
     productUpdates: true,
@@ -98,9 +100,6 @@ const Setting = () => {
     newPassword: "",
     confirmPassword: "",
   });
-  const [type, setType] = useState("");
-  const [message, setMessage] = useState("");
-  const [alert, setALert] = useState(null);
 
   const [errors, setErrors] = useState({});
 
@@ -137,36 +136,19 @@ const Setting = () => {
           { withCredentials: true }
         );
         if (response.status === 200) {
-          setType(response.data.type);
-          setMessage(response.data.message);
-          setALert(response.data.type, response.data.message);
+          success(response.data.message);
           setPasswords("");
         } else {
-          setType(response.data.type);
-          setMessage(response.data.message);
-          setALert(response.data.type, response.data.message);
+          error(response.data.message);
         }
       } catch (err) {
-        setType(err.response?.data?.type);
-        setMessage(err.response?.data?.message);
-        setALert(err.response?.data?.type, err.response?.data?.message);
+        error(err.response?.data?.message);
       }
     }
   };
 
   return (
-    <>
-      {alert && (
-        <motion.div
-          initial={{ y: -20, opacity: 0 }}
-          animate={{ y: 0, opacity: 1 }}
-          exit={{ y: -20, opacity: 0 }}
-          className="fixed top-4 left-1/2 -translate-x-1/2 z-50"
-        >
-          <Alert type={type} message={message} onClose={() => setALert(null)} />
-        </motion.div>
-      )}
-
+    <React.Fragment>
       <motion.div
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
@@ -307,7 +289,7 @@ const Setting = () => {
           </div>
         </motion.section>
       </motion.div>
-    </>
+    </React.Fragment>
   );
 };
 

@@ -17,7 +17,7 @@ import {
   FaCheckCircle,
   FaExclamationCircle,
 } from "react-icons/fa";
-import Alert from "../OtherComponents/Alert";
+import { useAlert } from "../OtherComponents/AlertProvider";
 
 // Password Checker component
 const PasswordChecker = ({ password, passwordRules }) => {
@@ -86,6 +86,7 @@ const LoaderAll = ({ message, progress }) => {
 const Signup = () => {
   const navigate = useNavigate();
   const electricaURL = import.meta.env.VITE_ELECTRICA_API_URL;
+  const { success, error, warning } = useAlert();
 
   const [credentials, setCredentials] = useState({
     name: "",
@@ -93,7 +94,6 @@ const Signup = () => {
     password: "",
     termsAndCondition: false,
   });
-  const [alert, setAlert] = useState(null);
   const [isPasswordVisible, setIsPasswordVisible] = useState(false);
   const [isFocused, setIsFocused] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
@@ -189,7 +189,7 @@ const Signup = () => {
         setLoadingMessage("Account Created Successfully!");
         setLoadingProgress(100);
         setSignupSuccess(true);
-        setAlert({ type: response.data.type, message: response.data.message });
+        success(response.data.message);
 
         setTimeout(() => {
           setIsLoading(false);
@@ -199,15 +199,12 @@ const Signup = () => {
       } else {
         setIsLoading(false);
         clearProgressInterval();
-        setAlert({ type: response.data.type, message: response.data.message });
+        warning(response.data.message);
       }
     } catch (err) {
       setIsLoading(false);
       clearProgressInterval();
-      setAlert({
-        type: err.response?.data?.type || "error",
-        message: err.response?.data?.message || "Something went wrong!",
-      });
+      error(err.response?.data?.message || "Something went wrong!");
     }
   };
 
@@ -218,14 +215,6 @@ const Signup = () => {
     >
       {isLoading && (
         <LoaderAll message={loadingMessage} progress={loadingProgress} />
-      )}
-
-      {alert && (
-        <Alert
-          type={alert.type}
-          message={alert.message}
-          onClose={() => setAlert(null)}
-        />
       )}
 
       <div className="w-full max-w-md p-8 bg-gray-900/80 backdrop-blur-lg rounded-xl shadow-2xl sm:max-w-lg border border-blue-500/20">

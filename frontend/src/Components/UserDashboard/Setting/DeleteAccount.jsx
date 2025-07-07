@@ -1,10 +1,12 @@
 import React, { useState } from "react";
 import axios from "axios";
+import { useAlert } from "../../OtherComponents/AlertProvider";
 
 const DeleteAccount = ({ userId, name }) => {
+  const { success, error } = useAlert();
+
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [prompt, setPrompt] = useState("");
-  const [alert, setAlert] = useState(null);
 
   const electricaURL = import.meta.env.VITE_ELECTRICA_API_URL;
 
@@ -20,19 +22,16 @@ const DeleteAccount = ({ userId, name }) => {
       );
 
       if (response.status === 200) {
-        setAlert({ type: "success", message: response.data.message });
+        success(response.data.message);
         // Redirect or perform any post-delete action here
         setTimeout(() => {
           window.location.href = "/"; // Example redirect
         }, 2000);
       } else {
-        setAlert({ type: "error", message: response.data.message });
+        error(response.data.message);
       }
     } catch (error) {
-      setAlert({
-        type: "error",
-        message: error.response?.data?.message || "Something went wrong!",
-      });
+      error(error.response?.data?.message);
     }
   };
 
@@ -52,19 +51,6 @@ const DeleteAccount = ({ userId, name }) => {
           Delete Account
         </button>
       </div>
-
-      {/* Alert */}
-      {alert && (
-        <div
-          className={`p-3 rounded-lg text-center ${
-            alert.type === "success"
-              ? "bg-green-600 text-green-100"
-              : "bg-red-600 text-red-100"
-          }`}
-        >
-          {alert.message}
-        </div>
-      )}
 
       {/* Modal */}
       {isModalOpen && (

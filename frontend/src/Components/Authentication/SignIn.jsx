@@ -82,7 +82,7 @@ const SignIn = () => {
         } else {
           setMiniLoader(false);
           setLoginSuccess(true);
-          warning(response.data.message);
+          success(response.data.message);
 
           setTimeout(() => {
             navigate("/db-au-user");

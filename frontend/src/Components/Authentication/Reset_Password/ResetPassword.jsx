@@ -1,17 +1,17 @@
 import React, { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
-import { AnimatePresence, motion } from "framer-motion";
+import { motion } from "framer-motion";
 import axios from "axios";
 import { faArrowLeft, faLock } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import Alert from "../../OtherComponents/Alert";
 import LoginLoader from "../../OtherComponents/LoginLoader";
+import { useAlert } from "../../OtherComponents/AlertProvider";
 
 const ResetPassword = () => {
   const navigate = useNavigate();
+  const { success, error, warning } = useAlert();
 
   const [newPassword, setNewPassword] = useState("");
-  const [alert, setAlert] = useState(null);
   const [loading, setLoading] = useState(false);
   const resetToken = localStorage.getItem("reset_token_forgot");
   const electricaURL = import.meta.env.VITE_ELECTRICA_API_URL;
@@ -29,21 +29,18 @@ const ResetPassword = () => {
       );
       if (response.status === 200) {
         localStorage.clear();
-        setAlert({ type: response.data.type, message: response.data.message });
+        success(response.data.message);
         setLoading(false);
         setTimeout(() => {
           navigate("/signin");
         }, 1200);
       } else {
         setLoading(false);
-        setAlert({ type: response.data.type, message: response.data.message });
+        warning(response.data.message);
       }
     } catch (err) {
       setLoading(false);
-      setAlert({
-        type: err.response?.data?.type,
-        message: err.response?.data?.message || "Failed to reset password",
-      });
+      error(err.response?.data?.message || "Something went wrong!");
     }
   };
 
@@ -56,16 +53,6 @@ const ResetPassword = () => {
         transition={{ duration: 0.3, ease: "easeInOut" }}
         className="w-full max-w-md bg-white/80 backdrop-blur-lg rounded-lg shadow-xl border border-white/20 p-8"
       >
-        <AnimatePresence>
-          {alert && (
-            <Alert
-              type={alert.type}
-              message={alert.message}
-              onClose={() => setAlert(null)}
-            />
-          )}
-        </AnimatePresence>
-
         <div className="flex flex-col items-center text-center">
           <motion.div
             initial={{ scale: 0 }}

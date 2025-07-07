@@ -16,8 +16,10 @@ import HeaderMain from "./HeaderMain";
 import { Link } from "react-router-dom";
 import axios from "axios";
 import Miniloader from "../OtherComponents/Miniloader";
+import { useAlert } from "../OtherComponents/AlertProvider";
 
 const ReviewPage = () => {
+  const { success, error } = useAlert();
   const electricaURL = import.meta.env.VITE_ELECTRICA_API_URL;
   const [rating, setRating] = useState(0);
   const [loading, setLoading] = useState(false);
@@ -71,6 +73,7 @@ const ReviewPage = () => {
       );
       if (response.status === 200) {
         setSubmitted(false);
+        success(response.data.message);
         setTimeout(() => {
           setFormData({
             name: "",
@@ -83,10 +86,11 @@ const ReviewPage = () => {
         }, 3000);
       } else {
         setSubmitted(false);
+        error(response.data.message || "Something went wrong!");
       }
-    } catch (error) {
+    } catch (err) {
       setSubmitted(false);
-      console.error("Error submitting review:", error);
+      error(err.response?.data?.message);
     } finally {
       setLoading(false);
     }

@@ -216,10 +216,6 @@ const AddProjectForm = () => {
     } catch (error) {
       error(error.response?.data?.message);
       setLoading(false);
-      // setAlert({
-      //   type: error.response?.data?.type,
-      //   message: error.response?.data?.message,
-      // });
     } finally {
       setLoading(false);
     }
@@ -260,11 +256,6 @@ const AddProjectForm = () => {
       <div className="absolute top-32 right-20 w-2 h-2 bg-blue-400/40 rounded-full animate-pulse delay-1000"></div>
       <div className="absolute bottom-32 left-16 w-4 h-4 bg-purple-400/20 rounded-full animate-pulse delay-500"></div>
       <div className="absolute bottom-16 right-12 w-2 h-2 bg-green-400/30 rounded-full animate-pulse delay-700"></div>
-
-      <h1 onClick={handleAlert} className="text-white text-center">
-        hello
-      </h1>
-
       <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-6 sm:py-8">
         {/* Alert */}
         {/* <AnimatePresence>

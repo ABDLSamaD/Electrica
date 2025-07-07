@@ -3,14 +3,15 @@ import Cookies from "js-cookie";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
 import GlobalVerificationEmail from "../OtherComponents/GlobalVerificationEmail";
+import { useAlert } from "../OtherComponents/AlertProvider";
 
 const EmailVerification = () => {
   const navigate = useNavigate();
   const cookieEmail = Cookies.get("signup_email");
+  const { success, warning, error } = useAlert();
 
   // State management
   const [otp, setOtp] = useState(["", "", "", "", "", ""]);
-  const [alert, setAlert] = useState(null);
   const [loading, setLoading] = useState(false);
   const [loadingResend, setLoadingResend] = useState(false);
   const electricaURL = import.meta.env.VITE_ELECTRICA_API_URL;
@@ -50,23 +51,14 @@ const EmailVerification = () => {
       if (response.status === 201) {
         Cookies.remove("signup_email");
         Cookies.remove("signup_time");
-        setAlert({
-          type: response.data.type,
-          message: response.data.message,
-        });
+        success(response.data.message);
 
         setTimeout(() => navigate(response.data.redirectUrl), 1300);
       } else {
-        setAlert({
-          type: response.data.type,
-          message: response.data.message,
-        });
+        warning(response.data.message);
       }
     } catch (err) {
-      setAlert({
-        type: err.response?.data?.type,
-        message: err.response?.data?.message,
-      });
+      error(err.response?.data?.message || "An error occurred");
     } finally {
       setLoading(false);
     }
@@ -118,10 +110,7 @@ const EmailVerification = () => {
       );
 
       if (response.status === 200) {
-        setAlert({
-          type: response.data.type,
-          message: response.data.message,
-        });
+        success(response.data.message);
         // ✅ Trigger animation when OTP is resent
         document
           .getElementById("resendOtpButton")
@@ -133,16 +122,12 @@ const EmailVerification = () => {
             .classList.remove("resend-animate");
         }, 1000);
       } else {
-        setAlert({
-          type: response.data.type,
-          message: response.data.message,
-        });
+        warning(response.data.message);
       }
     } catch (err) {
-      setAlert({
-        type: err.response?.data?.type,
-        message: err.response?.data?.message,
-      });
+      error(
+        err.response?.data?.message || "An error occurred while resending OTP"
+      );
     } finally {
       setLoadingResend(false);
     }
@@ -151,8 +136,6 @@ const EmailVerification = () => {
   return (
     <div>
       <GlobalVerificationEmail
-        alert={alert}
-        setAlert={setAlert}
         handleOtpForm={handleOtpForm}
         otp={otp}
         handleChange={handleChange}

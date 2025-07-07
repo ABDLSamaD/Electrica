@@ -16,26 +16,25 @@ import {
   FiThumbsUp,
 } from "react-icons/fi";
 import LoaderAll from "../../OtherComponents/LoaderAll";
-import Alert from "../../OtherComponents/Alert";
 import MessagesSendingRecieving from "./MessagesSendingRecieving";
 import ClientConfirmation from "./ClientConfirmation";
 import ProjectStageButton from "./ProjectStageButton";
 import MaterialApproves from "./MaterialApproves";
 import WorkerDailyDetails from "./WorkerDailyDetails";
 import { EllipsisVertical } from "lucide-react";
+import { useAlert } from "../../OtherComponents/AlertProvider";
 
 const StageManagement = () => {
   const navigate = useNavigate();
   const { projects, fetchProject, electricaURL } = useOutletContext();
+  const { success, warning, error } = useAlert();
   const { projectId } = useParams();
   const [project, setProject] = useState(null);
   const [loading, setLoading] = useState(true);
   const [loadingapprovematerial, setLoadingApproveMaterial] = useState({});
   const [isCompleted, setIsCompleted] = useState(false);
-  const [error, setError] = useState("");
-  const [successMessage, setSuccessMessage] = useState("");
+  const [errors, setErrors] = useState("");
   const [message, setMessage] = useState("");
-  const [alert, setAlert] = useState(null);
   const [activeStage, setActiveStage] = useState(null);
   const [messageUser, setMessageUser] = useState([]);
   const [messageAdmin, setMessageAdmin] = useState([]);
@@ -43,7 +42,7 @@ const StageManagement = () => {
   useEffect(() => {
     const fetchData = () => {
       if (!Array.isArray(projects)) {
-        setError("Invalid project data. Please refresh the page.");
+        setErrors("Invalid project data. Please refresh the page.");
         setLoading(false);
         return;
       }
@@ -53,7 +52,7 @@ const StageManagement = () => {
       );
 
       if (!selectedProject) {
-        setError("Project not found.");
+        setErrors("Project not found.");
         return;
       }
       const allStageCompleted = selectedProject.stages.every(
@@ -67,7 +66,7 @@ const StageManagement = () => {
       setMessageUser(selectedProject.clientMessages);
       setMessageAdmin(selectedProject.adminMessages);
       setActiveStage(selectedProject.stages?.[0]?._id || null);
-      setError("");
+      setErrors("");
       setLoading(false);
     };
 
@@ -85,7 +84,7 @@ const StageManagement = () => {
       );
 
       if (response.status === 200) {
-        setSuccessMessage("Material approved successfully!");
+        success(response.data.message);
         setProject((prev) => ({
           ...prev,
           stages: prev.stages.map((stage) =>
@@ -104,7 +103,7 @@ const StageManagement = () => {
         fetchProject();
       }
     } catch (err) {
-      setError("Failed to approve material. Please try again.");
+      error(err.response?.data?.message);
     } finally {
       setLoadingApproveMaterial((prev) => ({ ...prev, [materialId]: false })); // Set loading for specific material
     }
@@ -119,18 +118,15 @@ const StageManagement = () => {
       );
 
       if (response.status === 200) {
-        setAlert({ type: response.data.type, message: response.data.message });
+        success(response.data.message);
         setMessage("");
         fetchProject();
       } else {
-        setAlert({ type: response.data.type, message: response.data.message });
+        error(response.data.message);
       }
     } catch (err) {
-      setError("Failed to send message. Please try again.");
-      setAlert({
-        type: err.response?.data?.type,
-        message: err.response?.data?.message,
-      });
+      setErrors("Failed to send message. Please try again.");
+      error(err.response?.data?.message);
     }
   };
 
@@ -152,20 +148,14 @@ const StageManagement = () => {
         { withCredentials: true }
       );
       if (response.status === 200) {
-        setAlert({ type: response.data.type, message: response.data.message });
+        success(response.data.message);
         // Refresh data or handle UI updates
         fetchProject();
       } else {
-        setAlert({
-          type: response.data.type,
-          message: response.data.message,
-        });
+        error(response.data.message);
       }
     } catch (error) {
-      setAlert({
-        type: error.response?.data?.type,
-        message: error.response?.data?.message,
-      });
+      error(err.response?.data?.message);
     }
   };
 
@@ -177,10 +167,10 @@ const StageManagement = () => {
     );
   }
 
-  if (error) {
+  if (errors) {
     return (
       <p className="text-red-500 text-center text-2xl bg-gray-800 min-h-screen flex items-center justify-center">
-        {error}
+        {errors}
       </p>
     );
   }
@@ -200,13 +190,6 @@ const StageManagement = () => {
           /<span className="text-gray-600">project</span>
         </>
       </button>
-      {alert && (
-        <Alert
-          type={alert.type}
-          message={alert.message}
-          onClose={setAlert(null)}
-        />
-      )}
 
       <div className="md:container mx-auto w-full md:p-8 p-4 relative">
         <MessagesSendingRecieving
@@ -376,11 +359,7 @@ const StageManagement = () => {
             </div>
           ) : null
         )}
-
-        {successMessage && (
-          <p className="text-green-500 text-center mt-4">{successMessage}</p>
-        )}
-        {error && <p className="text-red-500 text-center mt-4">{error}</p>}
+        {errors && <p className="text-red-500 text-center mt-4">{errors}</p>}
       </div>
     </div>
   );

@@ -2,11 +2,13 @@ import React, { useState } from "react";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
 import ForgotPassword from "../../OtherComponents/ForgotPassword";
+import { useAlert } from "../../OtherComponents/AlertProvider";
 
 const Forgot = () => {
   const navigate = useNavigate();
+  const { success, error, warning } = useAlert();
+
   const [email, setEmail] = useState("");
-  const [alert, setAlert] = useState(null);
   const [loading, setLoading] = useState(false);
   const electricaURL = import.meta.env.VITE_ELECTRICA_API_URL;
 
@@ -19,20 +21,17 @@ const Forgot = () => {
         { email }
       );
       if (response.status === 200) {
-        setAlert({ type: response.data.type, message: response.data.message });
+        success(response.data.message);
         localStorage.setItem("reset_token_forgot", response.data.resetToken);
         localStorage.setItem("email-forgot", email);
         setTimeout(() => {
           navigate("/veify_forgot_otp");
         }, 1200);
       } else {
-        setAlert({ type: response.data.type, message: response.data.message });
+        warning(response.data.message);
       }
     } catch (err) {
-      setAlert({
-        type: err.response?.data?.type,
-        message: err.response?.data?.message || "Failed to send OTP",
-      });
+      error(err.response?.data?.message || "Something went wrong!");
     } finally {
       setLoading(false);
     }
@@ -40,8 +39,6 @@ const Forgot = () => {
 
   return (
     <ForgotPassword
-      alert={alert}
-      setAlert={setAlert}
       handleForgotPassword={handleForgotPassword}
       email={email}
       setEmail={setEmail}

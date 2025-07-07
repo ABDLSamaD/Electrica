@@ -1,18 +1,14 @@
 "use client";
 
 import { useEffect, useRef } from "react";
-import { Link } from "react-router-dom";
 import {
   FaEnvelope,
   FaSpinner,
   FaCheckCircle,
   FaExclamationCircle,
 } from "react-icons/fa";
-import Alert from "./Alert";
 
 const GlobalVerificationEmail = ({
-  alert,
-  setAlert,
   handleOtpForm,
   otp,
   handleChange,
@@ -65,18 +61,8 @@ const GlobalVerificationEmail = ({
     }
   }, []);
 
-
   return (
     <div className="min-h-screen flex items-center justify-center relative overflow-hidden p-4">
-      {/* Alert notification */}
-      {alert && (
-        <Alert
-          type={alert.type}
-          message={alert.message}
-          onClose={() => setAlert(null)}
-        />
-      )}
-
       {/* Main card */}
       <div className="relative border-solid bg-gray-900/80 text-white shadow-2xl rounded-xl p-6 sm:p-8 w-full max-w-md backdrop-blur-md border border-gray-700/50 animate-fade-in">
         {/* Header */}

@@ -23,6 +23,7 @@ import {
   Clock,
 } from "lucide-react";
 import ProjectsGrid from "./ProjectsGrid";
+import { useAlert } from "../../OtherComponents/AlertProvider";
 
 // Helper function to highlight matching text
 const highlightText = (text, query) => {
@@ -41,6 +42,7 @@ const highlightText = (text, query) => {
 
 const CheckProjects = () => {
   const { user, projects, fetchProject, electricaURL } = useOutletContext();
+  const { success, error } = useAlert();
   const navigate = useNavigate();
   const [loading, setLoading] = useState(true);
   const [searchQuery, setSearchQuery] = useState("");
@@ -72,14 +74,14 @@ const CheckProjects = () => {
         { withCredentials: true }
       );
       if (response.status === 200) {
-        alert(response.data.message);
+        success(response.data.message);
         fetchProject();
         navigate("/db-au-user/project");
       } else {
-        alert(response.data.message);
+        error(response.data.message);
       }
     } catch (error) {
-      alert(error.response?.data?.message || "Failed to remove project.");
+      error(error.response?.data?.message || "Failed to remove project.");
     } finally {
       setLoading(false);
     }

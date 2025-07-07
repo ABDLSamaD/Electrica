@@ -12,8 +12,10 @@ import HeaderMain from "./HeaderMain";
 import AnimatedFooter from "./Footer";
 import MiniLoader from "../OtherComponents/Miniloader";
 import axios from "axios";
+import { useAlert } from "../OtherComponents/AlertProvider";
 
 const Contact = () => {
+  const { success, error } = useAlert();
   const [formData, setFormData] = useState({
     firstName: "",
     lastName: "",
@@ -43,7 +45,7 @@ const Contact = () => {
       );
       if (response.status === 200) {
         // reset after 800 miliseecons
-        alert("form submitted");
+        success(response.data.message);
         setTimeout(() => {
           setLoading(false);
           setFormData({
@@ -56,10 +58,11 @@ const Contact = () => {
         }, 800);
       } else {
         setLoading(false);
+        error(response.data.message);
       }
-    } catch (error) {
+    } catch (err) {
+      error(err.response?.data?.message);
       setLoading(false);
-      console.log(error);
     }
   };
 
