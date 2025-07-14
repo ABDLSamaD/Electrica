@@ -1,6 +1,5 @@
-import React from "react";
 import Documentation from "./Documentation";
-import "../../dashboard.css";
+// import "../../dashboard.css"; // Assuming this is for global styles and not needed here
 
 const ProjectDoc = () => {
   return (

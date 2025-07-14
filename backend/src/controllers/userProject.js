@@ -125,15 +125,17 @@ exports.project = async (req, res) => {
 // remove user project controller
 exports.removeProject = async (req, res) => {
   try {
-    const { projectId, confirmRemoval = false, reason } = req.body;
+    const { projectId, confirmRemoval } = req.body;
 
     const userId = req.user.id;
-    const { user, project, error } = await getProjectAndStage(
-      userId,
-      projectId
-    );
-    if (error) {
-      return res.status(400).json({ type: "error", message: error }); // Handle error if returned from helper
+    const user = await User.findById(userId);
+    if (!user) {
+      return res.status(400).json({ type: "error", message: "User not found" });
+    }
+    if (!isValidObjectId(projectId)) {
+      return res
+        .status(400)
+        .json({ type: "error", message: "Invalid project ID" });
     }
 
     if (confirmRemoval !== true) {
@@ -142,22 +144,20 @@ exports.removeProject = async (req, res) => {
         message: "Confirmation to remove the project is required.",
       });
     }
-    if (!reason) {
-      return res
-        .status(400)
-        .json({ type: "error", message: "reason requried" });
-    }
 
     // Remove the project from the database
-    await project.findByIdAndDelete(projectId);
+    const project = await Project.findByIdAndDelete(projectId);
+    if (!project) {
+      return res
+        .status(400)
+        .json({ type: "error", message: "Project not found" });
+    }
 
     const admin = await Admin.find();
     sendEmail(
       admin.email,
       "Remove Project",
-      `${
-        user.name
-      } removed his project and reason ${reason} at ${new Date().toLocaleDateString()}`
+      `${user.name} removed his project at ${new Date().toLocaleDateString()}`
     );
     await addNotification(
       user._id,
@@ -169,6 +169,7 @@ exports.removeProject = async (req, res) => {
       .status(200)
       .json({ type: "success", message: "Project removed successfully." });
   } catch (error) {
+    console.log("error", error.message);
     res.status(500).json({ type: "error", message: "Internal server error" });
   }
 };

@@ -10,8 +10,8 @@ const MongoStore = require("connect-mongo");
 // const cluster = require("cluster");
 const mongoSanitize = require("express-mongo-sanitize");
 const xss = require("xss-clean");
-const http = require("http");
-const socketIo = require("socket.io");
+// const http = require("http");
+// const socketIo = require("socket.io");
 const { rateLimit } = require("express-rate-limit");
 const helmet = require("helmet");
 // const path = require("path");
@@ -103,18 +103,18 @@ app.use(session(sessionConfig));
 
 app.disable("x-powered-by");
 
-const server = http.createServer(app);
-const io = socketIo(server, {
-  cors: corsOptions,
-});
+// const server = http.createServer(app);
+// const io = socketIo(server, {
+//   cors: corsOptions,
+// });
 
-io.on("connection", (socket) => {
-  console.log("A user connected");
+// io.on("connection", (socket) => {
+//   console.log("A user connected");
 
-  socket.on("disconnect", () => {
-    console.log("A user disconnected");
-  });
-});
+//   socket.on("disconnect", () => {
+//     console.log("A user disconnected");
+//   });
+// });
 
 // routes call
 app.use("/api/auth", routes);
@@ -122,7 +122,7 @@ app.use("/api/adminauth", adminRoutes);
 app.use("/api/reviews", controllerRoutes);
 
 // Attach `io` to `app` for use in controllers
-app.set("io", io);
+// app.set("io", io);
 
 app.use((err, req, res, next) => {
   if (err instanceof SyntaxError && err.status === 400 && "body" in err) {
