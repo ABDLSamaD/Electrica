@@ -468,7 +468,7 @@ exports.login = async (req, res) => {
       role: "user",
     };
     // ✅ Send login email notification
-    await loginMail(users);
+    // await loginMail(users);
 
     await users.save();
     res.status(200).json({ type: "success", message: "Login successful" });

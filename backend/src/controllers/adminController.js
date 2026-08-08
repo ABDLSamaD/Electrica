@@ -105,7 +105,7 @@ exports.loginAdmin = async (req, res) => {
       text = `${subject} ${admin.username} has Login successfully.  
       ${new Date().toLocaleDateString()} - ${new Date().toLocaleTimeString()}`;
 
-    sendEmail(email, subject, text);
+    // sendEmail(email, subject, text);
 
     await admin.save();
 
