@@ -19,7 +19,7 @@ const DashboardLayout = () => {
   // Fetch User
   // -------------------------
   const {
-    data: user = {},
+    data: user = { user: null, isFirstTime: false },
     isLoading: isUserLoading,
   } = useQuery({
     queryKey: ["user"],
@@ -39,14 +39,15 @@ const DashboardLayout = () => {
 
       if (!data.encryptedData) {
         return {
-          user: {},
+          user: null,
           isFirstTime: false,
         };
       }
 
+      const decryptedUser = DecryptData(data.encryptedData);
       return {
-        user: DecryptData(data.encryptedData),
-        isFirstTime: data.isFirstTime,
+        user: decryptedUser || null,
+        isFirstTime: data.isFirstTime ?? false,
       };
     },
 
@@ -137,7 +138,7 @@ const DashboardLayout = () => {
         />
       ) : (
         <>
-          <Topbar />
+          <Topbar user={user?.user} electricaURL={electricaURL} />
 
           <motion.div
             key="main-content"

@@ -269,7 +269,7 @@ const Topbar = ({ user, electricaURL }) => {
                   <div className="relative">
                     <LazyLoadImage
                       src={
-                        user.profileImg || "/placeholder.svg?height=32&width=32"
+                        user?.profileImg || "/placeholder.svg?height=32&width=32"
                       }
                       alt="Profile"
                       loading="lazy"
@@ -281,7 +281,7 @@ const Topbar = ({ user, electricaURL }) => {
                   {!isMobile && (
                     <div className="hidden md:block text-left">
                       <p className="text-sm font-semibold text-white truncate max-w-24">
-                        {user.name}
+                        {user?.name || "Guest User"}
                       </p>
                       <p className="text-xs text-white/60">Online</p>
                     </div>
@@ -310,7 +310,7 @@ const Topbar = ({ user, electricaURL }) => {
                         <div className="relative inline-block">
                           <LazyLoadImage
                             src={
-                              user.profileImg ||
+                              user?.profileImg ||
                               "/placeholder.svg?height=80&width=80"
                             }
                             alt="Profile"
@@ -322,11 +322,11 @@ const Topbar = ({ user, electricaURL }) => {
                           </div>
                         </div>
                         <h3 className="mt-4 text-xl font-bold text-white">
-                          {user.name}
+                          {user?.name || "Guest User"}
                         </h3>
                         <p className="text-sm text-white/60 flex items-center justify-center mt-1">
                           <Mail className="w-3 h-3 mr-1" />
-                          {user.email}
+                          {user?.email || "No email available"}
                         </p>
                         <div className="flex items-center justify-center mt-2 space-x-4 text-xs text-white/50">
                           <div className="flex items-center">
@@ -510,7 +510,7 @@ const Topbar = ({ user, electricaURL }) => {
                     <div className="flex items-center space-x-3">
                       <LazyLoadImage
                         src={
-                          user.profileImg ||
+                          user?.profileImg ||
                           "/placeholder.svg?height=40&width=40"
                         }
                         alt="Profile"
@@ -519,10 +519,10 @@ const Topbar = ({ user, electricaURL }) => {
                       />
                       <div className="flex-1 min-w-0">
                         <p className="text-white font-semibold text-sm truncate">
-                          {user.name}
+                          {user?.name || "Guest User"}
                         </p>
                         <p className="text-white/60 text-xs truncate">
-                          {user.email}
+                          {user?.email || "No email available"}
                         </p>
                       </div>
                       <div className="w-2 h-2 bg-green-500 rounded-full"></div>
