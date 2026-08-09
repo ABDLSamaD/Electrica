@@ -14,7 +14,11 @@ const EmailVerification = () => {
   const [otp, setOtp] = useState(["", "", "", "", "", ""]);
   const [loading, setLoading] = useState(false);
   const [loadingResend, setLoadingResend] = useState(false);
-  const electricaURL = import.meta.env.VITE_ELECTRICA_API_URL;
+  const electricaURL =
+    import.meta.env.VITE_ELECTRICA_API_URL &&
+    import.meta.env.VITE_ELECTRICA_API_URL !== "undefined"
+      ? import.meta.env.VITE_ELECTRICA_API_URL
+      : "";
 
   const handleChange = (e, index) => {
     const value = e.target.value;

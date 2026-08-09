@@ -7,7 +7,11 @@ import axios from "axios";
 const HeaderMain = () => {
   const [isAuthenticatedUser, setIsAuthenticatedUser] = useState(false);
   const [isNavOpen, setIsNavOpen] = useState(false);
-  const electricaURL = import.meta.env.VITE_ELECTRICA_API_URL;
+  const electricaURL =
+    import.meta.env.VITE_ELECTRICA_API_URL &&
+    import.meta.env.VITE_ELECTRICA_API_URL !== "undefined"
+      ? import.meta.env.VITE_ELECTRICA_API_URL
+      : "";
 
   // Function to check user authentication based on cookies
   const checkAuth = async () => {

@@ -14,7 +14,11 @@ const ResetPassword = () => {
   const [newPassword, setNewPassword] = useState("");
   const [loading, setLoading] = useState(false);
   const resetToken = localStorage.getItem("reset_token_forgot");
-  const electricaURL = import.meta.env.VITE_ELECTRICA_API_URL;
+  const electricaURL =
+    import.meta.env.VITE_ELECTRICA_API_URL &&
+    import.meta.env.VITE_ELECTRICA_API_URL !== "undefined"
+      ? import.meta.env.VITE_ELECTRICA_API_URL
+      : "";
 
   const handleResetPassword = async (e) => {
     e.preventDefault();

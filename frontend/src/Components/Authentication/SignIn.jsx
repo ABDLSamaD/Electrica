@@ -12,7 +12,11 @@ import { useAlert } from "../OtherComponents/AlertProvider";
 const SignIn = () => {
   const navigate = useNavigate();
   // Use axios global baseURL set by axiosSetup; avoid using undefined env var
-  const electricaURL = import.meta.env.VITE_ELECTRICA_API_URL;
+  const electricaURL =
+    import.meta.env.VITE_ELECTRICA_API_URL &&
+    import.meta.env.VITE_ELECTRICA_API_URL !== "undefined"
+      ? import.meta.env.VITE_ELECTRICA_API_URL
+      : "";
   const { success, error, warning } = useAlert();
 
   // States

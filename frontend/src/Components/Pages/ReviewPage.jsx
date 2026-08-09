@@ -20,7 +20,11 @@ import { useAlert } from "../OtherComponents/AlertProvider";
 
 const ReviewPage = () => {
   const { success, error } = useAlert();
-  const electricaURL = import.meta.env.VITE_ELECTRICA_API_URL;
+  const electricaURL =
+    import.meta.env.VITE_ELECTRICA_API_URL &&
+    import.meta.env.VITE_ELECTRICA_API_URL !== "undefined"
+      ? import.meta.env.VITE_ELECTRICA_API_URL
+      : "";
   const [rating, setRating] = useState(0);
   const [loading, setLoading] = useState(false);
   const [hoverRating, setHoverRating] = useState(0);

@@ -74,7 +74,11 @@ const karigars = [
 ];
 
 function Complain() {
-  const electricaURL = import.meta.env.VITE_ELECTRICA_API_URL;
+  const electricaURL =
+    import.meta.env.VITE_ELECTRICA_API_URL &&
+    import.meta.env.VITE_ELECTRICA_API_URL !== "undefined"
+      ? import.meta.env.VITE_ELECTRICA_API_URL
+      : "";
   const [selectedKarigar, setSelectedKarigar] = useState(null);
   const [showForm, setShowForm] = useState(false);
   const [urgency, setUrgency] = useState("medium");

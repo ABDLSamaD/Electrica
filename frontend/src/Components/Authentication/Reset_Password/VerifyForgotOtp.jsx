@@ -16,7 +16,11 @@ const VerifyForgotOtp = () => {
   const resetToken = localStorage.getItem("reset_token_forgot");
   const emailForgot = localStorage.getItem("email-forgot");
 
-  const electricaURL = import.meta.env.VITE_ELECTRICA_API_URL;
+  const electricaURL =
+    import.meta.env.VITE_ELECTRICA_API_URL &&
+    import.meta.env.VITE_ELECTRICA_API_URL !== "undefined"
+      ? import.meta.env.VITE_ELECTRICA_API_URL
+      : "";
 
   const handleChange = (e, index) => {
     const value = e.target.value;

@@ -10,7 +10,11 @@ const Forgot = () => {
 
   const [email, setEmail] = useState("");
   const [loading, setLoading] = useState(false);
-  const electricaURL = import.meta.env.VITE_ELECTRICA_API_URL;
+  const electricaURL =
+    import.meta.env.VITE_ELECTRICA_API_URL &&
+    import.meta.env.VITE_ELECTRICA_API_URL !== "undefined"
+      ? import.meta.env.VITE_ELECTRICA_API_URL
+      : "";
 
   const handleForgotPassword = async (e) => {
     e.preventDefault();

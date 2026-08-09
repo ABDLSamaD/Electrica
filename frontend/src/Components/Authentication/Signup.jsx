@@ -85,7 +85,11 @@ const LoaderAll = ({ message, progress }) => {
 
 const Signup = () => {
   const navigate = useNavigate();
-  const electricaURL = import.meta.env.VITE_ELECTRICA_API_URL;
+  const electricaURL =
+    import.meta.env.VITE_ELECTRICA_API_URL &&
+    import.meta.env.VITE_ELECTRICA_API_URL !== "undefined"
+      ? import.meta.env.VITE_ELECTRICA_API_URL
+      : "";
   const { success, error, warning } = useAlert();
 
   const [credentials, setCredentials] = useState({

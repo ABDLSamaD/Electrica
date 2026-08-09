@@ -82,7 +82,11 @@ const AnimatedInput = ({
 
 const Setting = () => {
   const { user } = useOutletContext();
-  const electricaURL = import.meta.env.VITE_ELECTRICA_API_URL;
+  const electricaURL =
+    import.meta.env.VITE_ELECTRICA_API_URL &&
+    import.meta.env.VITE_ELECTRICA_API_URL !== "undefined"
+      ? import.meta.env.VITE_ELECTRICA_API_URL
+      : "";
   const { success, error } = useAlert();
   // State for notifications
   const [emailNotifications, setEmailNotifications] = useState({

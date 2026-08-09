@@ -24,7 +24,11 @@ const Contact = () => {
     message: "",
   });
   const [loading, setLoading] = useState(false);
-  const electricaURL = import.meta.env.VITE_ELECTRICA_API_URL;
+  const electricaURL =
+    import.meta.env.VITE_ELECTRICA_API_URL &&
+    import.meta.env.VITE_ELECTRICA_API_URL !== "undefined"
+      ? import.meta.env.VITE_ELECTRICA_API_URL
+      : "";
 
   const handleChange = (e) => {
     const { name, value } = e.target;

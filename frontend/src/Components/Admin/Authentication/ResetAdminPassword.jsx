@@ -10,7 +10,11 @@ import { FaArrowLeft } from "react-icons/fa";
 const ResetAdminPassword = () => {
   const navigate = useNavigate();
   const resetToken = localStorage.getItem("admn_resttokn");
-  const electricaURL = import.meta.env.VITE_ELECTRICA_API_URL;
+  const electricaURL =
+    import.meta.env.VITE_ELECTRICA_API_URL &&
+    import.meta.env.VITE_ELECTRICA_API_URL !== "undefined"
+      ? import.meta.env.VITE_ELECTRICA_API_URL
+      : "";
 
   const [newPassword, setNewPassword] = useState("");
   const [alert, setAlert] = useState(null);
