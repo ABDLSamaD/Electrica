@@ -530,6 +530,7 @@ exports.logout = async (req, res) => {
   }
   try {
     const user = await User.findById(req.session.user.id);
+    const userId = req.session.user.id;
     user.token = null;
     // Remove only the current session (not all)
     user.sessions = user.sessions.filter((s) => s.sessionId !== req.sessionID);
