@@ -320,7 +320,9 @@ exports.getAdmin = async (req, res) => {
         .status(401)
         .json({ type: "error", message: "admin not found!" });
     const encryptedUserData = encryptData(admin);
-    res.status(200).json({ encryptedData: encryptedUserData });
+    const resp = { encryptedData: encryptedUserData };
+    if (process.env.EXPOSE_PLAIN_DATA === "true") resp.plainData = admin;
+    res.status(200).json(resp);
   } catch (error) {
     res.status(500).json({ type: "error", message: "Internal server error" });
   }
@@ -334,7 +336,9 @@ exports.getAllUser = async (req, res) => {
       "name email profileImg activityLog isBlocked createdAt isVerified loginAttempt project totalCost contractorMessageOfBill contractorBill contractorBillDiscount discountAppliedDate address city phone fullName token"
     );
     const encryptedUserData = encryptData(users);
-    res.status(200).json({ encryptedData: encryptedUserData });
+    const resp = { encryptedData: encryptedUserData };
+    if (process.env.EXPOSE_PLAIN_DATA === "true") resp.plainData = users;
+    res.status(200).json(resp);
   } catch (error) {
     res.status(500).json({ type: "error", message: "Internal server error" });
   }

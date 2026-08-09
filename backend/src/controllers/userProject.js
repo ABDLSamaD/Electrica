@@ -218,10 +218,9 @@ exports.getProjectDetails = async (req, res) => {
       console.log(`[CACHE HIT] ${cacheKey}`);
 
       const encryptedUserData = encryptData(cachedProjects);
-
-      return res.status(200).json({
-        encryptedData: encryptedUserData,
-      });
+      const resp = { encryptedData: encryptedUserData };
+      if (process.env.EXPOSE_PLAIN_DATA === "true") resp.plainData = cachedProjects;
+      return res.status(200).json(resp);
     }
 
     console.log(`[CACHE MISS] ${cacheKey}`);
@@ -236,10 +235,9 @@ exports.getProjectDetails = async (req, res) => {
     cache.set(cacheKey, projects, 300);
 
     const encryptedUserData = encryptData(projects);
-
-    return res.status(200).json({
-      encryptedData: encryptedUserData,
-    });
+    const resp = { encryptedData: encryptedUserData };
+    if (process.env.EXPOSE_PLAIN_DATA === "true") resp.plainData = projects;
+    return res.status(200).json(resp);
   } catch (error) {
     console.error("getProjectDetails error:", error.message);
 

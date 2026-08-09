@@ -41,6 +41,14 @@ const DashboardLayout = () => {
 
       const data = await response.json();
 
+      // If server provides plainData (for debugging or when decryption keys are not available), use it
+      if (data.plainData) {
+        return {
+          user: data.plainData || null,
+          isFirstTime: data.isFirstTime ?? false,
+        };
+      }
+
       if (!data.encryptedData) {
         return {
           user: null,
@@ -79,6 +87,8 @@ const DashboardLayout = () => {
       }
 
       const data = await response.json();
+
+      if (data.plainData) return data.plainData || [];
 
       if (!data.encryptedData) {
         return [];

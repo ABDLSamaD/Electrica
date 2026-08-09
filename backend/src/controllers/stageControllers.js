@@ -588,7 +588,9 @@ exports.getProjectDetails = async (req, res) => {
     }
     const project = await Project.find();
     const encryptedUserData = encryptData(project);
-    res.status(200).json({ encryptedData: encryptedUserData });
+    const resp = { encryptedData: encryptedUserData };
+    if (process.env.EXPOSE_PLAIN_DATA === "true") resp.plainData = project;
+    res.status(200).json(resp);
   } catch (error) {
     res.status(500).json({ type: "error", message: "Internal sevrer error" });
   }

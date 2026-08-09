@@ -755,11 +755,12 @@ exports.getUserDetails = async (req, res) => {
       console.log(`[CACHE HIT] ${cacheKey}`);
 
       const encryptedUserData = encryptData(cachedUser);
-
-      return res.json({
+      const resp = {
         encryptedData: encryptedUserData,
         isFirstTime: cachedUser.isFirstTime,
-      });
+      };
+      if (process.env.EXPOSE_PLAIN_DATA === "true") resp.plainData = cachedUser;
+      return res.json(resp);
     }
 
     console.log(`[CACHE MISS] ${cacheKey}`);
@@ -783,11 +784,12 @@ exports.getUserDetails = async (req, res) => {
 
     // 4. Encrypt response
     const encryptedUserData = encryptData(user);
-
-    return res.json({
+    const resp = {
       encryptedData: encryptedUserData,
       isFirstTime: user.isFirstTime,
-    });
+    };
+    if (process.env.EXPOSE_PLAIN_DATA === "true") resp.plainData = user;
+    return res.json(resp);
   } catch (error) {
     console.error("getUserDetails error:", error.message);
 

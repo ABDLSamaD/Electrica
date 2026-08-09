@@ -21,7 +21,7 @@ const NotificationIcon = ({ electricaURL }) => {
       );
       if (response.status === 200 && response.data.encryptedData) {
         const decryptedUser = DecryptData(response.data.encryptedData);
-        setNotifications(decryptedUser);
+        setNotifications(decryptedUser || []);
       } else {
         setNotifications([]);
       }

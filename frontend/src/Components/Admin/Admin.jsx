@@ -25,10 +25,13 @@ const Admin = () => {
           withCredentials: true,
         }
       );
-      if (response.status === 200 && response.data.encryptedData) {
-        const decryptedUser = DecryptData(response.data.encryptedData);
+      if (response.status === 200) {
+        const data = response.data;
+        const decryptedUser = data.plainData
+          ? data.plainData
+          : DecryptData(data.encryptedData);
         setTimeout(() => {
-          setAdmin(decryptedUser);
+          setAdmin(decryptedUser || "");
         }, 1080);
       } else {
         setAdmin("");
@@ -46,10 +49,13 @@ const Admin = () => {
         `${electricaURL}/api/adminAuth/get_all_users`,
         { withCredentials: true }
       );
-      if (response.status === 200 && response.data.encryptedData) {
-        const decryptedUser = DecryptData(response.data.encryptedData);
+      if (response.status === 200) {
+        const data = response.data;
+        const decryptedUser = data.plainData
+          ? data.plainData
+          : DecryptData(data.encryptedData);
         setTimeout(() => {
-          setUsers(decryptedUser);
+          setUsers(decryptedUser || []);
         }, 1001);
       } else {
         setUsers([]);
@@ -65,13 +71,16 @@ const Admin = () => {
         `${electricaURL}/api/adminauth/project-details`,
         { withCredentials: true }
       );
-      if (response.status === 200 && response.data.encryptedData) {
-        const decryptedUser = DecryptData(response.data.encryptedData);
+      if (response.status === 200) {
+        const data = response.data;
+        const decryptedUser = data.plainData
+          ? data.plainData
+          : DecryptData(data.encryptedData);
         setTimeout(() => {
-          setProjects(decryptedUser);
+          setProjects(decryptedUser || []);
         }, 1001);
       } else {
-        setUsers([]);
+        setProjects([]);
       }
     } catch (error) {
       setUsers([]);
