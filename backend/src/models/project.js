@@ -6,7 +6,11 @@ const projectSchema = new mongoose.Schema({
   isActive: { type: Boolean, default: true }, // Tracks if the project is currently active
   clientName: String,
   clientNumber: { type: Number, required: true },
-  projectDescription: { type: String, required: true },
+  projectDescription: {
+    type: String,
+    default: "",
+    trim: true,
+  },
   projectName: { type: String, required: true },
   projectAddress: { type: String, required: true },
   projectCity: { type: String, required: true },
@@ -20,7 +24,10 @@ const projectSchema = new mongoose.Schema({
     enum: ["Low", "Medium", "High"],
     required: true,
   },
-  projectPics: [String], // General project images
+  projectPics: {
+    type: [String],
+    default: [],
+  }, // General project images
   status: {
     type: String,
     enum: ["submitted", "pending", "approved", "rejected"],

@@ -24,21 +24,25 @@ exports.project = async (req, res) => {
     } = req.body;
 
     if (
-      !clientName ||
+      !clientName?.trim() ||
       !clientNumber ||
-      !projectDescription ||
-      !projectAddress ||
-      !projectName ||
-      !projectCity ||
+      !projectAddress?.trim() ||
+      !projectName?.trim() ||
+      !projectCity?.trim() ||
       !category ||
       !voltageType ||
       !phases ||
-      !estimatedBudget ||
-      advancePaid === undefined
+      estimatedBudget === undefined ||
+      estimatedBudget === null ||
+      estimatedBudget === "" ||
+      advancePaid === undefined ||
+      advancePaid === null ||
+      advancePaid === ""
     ) {
-      return res
-        .status(400)
-        .json({ type: "error", message: "All fields are required" });
+      return res.status(400).json({
+        type: "error",
+        message: "All required fields must be provided",
+      });
     }
 
     let userId = req.user.id;
@@ -86,7 +90,7 @@ exports.project = async (req, res) => {
     const project = new Project({
       clientName,
       clientNumber,
-      projectDescription,
+      projectDescription: projectDescription?.trim() || "",
       projectAddress,
       projectName,
       projectCity,
@@ -95,10 +99,14 @@ exports.project = async (req, res) => {
       phases,
       estimatedBudget,
       advancePaid,
-      projectPics: projectPics || [],
-      status: "submitted", // Initially set the status to 'submitted'
+      projectPics: Array.isArray(projectPics)
+        ? projectPics
+        : projectPics
+          ? [projectPics]
+          : [],
+      status: "submitted",
       stages: initialStages,
-      user: userId, // Reference to the user who created the project
+      user: userId,
     });
 
     await project.save();
@@ -109,7 +117,7 @@ exports.project = async (req, res) => {
     );
 
     let text = `${user.name} your project ${projectName} submited successfully. plesae wait for an admin to approve your project. `;
-    sendEmail(user.email, "Project Submission ", text);
+    // sendEmail(user.email, "Project Submission ", text);
 
     res.status(200).json({
       type: "success",
@@ -341,11 +349,10 @@ exports.clientConfirmStageCompletion = async (req, res) => {
 
     res.status(200).json({
       type: "success",
-      message: `Client has ${
-        clientConfirmed
-          ? `confirmed completion of "${stageName}" with a start date: ${startDate}`
-          : "requested delay for this stage."
-      }`,
+      message: `Client has ${clientConfirmed
+        ? `confirmed completion of "${stageName}" with a start date: ${startDate}`
+        : "requested delay for this stage."
+        }`,
     });
   } catch (error) {
     res.status(500).json({ type: "error", message: "Internal server error" });

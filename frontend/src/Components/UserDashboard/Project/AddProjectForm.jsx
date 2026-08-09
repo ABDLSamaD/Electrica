@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { useMutation } from "@tanstack/react-query";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { useNavigate, useOutletContext } from "react-router-dom";
 import {
   ArrowLeft,
@@ -26,23 +26,25 @@ import { useAlert } from "../../OtherComponents/AlertProvider";
 
 const AddProjectForm = () => {
   const navigate = useNavigate();
+  const queryClient = useQueryClient();
 
-  const {
-    user,
-    fetchUser,
-    fetchProject,
-    electricaURL,
-  } = useOutletContext();
+  // Null-safe context extraction
+  const outletContext = useOutletContext() || {};
+  const { user = {}, electricaURL = "" } = outletContext;
 
   const { success, error, warning } = useAlert();
 
+  // Safe user object
+  const safeUser =
+    user && typeof user === "object" ? user : {};
+
   const [formData, setFormData] = useState({
-    clientName: user?.fullName || "",
-    clientNumber: user?.phone || "",
+    clientName: safeUser.fullName || safeUser.name || "",
+    clientNumber: safeUser.phone || "",
     projectDescription: "",
-    projectAddress: user?.address || "",
+    projectAddress: safeUser.address || "",
     projectName: "",
-    projectCity: user?.city || "",
+    projectCity: safeUser.city || "",
     category: "",
     voltageType: "",
     phases: "",
@@ -56,24 +58,30 @@ const AddProjectForm = () => {
   const [showImagePreview, setShowImagePreview] = useState(null);
   const [imagePreviews, setImagePreviews] = useState([]);
 
-  /*
-   * Keep user information synchronized if the parent
-   * context updates after the component has mounted.
-   */
+  // Keep user information synchronized
   useEffect(() => {
+    const latestSafeUser =
+      user && typeof user === "object" ? user : {};
+
     setFormData((previous) => ({
       ...previous,
-      clientName: user?.fullName || previous.clientName,
-      clientNumber: user?.phone || previous.clientNumber,
-      projectAddress: user?.address || previous.projectAddress,
-      projectCity: user?.city || previous.projectCity,
+      clientName:
+        latestSafeUser.fullName ||
+        latestSafeUser.name ||
+        previous.clientName,
+      clientNumber:
+        latestSafeUser.phone ||
+        previous.clientNumber,
+      projectAddress:
+        latestSafeUser.address ||
+        previous.projectAddress,
+      projectCity:
+        latestSafeUser.city ||
+        previous.projectCity,
     }));
   }, [user]);
 
-  /*
-   * Create image previews once when selected files change.
-   * Revoke object URLs when they are no longer needed.
-   */
+  // Create image previews
   useEffect(() => {
     if (!formData.projectPics.length) {
       setImagePreviews([]);
@@ -88,7 +96,9 @@ const AddProjectForm = () => {
     setImagePreviews(previews);
 
     return () => {
-      previews.forEach(({ url }) => URL.revokeObjectURL(url));
+      previews.forEach(({ url }) =>
+        URL.revokeObjectURL(url)
+      );
     };
   }, [formData.projectPics]);
 
@@ -163,6 +173,25 @@ const AddProjectForm = () => {
       return;
     }
 
+    // Max 10 images validation
+    if (files.length > 10) {
+      warning("You can upload a maximum of 10 images.");
+      event.target.value = "";
+      return;
+    }
+
+    // File type validation
+    const invalidFile = files.find(
+      (file) =>
+        !["image/jpeg", "image/png"].includes(file.type)
+    );
+
+    if (invalidFile) {
+      warning("Only JPEG and PNG images are allowed.");
+      event.target.value = "";
+      return;
+    }
+
     setPicMessage("");
 
     setFormData((previous) => ({
@@ -170,9 +199,6 @@ const AddProjectForm = () => {
       projectPics: files,
     }));
 
-    /*
-     * Allows selecting the same files again later.
-     */
     event.target.value = "";
   };
 
@@ -186,14 +212,13 @@ const AddProjectForm = () => {
   };
 
   const createProject = async () => {
-    /*
-     * Images are optional.
-     * If there are no images, we simply submit an empty projectPics list.
-     */
     let imageUrls = [];
 
     if (formData.projectPics.length > 0) {
-      imageUrls = await uploadImagesToCloudinary(formData.projectPics);
+      imageUrls =
+        await uploadImagesToCloudinary(
+          formData.projectPics
+        );
     }
 
     const {
@@ -214,7 +239,10 @@ const AddProjectForm = () => {
 
     newFormData.append("clientName", clientName);
     newFormData.append("clientNumber", clientNumber);
-    newFormData.append("projectDescription", projectDescription);
+    newFormData.append(
+      "projectDescription",
+      projectDescription
+    );
     newFormData.append("projectAddress", projectAddress);
     newFormData.append("projectName", projectName);
     newFormData.append("projectCity", projectCity);
@@ -254,65 +282,40 @@ const AddProjectForm = () => {
     return responseData;
   };
 
-  const {
-    mutate: submitProject,
-    isPending: loading,
-  } = useMutation({
-    mutationFn: createProject,
+  const { mutate: submitProject, isPending: loading } =
+    useMutation({
+      mutationFn: createProject,
 
-    onSuccess: async (data) => {
-      success(data.message);
+      onSuccess: (data) => {
+        success(data.message);
 
-      /*
-       * Preserve existing application behavior.
-       * These functions are supplied by DashboardLayout.
-       */
-      await Promise.allSettled([
-        fetchUser(),
-        fetchProject(),
-      ]);
+        // Invalidate queries to refresh data
+        queryClient.invalidateQueries({
+          queryKey: ["projects"],
+        });
 
-      setTimeout(() => {
+        queryClient.invalidateQueries({
+          queryKey: ["user"],
+        });
+
+        // Navigate immediately after success
         navigate("/db-au-user/checkstatus");
-      }, 2301);
-    },
+      },
 
-    onError: (submitError) => {
-      error(submitError.message || "Something went wrong.");
-    },
-  });
+      onError: (submitError) => {
+        error(
+          submitError.message ||
+            "Something went wrong while creating the project."
+        );
+      },
+    });
 
   const validateForm = () => {
-    /*
-     * These are the mandatory fields.
-     *
-     * Client:
-     * # clientName
-     * # clientNumber
-     *
-     * Project:
-     * # projectName
-     * # projectDescription
-     * # projectAddress
-     * # projectCity
-     *
-     * Technical:
-     * # category
-     * # voltageType
-     * # phases
-     *
-     * Financial:
-     * # estimatedBudget
-     * # advancePaid
-     *
-     * Images are OPTIONAL.
-     */
-
+    // projectDescription is now OPTIONAL
     const requiredFields = [
       ["clientName", "Client name"],
       ["clientNumber", "Contact number"],
       ["projectName", "Project name"],
-      ["projectDescription", "Project description"],
       ["projectAddress", "Project address"],
       ["projectCity", "Project city"],
       ["category", "Project category"],
@@ -369,8 +372,9 @@ const AddProjectForm = () => {
             </h1>
 
             <p className="mt-2 max-w-3xl text-sm leading-6 text-gray-600 dark:text-gray-400">
-              Add the client, project, technical, financial, and optional
-              image details for your electrical project.
+              Add the client, project, technical, financial, and
+              optional image details for your electrical
+              project.
             </p>
           </div>
 
@@ -385,8 +389,11 @@ const AddProjectForm = () => {
 
               <p className="mt-1 text-gray-600 dark:text-gray-400">
                 Fields marked with{" "}
-                <span className="font-semibold text-red-500">#</span>{" "}
-                are mandatory. Project images are optional.
+                <span className="font-semibold text-red-500">
+                  #
+                </span>{" "}
+                are mandatory. Project images and
+                description are optional.
               </p>
             </div>
           </div>
@@ -515,24 +522,6 @@ const AddProjectForm = () => {
                 </FormField>
               </div>
 
-              {/* Description */}
-              <FormField
-                label="Project Description"
-                required
-                description="Describe the electrical work, scope and specific tasks."
-                icon={<FileText className="h-4 w-4" />}
-              >
-                <textarea
-                  name="projectDescription"
-                  value={formData.projectDescription}
-                  onChange={handleInputChange}
-                  placeholder="Describe the electrical work needed..."
-                  rows={5}
-                  required
-                  className={`${inputClass} resize-y`}
-                />
-              </FormField>
-
               {/* Address */}
               <FormField
                 label="Project Address"
@@ -547,6 +536,22 @@ const AddProjectForm = () => {
                   placeholder="Enter complete address including street and area"
                   rows={3}
                   required
+                  className={`${inputClass} resize-y`}
+                />
+              </FormField>
+
+              {/* Description - OPTIONAL */}
+              <FormField
+                label="Project Description"
+                description="Briefly describe the electrical work, scope and specific tasks."
+                icon={<FileText className="h-4 w-4" />}
+              >
+                <textarea
+                  name="projectDescription"
+                  value={formData.projectDescription}
+                  onChange={handleInputChange}
+                  placeholder="Describe the electrical work if needed..."
+                  rows={4}
                   className={`${inputClass} resize-y`}
                 />
               </FormField>
@@ -617,9 +622,15 @@ const AddProjectForm = () => {
                   className={selectClass}
                 >
                   <option value="">Select Voltage</option>
-                  <option value="Low">Low Voltage (120-240V)</option>
-                  <option value="Medium">Medium Voltage (480-600V)</option>
-                  <option value="High">High Voltage (Above 1000V)</option>
+                  <option value="Low">
+                    Low Voltage (120-240V)
+                  </option>
+                  <option value="Medium">
+                    Medium Voltage (480-600V)
+                  </option>
+                  <option value="High">
+                    High Voltage (Above 1000V)
+                  </option>
                 </select>
               </FormField>
 
@@ -721,16 +732,19 @@ const AddProjectForm = () => {
 
                   <ul className="mt-2 space-y-1 text-sm text-gray-600 dark:text-gray-400">
                     <li>
-                      • Residential electrical work: 20,000 - 350,000 PKR
+                      • Residential electrical work: 20,000 -
+                      350,000 PKR
                     </li>
                     <li>
-                      • Commercial projects: 50,000 - 200,000 PKR
+                      • Commercial projects: 50,000 - 200,000
+                      PKR
                     </li>
                     <li>
                       • Industrial installations: 100,000+ PKR
                     </li>
                     <li>
-                      • Advance payment is typically 20-30% of total budget
+                      • Advance payment is typically 20-30%
+                      of total budget
                     </li>
                   </ul>
                 </div>
@@ -755,8 +769,8 @@ const AddProjectForm = () => {
                   </h2>
 
                   <p className="text-sm text-gray-500 dark:text-gray-400">
-                    Add photos of the existing setup, problem areas or
-                    reference images.
+                    Add photos of the existing setup, problem
+                    areas or reference images.
                   </p>
                 </div>
               </div>
@@ -812,46 +826,55 @@ const AddProjectForm = () => {
                     <CheckCircle className="h-4 w-4 text-green-600" />
 
                     <h4 className="text-sm font-semibold text-gray-900 dark:text-white">
-                      Selected Images ({imagePreviews.length})
+                      Selected Images (
+                      {imagePreviews.length})
                     </h4>
                   </div>
 
                   <div className="grid grid-cols-2 gap-4 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5">
-                    {imagePreviews.map(({ file, url }, index) => (
-                      <div key={`${file.name}-${index}`}>
-                        <div className="group relative overflow-hidden rounded-lg border border-gray-200 bg-gray-100 dark:border-gray-800 dark:bg-gray-800">
-                          <img
-                            src={url}
-                            alt={`Preview ${index + 1}`}
-                            className="h-28 w-full object-cover"
-                          />
+                    {imagePreviews.map(
+                      ({ file, url }, index) => (
+                        <div
+                          key={`${file.name}-${index}`}
+                        >
+                          <div className="group relative overflow-hidden rounded-lg border border-gray-200 bg-gray-100 dark:border-gray-800 dark:bg-gray-800">
+                            <img
+                              src={url}
+                              alt={`Preview ${index + 1}`}
+                              className="h-28 w-full object-cover"
+                            />
 
-                          <div className="absolute inset-0 flex items-center justify-center gap-2 bg-black/50 opacity-0 transition-opacity group-hover:opacity-100">
-                            <button
-                              type="button"
-                              onClick={() => setShowImagePreview(url)}
-                              className="rounded-lg bg-white/90 p-2 text-gray-800 hover:bg-white"
-                              aria-label="Preview image"
-                            >
-                              <Eye className="h-4 w-4" />
-                            </button>
+                            <div className="absolute inset-0 flex items-center justify-center gap-2 bg-black/50 opacity-0 transition-opacity group-hover:opacity-100">
+                              <button
+                                type="button"
+                                onClick={() =>
+                                  setShowImagePreview(url)
+                                }
+                                className="rounded-lg bg-white/90 p-2 text-gray-800 hover:bg-white"
+                                aria-label="Preview image"
+                              >
+                                <Eye className="h-4 w-4" />
+                              </button>
 
-                            <button
-                              type="button"
-                              onClick={() => handleRemoveImage(index)}
-                              className="rounded-lg bg-red-500 p-2 text-white hover:bg-red-600"
-                              aria-label="Remove image"
-                            >
-                              <Trash2 className="h-4 w-4" />
-                            </button>
+                              <button
+                                type="button"
+                                onClick={() =>
+                                  handleRemoveImage(index)
+                                }
+                                className="rounded-lg bg-red-500 p-2 text-white hover:bg-red-600"
+                                aria-label="Remove image"
+                              >
+                                <Trash2 className="h-4 w-4" />
+                              </button>
+                            </div>
                           </div>
-                        </div>
 
-                        <p className="mt-1 truncate text-xs text-gray-500 dark:text-gray-400">
-                          {file.name}
-                        </p>
-                      </div>
-                    ))}
+                          <p className="mt-1 truncate text-xs text-gray-500 dark:text-gray-400">
+                            {file.name}
+                          </p>
+                        </div>
+                      )
+                    )}
                   </div>
                 </div>
               )}
@@ -866,9 +889,18 @@ const AddProjectForm = () => {
                     </p>
 
                     <ul className="mt-2 space-y-1">
-                      <li>• Take clear photos of electrical panels and problem areas.</li>
-                      <li>• Include both wide shots and close-ups when useful.</li>
-                      <li>• Reference images can also be added.</li>
+                      <li>
+                        • Take clear photos of electrical
+                        panels and problem areas.
+                      </li>
+                      <li>
+                        • Include both wide shots and
+                        close-ups when useful.
+                      </li>
+                      <li>
+                        • Reference images can also be
+                        added.
+                      </li>
                     </ul>
                   </div>
                 </div>
@@ -879,8 +911,11 @@ const AddProjectForm = () => {
           {/* Submit */}
           <div className="flex flex-col-reverse gap-3 border-t border-gray-200 pt-6 sm:flex-row sm:items-center sm:justify-between dark:border-gray-800">
             <p className="text-sm text-gray-500 dark:text-gray-400">
-              <span className="font-semibold text-red-500">#</span>{" "}
-              Required fields must be completed before submitting.
+              <span className="font-semibold text-red-500">
+                #
+              </span>{" "}
+              Required fields must be completed before
+              submitting.
             </p>
 
             <div className="flex gap-3">
@@ -914,7 +949,7 @@ const AddProjectForm = () => {
           </div>
         </form>
 
-        {/* Image Preview */}
+        {/* Image Preview Modal */}
         {showImagePreview && (
           <div
             className="fixed inset-0 z-50 flex items-center justify-center bg-black/70 p-4"
@@ -947,9 +982,7 @@ const AddProjectForm = () => {
 };
 
 /*
- * Reusable field wrapper.
- * Keeping this outside the component prevents a new component
- * definition from being created on every render.
+ * Reusable field wrapper
  */
 const FormField = ({
   label,
@@ -990,10 +1023,10 @@ const FormField = ({
   );
 };
 
+// Simplified input styling - no blue focus ring
 const inputClass =
-  "w-full rounded-lg border border-gray-300 bg-white px-3.5 py-2.5 text-sm text-gray-900 outline-none transition focus:border-blue-500 focus:ring-2 focus:ring-blue-500/10 placeholder:text-gray-400 dark:border-gray-700 dark:bg-gray-950 dark:text-white dark:placeholder:text-gray-600";
+  "w-full rounded-lg border border-gray-300 bg-white px-3 py-2.5 text-sm text-gray-900 placeholder:text-gray-400 outline-none focus:border-gray-300 focus:ring-0 dark:border-gray-700 dark:bg-gray-900 dark:text-white dark:placeholder:text-gray-500 dark:focus:border-gray-700";
 
-const selectClass =
-  "w-full rounded-lg border border-gray-300 bg-white px-3.5 py-2.5 text-sm text-gray-900 outline-none transition focus:border-blue-500 focus:ring-2 focus:ring-blue-500/10 dark:border-gray-700 dark:bg-gray-950 dark:text-white";
+const selectClass = inputClass;
 
 export default AddProjectForm;
