@@ -1,7 +1,7 @@
 const CryptoJS = require("crypto-js");
 const dotenv = require("dotenv");
 
-dotenv.config({ path: "../../../.env" });
+dotenv.config();
 
 const SECRET_KEY = CryptoJS.enc.Utf8.parse(process.env.SECRET_KEY);
 const IV = CryptoJS.enc.Utf8.parse(process.env.IV);
