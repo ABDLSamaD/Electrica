@@ -29,6 +29,7 @@ import {
 } from "lucide-react";
 
 import { useAlert } from "../../OtherComponents/AlertProvider";
+import DecryptData from "../Setting/DecryptData";
 
 const DEFAULT_PROFILE_IMAGE =
   "https://upload.wikimedia.org/wikipedia/commons/thumb/b/b5/Windows_10_Default_Profile_Picture.svg/2048px-Windows_10_Default_Profile_Picture.svg.png";
@@ -63,7 +64,7 @@ const Profile = () => {
   // --------------------------------------------------
 
   const {
-    data: user = {},
+    data = { user: {}, isFirstTime: false },
     isLoading: isUserLoading,
     isError: isUserError,
   } = useQuery({
@@ -81,21 +82,33 @@ const Profile = () => {
         throw new Error("Failed to fetch user information");
       }
 
-      const data = await response.json();
+      const payload = await response.json();
 
-      if (!data.encryptedData) {
-        return {};
+      if (payload.plainData) {
+        return {
+          user: payload.plainData || {},
+          isFirstTime: payload.isFirstTime ?? false,
+        };
       }
 
-      // Keep the same DecryptData implementation
-      // if your backend still returns encrypted data.
-      // Import it if required by your project.
-      return data.encryptedData;
+      if (!payload.encryptedData) {
+        return {
+          user: {},
+          isFirstTime: payload.isFirstTime ?? false,
+        };
+      }
+
+      return {
+        user: DecryptData(payload.encryptedData) || {},
+        isFirstTime: payload.isFirstTime ?? false,
+      };
     },
 
     staleTime: 5 * 60 * 1000,
     refetchOnWindowFocus: false,
   });
+
+  const user = data.user || {};
 
   // --------------------------------------------------
   // Update local form values when user data is available
