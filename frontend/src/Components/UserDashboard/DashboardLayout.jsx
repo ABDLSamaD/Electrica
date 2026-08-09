@@ -84,7 +84,7 @@ const DashboardLayout = () => {
         return [];
       }
 
-      return DecryptData(data.encryptedData);
+      return DecryptData(data.encryptedData) || [];
     },
 
     staleTime: 5 * 60 * 1000,
