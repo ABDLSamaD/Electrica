@@ -25,6 +25,7 @@ import {
   UserCheck,
   Info,
   X,
+  Award,
 } from "lucide-react";
 
 import { useAlert } from "../../OtherComponents/AlertProvider";
