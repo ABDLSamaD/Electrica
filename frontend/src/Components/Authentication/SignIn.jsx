@@ -61,7 +61,9 @@ const SignIn = () => {
 
     try {
       // Step 1: Get IP address
-      const ipResponse = await axios.get("https://api.ipify.org?format=json");
+      const ipResponse = await axios.get("https://api.ipify.org?format=json", {
+        withCredentials: false,
+      });
       const ipAddress = ipResponse.data.ip;
 
       // Step 2: Get device details using UAParser
