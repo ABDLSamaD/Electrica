@@ -28,6 +28,7 @@ import {
   Title,
   Tooltip,
   Legend,
+  Filler,
 } from "chart.js";
 import { Line } from "react-chartjs-2";
 
@@ -36,6 +37,7 @@ ChartJS.register(
   LinearScale,
   PointElement,
   LineElement,
+  Filler,
   Title,
   Tooltip,
   Legend
@@ -113,9 +115,14 @@ const DashboardHome = () => {
     const timer = setTimeout(() => {
       try {
         setData(user);
-        const checkUser = projects.filter(
-          (project) => project.user === user._id
-        );
+        const checkUser = projects.filter((project) => {
+          if (!project || !user) return false;
+          try {
+            return String(project.user) === String(user._id);
+          } catch (e) {
+            return false;
+          }
+        });
         setIfUser(checkUser);
       } catch (err) {
         setError("Failed to load user data.");
