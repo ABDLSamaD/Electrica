@@ -4,6 +4,15 @@ const Admin = require("../models/admin");
 const Project = require("../models/project");
 const encryptData = require("../validators/encryptData");
 const addNotification = require("./addNotification");
+const {
+  cache,
+  CACHE_KEYS,
+  invalidateUser,
+  invalidateUserProjects,
+  invalidateProject,
+  invalidateProjectAndUser,
+} = require("../utils/cache");
+
 
 // create user project controller
 exports.project = async (req, res) => {
@@ -110,6 +119,9 @@ exports.project = async (req, res) => {
     });
 
     await project.save();
+
+    invalidateUserProjects(userId);
+
     await addNotification(
       user._id,
       `${user.name} you have submitted your project ${projectName}, the contractor will contact you soon.`,
@@ -161,12 +173,15 @@ exports.removeProject = async (req, res) => {
         .json({ type: "error", message: "Project not found" });
     }
 
+    invalidateProjectAndUser(projectId, userId);
+
     const admin = await Admin.find();
-    sendEmail(
-      admin.email,
-      "Remove Project",
-      `${user.name} removed his project at ${new Date().toLocaleDateString()}`
-    );
+    // sendEmail(
+    //   admin.email,
+    //   "Remove Project",
+    //   `${user.name} removed his project at ${new Date().toLocaleDateString()}`
+    // );
+
     await addNotification(
       user._id,
       `${user.name} you have remove your project ${project.projectName}`,
@@ -185,16 +200,53 @@ exports.removeProject = async (req, res) => {
 // get user project details
 exports.getProjectDetails = async (req, res) => {
   try {
-    let userId = req.user.id; // Extracted from middleware
-    const user = await User.findById(userId);
-    if (!user) {
-      return res.status(400).json({ type: "error", message: "User not found" });
+    const userId = req.user?.id;
+
+    if (!userId) {
+      return res.status(401).json({
+        type: "error",
+        message: "Unauthorized",
+      });
     }
-    const project = await Project.find();
-    const encryptedUserData = encryptData(project);
-    res.status(200).json({ encryptedData: encryptedUserData });
+
+    const cacheKey = CACHE_KEYS.userProjects(userId);
+
+    // Cache hit
+    const cachedProjects = cache.get(cacheKey);
+
+    if (cachedProjects) {
+      console.log(`[CACHE HIT] ${cacheKey}`);
+
+      const encryptedUserData = encryptData(cachedProjects);
+
+      return res.status(200).json({
+        encryptedData: encryptedUserData,
+      });
+    }
+
+    console.log(`[CACHE MISS] ${cacheKey}`);
+
+    // IMPORTANT:
+    // Only fetch projects belonging to this user
+    const projects = await Project.find({
+      user: userId,
+    }).lean();
+
+    // Cache for 5 minutes
+    cache.set(cacheKey, projects, 300);
+
+    const encryptedUserData = encryptData(projects);
+
+    return res.status(200).json({
+      encryptedData: encryptedUserData,
+    });
   } catch (error) {
-    res.status(500).json({ type: "error", message: "Internal server error" });
+    console.error("getProjectDetails error:", error.message);
+
+    return res.status(500).json({
+      type: "error",
+      message: "Internal server error",
+    });
   }
 };
 
@@ -214,6 +266,8 @@ exports.sendMessageToAdmin = async (req, res) => {
     });
 
     await project.save();
+
+    invalidateProjectAndUser(projectId, userId);
 
     res.status(200).json({
       type: "success",
@@ -256,6 +310,8 @@ exports.markMessageAsShown = async (req, res) => {
     }
 
     await project.save();
+
+    invalidateProjectAndUser(projectId, userId);
 
     res.status(200).json({
       type: "success",
@@ -328,6 +384,8 @@ exports.clientConfirmStageCompletion = async (req, res) => {
 
     await project.save();
 
+    invalidateProjectAndUser(projectId, userId);
+
     // send an confirmation email to admin that materials are approved
     try {
       const admin = await Admin.findOne(); // or Admin.find()
@@ -386,12 +444,14 @@ exports.removeClientConfirmation = async (req, res) => {
 
     await project.save();
 
+    invalidateProjectAndUser(projectId, userId);
+
     const admin = await Admin.find();
-    sendEmail(
-      admin.email,
-      `${user.name} Removed Stage Confirmation`,
-      `The ${user.name} has removed their confirmation for stage "${stageName}" in project "${project.clientName}". Please review and take necessary actions.`
-    );
+    // sendEmail(
+    //   admin.email,
+    //   `${user.name} Removed Stage Confirmation`,
+    //   `The ${user.name} has removed their confirmation for stage "${stageName}" in project "${project.clientName}". Please review and take necessary actions.`
+    // );
 
     res.status(200).json({
       message: `Client confirmation for Stage "${stageName}" has been removed.`,
@@ -433,6 +493,8 @@ exports.approveMaterials = async (req, res) => {
 
     await project.save();
 
+    invalidateProjectAndUser(projectId, userId);
+
     // send an confirmation email to admin that materials are approved
     try {
       const admin = await Admin.findOne(); // or Admin.find()
@@ -441,11 +503,11 @@ exports.approveMaterials = async (req, res) => {
           .status(400)
           .json({ type: "error", message: "Admin email not found." });
       }
-      await sendEmail(
-        admin.email,
-        "Client approved stage material bill",
-        `${user.name} approved materials list. now you come from tomorrow for work: ${stageName}`
-      );
+      // await sendEmail(
+      //   admin.email,
+      //   "Client approved stage material bill",
+      //   `${user.name} approved materials list. now you come from tomorrow for work: ${stageName}`
+      // );
       await addNotification(
         user._id,
         `${user.name} you have aproved materials bill list of ${projectName} of ${stage.name}`,
@@ -486,6 +548,8 @@ exports.specifyStartDate = async (req, res) => {
     stage.clientConfirmation.date = startDate;
 
     await project.save();
+
+    invalidateProjectAndUser(projectId, userId);
 
     res.status(200).json({
       type: "success",
@@ -530,13 +594,16 @@ exports.setPaymentMethod = async (req, res) => {
     }
 
     const admin = await Admin.findOne();
-    sendEmail(
-      admin.email,
-      "Payment method",
-      `${user.name} update (cash_on_hand) payment method. and paying amount will be on ${payDate}`
-    );
+    // sendEmail(
+    //   admin.email,
+    //   "Payment method",
+    //   `${user.name} update (cash_on_hand) payment method. and paying amount will be on ${payDate}`
+    // );
 
     await project.save();
+
+    invalidateProjectAndUser(projectId, userId);
+
     res.status(200).json({
       type: "success",
       message: "Payment method updated successfully",

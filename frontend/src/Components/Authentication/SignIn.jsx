@@ -11,6 +11,7 @@ import { useAlert } from "../OtherComponents/AlertProvider";
 
 const SignIn = () => {
   const navigate = useNavigate();
+  // Use axios global baseURL set by axiosSetup; avoid using undefined env var
   const electricaURL = import.meta.env.VITE_ELECTRICA_API_URL;
   const { success, error, warning } = useAlert();
 
@@ -66,7 +67,7 @@ const SignIn = () => {
 
       // Step 3: Hit API
       const response = await axios.post(
-        `${electricaURL}/api/auth/signin`,
+        `/api/auth/signin`,
         { email, password, rememberMe, ipAddress, deviceInfo },
         { withCredentials: true }
       );
@@ -129,7 +130,7 @@ const SignIn = () => {
     const email = Cookies.get("ez-em-01e");
     try {
       const response = await axios.post(
-        `${electricaURL}/api/auth/signin`,
+        `/api/auth/signin`,
         { email: JSON.parse(email), password: password, otp: otpString },
         { withCredentials: true }
       );

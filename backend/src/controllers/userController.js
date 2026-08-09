@@ -2,11 +2,19 @@ const bcrypt = require("bcryptjs");
 const User = require("../models/user");
 const jwt = require("jsonwebtoken");
 const crypto = require("crypto");
+const mongoose = require("mongoose");
+const {
+  cache,
+  CACHE_KEYS,
+  invalidateUser,
+  invalidateUserProjects,
+  invalidateProject,
+  invalidateProjectAndUser,
+} = require("../utils/cache");
 const { sendOtpEmail } = require("../utils/otpService");
 const { loginMail } = require("../utils/loginmail");
 const { sendEmail } = require("../utils/mail");
 const Project = require("../models/project");
-const mongoose = require("mongoose");
 // const cron = require("node-cron");
 const addNotification = require("./addNotification");
 const encryptData = require("../validators/encryptData");
@@ -506,6 +514,7 @@ exports.updateFirstTime = async (req, res) => {
   try {
     const userId = req.user.id;
     await User.findByIdAndUpdate(userId, { isFirstTime: false });
+    invalidateUser(userId);
     res.json({ message: "User updated successfully" });
   } catch (err) {
     res.status(500).json({ message: err.message });
@@ -525,6 +534,7 @@ exports.logout = async (req, res) => {
     // Remove only the current session (not all)
     user.sessions = user.sessions.filter((s) => s.sessionId !== req.sessionID);
     await user.save();
+    invalidateUser(userId);
     req.session.destroy((err) => {
       if (err) {
         return res
@@ -608,6 +618,7 @@ exports.forgotPassword = async (req, res) => {
 
     await sendEmail(user.email, "Forgot OTP", `your forgot otp is: ${otp}`);
     await user.save();
+    invalidateUser(user._id.toString());
 
     res.status(200).json({
       type: "success",
@@ -728,29 +739,62 @@ exports.resetPassword = async (req, res) => {
 exports.getUserDetails = async (req, res) => {
   try {
     if (!req.user || !req.user.id) {
-      return res.status(401).json({ type: "error", message: "Unauthorized" });
+      return res.status(401).json({
+        type: "error",
+        message: "Unauthorized",
+      });
     }
-    const user = await User.findById(req.user.id).select(
-      "-password -resetToken -resetTokenExpires -otp -otpAttempts -otpExpires"
-    );
+
+    const userId = req.user.id;
+    const cacheKey = CACHE_KEYS.user(userId);
+
+    // 1. Check cache
+    const cachedUser = cache.get(cacheKey);
+
+    if (cachedUser) {
+      console.log(`[CACHE HIT] ${cacheKey}`);
+
+      const encryptedUserData = encryptData(cachedUser);
+
+      return res.json({
+        encryptedData: encryptedUserData,
+        isFirstTime: cachedUser.isFirstTime,
+      });
+    }
+
+    console.log(`[CACHE MISS] ${cacheKey}`);
+
+    // 2. DB query
+    const user = await User.findById(userId)
+      .select(
+        "-password -resetToken -resetTokenExpires -otp -otpAttempts -otpExpires"
+      )
+      .lean();
 
     if (!user) {
-      return res
-        .status(401)
-        .json({ type: "error", message: "User not found!" });
+      return res.status(401).json({
+        type: "error",
+        message: "User not found!",
+      });
     }
-    // Encrypt user data sending to response
-    const encryptedUserData = encryptData({
-      ...user.toObject(),
-    });
 
-    res.json({
+    // 3. Store only safe data
+    cache.set(cacheKey, user, 300);
+
+    // 4. Encrypt response
+    const encryptedUserData = encryptData(user);
+
+    return res.json({
       encryptedData: encryptedUserData,
       isFirstTime: user.isFirstTime,
     });
   } catch (error) {
     console.error("getUserDetails error:", error.message);
-    res.status(500).json({ type: "error", message: "Internal server error" });
+
+    return res.status(500).json({
+      type: "error",
+      message: "Internal server error",
+    });
   }
 };
 
